@@ -1,10 +1,15 @@
 package info.novatec.metricCollector.github;
 
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import info.novatec.metricCollector.commons.DailyVisitsEntity;
+
 
 public class GithubMetrics {
+
+    private String projectName;
 
     private Integer numberOfContributors;
 
@@ -16,18 +21,29 @@ public class GithubMetrics {
 
     private Integer numberOfOpenIssues;
 
+    private Integer numberOfClosedIssues;
+
     private Integer numberOfCommits;
 
     private SortedMap<String, Integer> downloadsPerRelease;
 
-    private Integer numberOfUniqueVisitors;
+    private List<DailyVisitsEntity> dailyVisits;
 
     private SortedMap<String, Integer> referringSitesLast14Days;
 
-    public GithubMetrics(){
+    public GithubMetrics() {
 
         downloadsPerRelease = new TreeMap<>();
         referringSitesLast14Days = new TreeMap<>();
+
+    }
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 
     public Integer getNumberOfContributors() {
@@ -70,6 +86,14 @@ public class GithubMetrics {
         this.numberOfOpenIssues = numberOfOpenIssues;
     }
 
+    public Integer getNumberOfClosedIssues() {
+        return numberOfClosedIssues;
+    }
+
+    public void setNumberOfClosedIssues(Integer numberOfClosedIssues) {
+        this.numberOfClosedIssues = numberOfClosedIssues;
+    }
+
     public Integer getNumberOfCommits() {
         return numberOfCommits;
     }
@@ -82,16 +106,16 @@ public class GithubMetrics {
         return downloadsPerRelease;
     }
 
-    public void addDownloadsPerRelease(String releaseAndOrArtifact, int numberOfDownloads ) {
+    public void addDownloadsPerRelease(String releaseAndOrArtifact, int numberOfDownloads) {
         downloadsPerRelease.put(releaseAndOrArtifact, numberOfDownloads);
     }
 
-    public Integer getNumberOfUniqueVisitors() {
-        return numberOfUniqueVisitors;
+    public List<DailyVisitsEntity> getDailyVisits() {
+        return dailyVisits;
     }
 
-    public void setNumberOfUniqueVisitors(Integer numberOfUniqueVisitors) {
-        this.numberOfUniqueVisitors = numberOfUniqueVisitors;
+    public void setDailyVisits(List<DailyVisitsEntity> dailyVisits) {
+        this.dailyVisits = dailyVisits;
     }
 
     public SortedMap<String, Integer> getReferringSitesLast14Days() {

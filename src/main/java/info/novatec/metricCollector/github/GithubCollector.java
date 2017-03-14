@@ -1,5 +1,8 @@
 package info.novatec.metricCollector.github;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 
+import info.novatec.metricCollector.commons.DailyVisitsEntity;
 import info.novatec.metricCollector.commons.RestRequester;
 import info.novatec.metricCollector.exception.UserDeniedException;
 
@@ -28,6 +32,7 @@ public class GithubCollector {
 
         setHeadersForGithub();
         GithubMetrics githubMetrics = new GithubMetrics();
+        githubMetrics.setProjectName(projectName);
 
         JSONObject projectRepository = new JSONObject(getProjectRepository(projectName).getBody());
 
@@ -36,8 +41,9 @@ public class GithubCollector {
         collectNumberOfForks(githubMetrics, projectRepository);
         collectNumberOfWatchers(githubMetrics, projectRepository);
         collectNumberOfOpenIssues(githubMetrics, projectRepository);
+        collectNumberOfClosedIssues(githubMetrics, projectName);
         collectNumberOfCommits(githubMetrics, projectName);
-        collectNumberOfUniqueVisitors(githubMetrics, projectName);
+        collectDailyVisitsLast14Days(githubMetrics, projectName);
         collectReferringSitesLast14Days(githubMetrics, projectName);
         collectNumberOfDownloads(githubMetrics, projectRepository, projectName);
 
@@ -78,6 +84,12 @@ public class GithubCollector {
         githubMetrics.setNumberOfOpenIssues(projectRepository.getInt("open_issues_count"));
     }
 
+    private void collectNumberOfClosedIssues(GithubMetrics githubMetrics, String projectName) {
+        String url = BASE_URL + "/repos/" + projectName + "/issues/events";
+        JSONArray closedIssues = new JSONArray(restRequester.sendRequest(url).getBody());
+        githubMetrics.setNumberOfClosedIssues(closedIssues.length());
+    }
+
     private void collectNumberOfCommits(GithubMetrics githubMetrics, String projectName) {
         String url = BASE_URL + "/repos/" + projectName + "/commits";
         JSONArray commits = new JSONArray(restRequester.sendRequest(url).getBody());
@@ -115,13 +127,22 @@ public class GithubCollector {
         }
     }
 
-    private void collectNumberOfUniqueVisitors(GithubMetrics githubMetrics, String projectName) {
+    private void collectDailyVisitsLast14Days(GithubMetrics githubMetrics, String projectName) {
         try {
             String url = BASE_URL + "/repos/" + projectName + "/traffic/views";
             JSONObject visitors = new JSONObject(restRequester.sendRequest(url).getBody());
-            githubMetrics.setNumberOfUniqueVisitors(visitors.getInt("uniques"));
+            JSONArray visitsAsJSON = visitors.getJSONArray("views");
+            List<DailyVisitsEntity> visitsAsList = new ArrayList<>(visitsAsJSON.length());
+            for (int visitsIndex=0; visitsIndex<visitsAsJSON.length(); visitsIndex++){
+                JSONObject visitAsJSON = visitsAsJSON.getJSONObject(visitsIndex);
+                String timestamp = visitAsJSON.getString("timestamp");
+                Integer totalVisits = visitAsJSON.getInt("count");
+                Integer uniqueVisits = visitAsJSON.getInt("uniques");
+                visitsAsList.add(new DailyVisitsEntity(timestamp, totalVisits, uniqueVisits));
+            }
+            githubMetrics.setDailyVisits(visitsAsList);
         } catch (HttpClientErrorException e) {
-            throw new UserDeniedException("No authorized user logged in!");
+            throw new UserDeniedException("No authorized user logged in! Please add a valid oauth token to the header.");
         }
     }
 
