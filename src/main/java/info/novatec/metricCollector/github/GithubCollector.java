@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 
+import info.novatec.metricCollector.commons.ConfigProperties;
 import info.novatec.metricCollector.commons.DailyVisitsEntity;
 import info.novatec.metricCollector.commons.RestRequester;
 import info.novatec.metricCollector.exception.UserDeniedException;
@@ -22,6 +23,8 @@ public class GithubCollector {
     private static final String BASE_URL = "https://api.github.com";
 
     private RestRequester restRequester;
+
+    private ConfigProperties properties;
 
     @Autowired
     public GithubCollector(RestRequester restRequester) {
@@ -50,10 +53,15 @@ public class GithubCollector {
         return githubMetrics;
     }
 
+    @Autowired
+    public void setProperties(ConfigProperties properties) {
+        this.properties = properties;
+    }
+
     private void setHeadersForGithub() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Accept", "application/vnd.github.v3+json");
-        httpHeaders.set("Authorization", "token 62eb1c5273456e8ed6fc165671fbdc2ba059db81");
+        httpHeaders.set("Authorization", "token "+properties.getGitHubToken());
         restRequester.setHeaders(httpHeaders);
     }
 
