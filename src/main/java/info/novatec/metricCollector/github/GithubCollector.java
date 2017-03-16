@@ -1,7 +1,6 @@
 package info.novatec.metricCollector.github;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -11,12 +10,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 
+import lombok.extern.slf4j.Slf4j;
+
 import info.novatec.metricCollector.commons.ConfigProperties;
 import info.novatec.metricCollector.commons.DailyVisitsEntity;
 import info.novatec.metricCollector.commons.RestRequester;
 import info.novatec.metricCollector.exception.UserDeniedException;
 
-
+@Slf4j
 @Component
 public class GithubCollector {
 
@@ -27,7 +28,7 @@ public class GithubCollector {
     private ConfigProperties properties;
 
     @Autowired
-    public GithubCollector(RestRequester restRequester) {
+    GithubCollector(RestRequester restRequester) {
         this.restRequester = restRequester;
     }
 
@@ -50,6 +51,7 @@ public class GithubCollector {
         collectReferringSitesLast14Days(githubMetrics, projectName);
         collectNumberOfDownloads(githubMetrics, projectRepository, projectName);
 
+        log.info("Collection of ");
         return githubMetrics;
     }
 
@@ -116,7 +118,6 @@ public class GithubCollector {
      * @param projectName The GitHub repository. pattern: '<user>/<repository>'
      */
     private void collectNumberOfDownloads(GithubMetrics githubMetrics, JSONObject projectRepository, String projectName) {
-
         if (projectRepository == null || projectRepository.getBoolean("has_downloads")) {
             String url = BASE_URL + "/repos/" + projectName + "/releases";
             JSONArray releases = new JSONArray(restRequester.sendRequest(url).getBody());
@@ -128,7 +129,6 @@ public class GithubCollector {
                     JSONObject asset = assets.getJSONObject(assetsIndex);
                     String key = releaseRepository.getString("tag_name") + ":" + asset.getString("name");
                     int value = asset.getInt("download_count");
-
                     githubMetrics.addDownloadsPerRelease(key, value);
                 }
             }
@@ -139,19 +139,33 @@ public class GithubCollector {
         try {
             String url = BASE_URL + "/repos/" + projectName + "/traffic/views";
             JSONObject visitors = new JSONObject(restRequester.sendRequest(url).getBody());
-            JSONArray visitsAsJSON = visitors.getJSONArray("views");
-            List<DailyVisitsEntity> visitsAsList = new ArrayList<>(visitsAsJSON.length());
-            for (int visitsIndex=0; visitsIndex<visitsAsJSON.length(); visitsIndex++){
-                JSONObject visitAsJSON = visitsAsJSON.getJSONObject(visitsIndex);
-                String timestamp = visitAsJSON.getString("timestamp");
-                Integer totalVisits = visitAsJSON.getInt("count");
-                Integer uniqueVisits = visitAsJSON.getInt("uniques");
-                visitsAsList.add(new DailyVisitsEntity(timestamp, totalVisits, uniqueVisits));
-            }
-            githubMetrics.setDailyVisits(visitsAsList);
+            JSONObject visitAsJSON = getYesterdaysVisits(visitors.getJSONArray("views"));
+            String timestamp = visitAsJSON.getString("timestamp");
+            int totalVisits = visitAsJSON.getInt("count");
+            int uniqueVisits = visitAsJSON.getInt("uniques");
+            DailyVisitsEntity dailyVisits = new DailyVisitsEntity(timestamp, totalVisits, uniqueVisits);
+
+            githubMetrics.setDailyVisits(dailyVisits);
         } catch (HttpClientErrorException e) {
-            throw new UserDeniedException("No authorized user logged in! Please add a valid oauth token to the header.");
+            throw new UserDeniedException("No authorized user logged in! Please add a valid oauth token to the properties");
         }
+    }
+
+    /**
+     * Github API v3 provides page-visits for the last fortnight. These data will be updated every morning, including
+     * 'today' from midnight to mordning. To ensure correct data for the whole day, this method checks the latest entry
+     * for its timestamp. If it is 'today' the return value is the entry for 'yesterday' resp. next to the last one.
+     * @param visits List of visits-metrics received from github api v3
+     * @return The entry for yesterdays visits statistics
+     */
+    private JSONObject getYesterdaysVisits(JSONArray visits){
+        JSONObject yesterdaysVisits = visits.getJSONObject(visits.length()-1);
+        String timestamp = yesterdaysVisits.getString("timestamp").split("T")[0];
+
+        if(LocalDate.parse(timestamp).toEpochDay() == LocalDate.now().toEpochDay()){
+            yesterdaysVisits = visits.getJSONObject(visits.length()-2);
+        }
+        return yesterdaysVisits;
     }
 
     /**

@@ -18,6 +18,12 @@ public class ConfigProperties {
 
     String gitHubToken;
 
+    String gitHubMetricsDownloadsSuffix;
+
+    String influxUrl;
+
+    String influxDbName;
+
     private Properties properties;
 
     public ConfigProperties(String propertiesFileName) {
@@ -28,6 +34,9 @@ public class ConfigProperties {
             log.error("File '"+propertiesFileName+"' not found. Please provide it in resource folder.");
         }
         gitHubToken = properties.getProperty("github.token");
+        gitHubMetricsDownloadsSuffix = properties.getProperty("github.metrics.downloads.suffix");
+        influxUrl = properties.getProperty("influx.url");
+        influxDbName = properties.getProperty("influx.db-name");
     }
 
     public ConfigProperties() {

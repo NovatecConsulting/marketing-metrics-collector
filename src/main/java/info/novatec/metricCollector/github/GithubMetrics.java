@@ -1,6 +1,5 @@
 package info.novatec.metricCollector.github;
 
-import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -31,7 +30,7 @@ public class GithubMetrics {
 
     private SortedMap<String, Integer> downloadsPerRelease;
 
-    private List<DailyVisitsEntity> dailyVisits;
+    private DailyVisitsEntity dailyVisits;
 
     private SortedMap<String, Integer> referringSitesLast14Days;
 
