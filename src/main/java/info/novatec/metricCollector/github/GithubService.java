@@ -1,19 +1,19 @@
 package info.novatec.metricCollector.github;
 
-import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.influxdb.dto.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+import info.novatec.metricCollector.commons.ConfigProperties;
 import info.novatec.metricCollector.commons.InfluxService;
 
 
@@ -21,98 +21,78 @@ import info.novatec.metricCollector.commons.InfluxService;
 @Component
 public class GithubService {
 
-    private static final String MEASUREMENT = "github";
-
     private InfluxService influx;
 
     private GithubCollector collector;
 
+    private ConfigProperties properties;
+
+    @Setter
+    private LocalDate baseDate; //required to add past data for testing
+
     @Autowired
-    GithubService(InfluxService influx, GithubCollector collector) {
+    GithubService(InfluxService influx, GithubCollector collector, ConfigProperties properties) {
         this.influx = influx;
-        influx.setRetention("daily");
         this.collector = collector;
+        this.properties = properties;
+        baseDate = LocalDate.now();
     }
 
     void setRetention(String retention) {
         influx.setRetention(retention);
     }
 
-    void collectAndSaveGithubMetrics(String githubProjectURL) {
+    void collectAndSaveMetrics(String githubProjectURL) {
         String projectname = githubProjectURL.substring("https://github.com/".length());
         GithubMetrics metrics = collector.collect(projectname);
         influx.savePoint(createPoints(metrics));
         influx.close();
-    }
-
-    private GithubMetrics retrieveGithubMetricsFromInflux(String timestamp) {
-        GithubMetrics metrics = new GithubMetrics();
-        Map<String, Object> metricsMap = influx.getEntry(timestamp, MEASUREMENT);
-        metricsMap.remove("time");
-        metricsMap.remove("totalVisits");
-        metricsMap.remove("uniqueVisits");
-
-        metricsMap.forEach((key, value) -> {
-            try {
-                String methodName = "set" + key.substring(0, 1).toUpperCase() + key.substring(1);
-                if (value instanceof Double) {
-                    metrics.getClass().getMethod(methodName, Integer.class).invoke(metrics, (( Double ) value).intValue());
-                } else {
-                    metrics.getClass().getMethod(methodName, String.class).invoke(metrics, ( String ) value);
-                }
-
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
-
-        });
-
-        return metrics;
+        log.info("Measurement points  for '"+projectname+"' added to InfluxDb.");
     }
 
     private List<Point> createPoints(GithubMetrics metrics) {
 
-        List<Point> points = new ArrayList<>(2);
+        List<Point> points = new ArrayList<>();
 
-        log.info("Add measurement point for " + metrics.getProjectName());
+        log.info("Add measurement points for " + metrics.getRepositoryName());
 
         //create point for saving todays metrics
-        Point pointForTodaysMetrics = createPoint(metrics, getCurrentDateAsSeconds()).build();
-        points.add(pointForTodaysMetrics);
+        points.add(createTodaysPoint(metrics));
+        log.info("Measurement point for today's metrics created.");
 
-        //create point for updating yesterdays metrics
-        String yesterdaysDate = metrics.getDailyVisits().getTimestamp();
-        GithubMetrics yesterdaysMetrics = retrieveGithubMetricsFromInflux(yesterdaysDate);
-        Point pointForYesterdaysMetrics = createPoint(yesterdaysMetrics, getDateAsSeconds(yesterdaysDate))
-            .addField("totalVisits", metrics.getDailyVisits().getTotalVisits())
-            .addField("uniqueVisits", metrics.getDailyVisits().getUniqueVisits())
-            .build();
+        //create point for updating yesterdays visits
 
-        points.add(pointForYesterdaysMetrics);
-
+        points.add(createYesterdaysPoint(metrics));
+        log.info("Measurement point for yesterdays download metrics created.");
         return points;
     }
 
-    private Point.Builder createPoint(GithubMetrics metrics, long timeInSeconds) {
-        return Point.measurement(MEASUREMENT)
-            .time(timeInSeconds, TimeUnit.SECONDS)
-            .tag("projectName", metrics.getProjectName())
-            .addField("numberOfContributors", metrics.getNumberOfContributors())
-            .addField("numberOfStars", metrics.getNumberOfStars())
-            .addField("numberOfForks", metrics.getNumberOfForks())
-            .addField("numberOfWatchers", metrics.getNumberOfWatchers())
-            .addField("numberOfOpenIssues", metrics.getNumberOfOpenIssues())
-            .addField("numberOfClosedIssues", metrics.getNumberOfClosedIssues())
-            .addField("numberOfCommits", metrics.getNumberOfCommits());
+    private Point createTodaysPoint(GithubMetrics metrics) {
+        Point.Builder point = Point.measurement(properties.getInfluxMeasurementNameGithub())
+            .time(getDateTimeInSeconds(0), TimeUnit.SECONDS)
+            .tag("projectName", metrics.getRepositoryName())
+            .addField("contributors", metrics.getContributors())
+            .addField("stars", metrics.getStars())
+            .addField("forks", metrics.getForks())
+            .addField("watchers", metrics.getWatchers())
+            .addField("openIssues", metrics.getOpenIssues())
+            .addField("closedIssues", metrics.getClosedIssues())
+            .addField("commits", metrics.getCommits());
+        metrics.getReleaseDownloads().entrySet().forEach(map -> point.addField(map.getKey(), map.getValue()));
+        return point.build();
     }
 
-    private long getDateAsSeconds(String dateTime) {
-        String date = dateTime.split("T")[0];
-        return LocalDate.parse(date).atStartOfDay(ZoneId.of("Z")).toEpochSecond();
+    private Point createYesterdaysPoint(GithubMetrics metrics){
+        return Point.measurement(properties.getInfluxMeasurementNameGithub())
+            .time(getDateTimeInSeconds(1), TimeUnit.SECONDS)
+            .tag("projectName", metrics.getRepositoryName())
+            .addField("totalVisits", metrics.getDailyVisits().getTotalVisits())
+            .addField("uniqueVisits", metrics.getDailyVisits().getUniqueVisits())
+            .build();
     }
 
-    private long getCurrentDateAsSeconds() {
-        return LocalDate.now().atStartOfDay(ZoneId.of("Z")).toEpochSecond();
+    private long getDateTimeInSeconds(int minusDays) {
+        return baseDate.minusDays(minusDays).atStartOfDay(ZoneId.of("Z")).toEpochSecond();
     }
 
 }

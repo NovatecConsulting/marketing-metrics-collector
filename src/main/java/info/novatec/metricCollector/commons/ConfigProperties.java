@@ -18,11 +18,17 @@ public class ConfigProperties {
 
     String gitHubToken;
 
-    String gitHubMetricsDownloadsSuffix;
-
     String influxUrl;
-
     String influxDbName;
+    String influxMeasurementNameGithub;
+    String influxMeasurementNameTwitter;
+
+    String twitterConsumerKey;
+    String twitterConsumerSecret;
+    String twitterOAuthToken;
+    String twitterOauthTokenSecret;
+
+
 
     private Properties properties;
 
@@ -34,9 +40,17 @@ public class ConfigProperties {
             log.error("File '"+propertiesFileName+"' not found. Please provide it in resource folder.");
         }
         gitHubToken = properties.getProperty("github.token");
-        gitHubMetricsDownloadsSuffix = properties.getProperty("github.metrics.downloads.suffix");
         influxUrl = properties.getProperty("influx.url");
         influxDbName = properties.getProperty("influx.db-name");
+        influxMeasurementNameGithub = properties.getProperty("influx.measurement.name.github");
+        influxMeasurementNameTwitter = properties.getProperty("influx.measurement.name.twitter");
+
+        twitterConsumerKey = properties.getProperty("twitter.consumer.key");
+        twitterConsumerSecret = properties.getProperty("twitter.consumer.secret");
+        twitterOAuthToken = properties.getProperty("twitter.access.token");
+        twitterOauthTokenSecret = properties.getProperty("twitter.access.token.secret");
+
+
     }
 
     public ConfigProperties() {

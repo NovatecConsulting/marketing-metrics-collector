@@ -15,10 +15,14 @@
     </parent>
 
     <properties>
+        <version.java>1.8</version.java>
         <version.spring.boot>1.5.2.RELEASE</version.spring.boot>
         <version.lombok>1.16.14</version.lombok>
         <version.slf4j>1.7.22</version.slf4j>
-        <version.json>20151123</version.json>
+        <version.json>1.0.4</version.json>
+        <version.json.api>1.0</version.json.api>
+        <version.twitter4j>4.0.6</version.twitter4j>
+        <version.influxdb>2.5</version.influxdb>
     </properties>
 
     <dependencies>
@@ -37,14 +41,19 @@
 
         <!-- data & database -->
         <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.json</artifactId>
             <version>${version.json}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.json</groupId>
+            <artifactId>javax.json-api</artifactId>
+            <version>${version.json.api}</version>
         </dependency>
         <dependency>
             <groupId>org.influxdb</groupId>
             <artifactId>influxdb-java</artifactId>
-            <version>2.5</version>
+            <version>${version.influxdb}</version>
         </dependency>
 
         <!-- commons -->
@@ -55,6 +64,14 @@
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
+
+        <!-- Twitter API -->
+        <dependency>
+            <groupId>org.twitter4j</groupId>
+            <artifactId>twitter4j-core</artifactId>
+            <version>${version.twitter4j}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -67,8 +84,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>${version.java}</source>
+                    <target>${version.java}</target>
                 </configuration>
             </plugin>
         </plugins>

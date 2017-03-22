@@ -1,7 +1,6 @@
 package info.novatec.metricCollector.github;
 
 import java.util.SortedMap;
-import java.util.TreeMap;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,42 +9,29 @@ import info.novatec.metricCollector.commons.DailyVisitsEntity;
 
 @Getter
 @Setter
-public class GithubMetrics {
+class GithubMetrics {
 
-    private String projectName;
+    private String repositoryName;
 
-    private Integer numberOfContributors;
+    private Integer contributors;
 
-    private Integer numberOfStars;
+    private Integer stars;
 
-    private Integer numberOfForks;
+    private Integer forks;
 
-    private Integer numberOfWatchers;
+    private Integer watchers;
 
-    private Integer numberOfOpenIssues;
+    private Integer openIssues;
 
-    private Integer numberOfClosedIssues;
+    private Integer closedIssues;
 
-    private Integer numberOfCommits;
+    private Integer commits;
 
-    private SortedMap<String, Integer> downloadsPerRelease;
+    private SortedMap<String, Integer> releaseDownloads;
 
     private DailyVisitsEntity dailyVisits;
 
     private SortedMap<String, Integer> referringSitesLast14Days;
 
-    GithubMetrics() {
-
-        downloadsPerRelease = new TreeMap<>();
-        referringSitesLast14Days = new TreeMap<>();
-
-    }
-
-    void addDownloadsPerRelease(String releaseAndOrArtifact, int numberOfDownloads) {
-        downloadsPerRelease.put(releaseAndOrArtifact, numberOfDownloads);
-    }
-
-    void addReferringSitesLast14Days(String referringSite, int visits) {
-        referringSitesLast14Days.put(referringSite, visits);
-    }
+    GithubMetrics() { }
 }
