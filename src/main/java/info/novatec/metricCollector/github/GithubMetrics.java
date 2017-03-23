@@ -12,26 +12,15 @@ import info.novatec.metricCollector.commons.DailyVisitsEntity;
 class GithubMetrics {
 
     private String repositoryName;
-
     private Integer contributors;
-
     private Integer stars;
-
     private Integer forks;
-
     private Integer watchers;
-
     private Integer openIssues;
-
     private Integer closedIssues;
-
     private Integer commits;
-
     private SortedMap<String, Integer> releaseDownloads;
-
     private DailyVisitsEntity dailyVisits;
-
     private SortedMap<String, Integer> referringSitesLast14Days;
 
-    GithubMetrics() { }
 }

@@ -1,7 +1,5 @@
 package info.novatec.metricCollector.github;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -10,10 +8,11 @@ import org.influxdb.dto.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import lombok.Setter;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import info.novatec.metricCollector.commons.ConfigProperties;
+import info.novatec.metricCollector.commons.DateTimeConverter;
 import info.novatec.metricCollector.commons.InfluxService;
 
 
@@ -27,15 +26,15 @@ public class GithubService {
 
     private ConfigProperties properties;
 
-    @Setter
-    private LocalDate baseDate; //required to add past data for testing
+    @Getter
+    private DateTimeConverter dateTimeConverter;
 
     @Autowired
-    GithubService(InfluxService influx, GithubCollector collector, ConfigProperties properties) {
+    GithubService(InfluxService influx, GithubCollector collector, ConfigProperties properties, DateTimeConverter dateTimeConverter) {
         this.influx = influx;
         this.collector = collector;
         this.properties = properties;
-        baseDate = LocalDate.now();
+        this.dateTimeConverter = dateTimeConverter;
     }
 
     void setRetention(String retention) {
@@ -43,11 +42,18 @@ public class GithubService {
     }
 
     void collectAndSaveMetrics(String githubProjectURL) {
+        saveMetrics(collectMetrics(githubProjectURL));
+    }
+
+    GithubMetrics collectMetrics(String githubProjectURL){
         String projectname = githubProjectURL.substring("https://github.com/".length());
-        GithubMetrics metrics = collector.collect(projectname);
+        return collector.collect(projectname);
+    }
+
+    void saveMetrics(GithubMetrics metrics){
         influx.savePoint(createPoints(metrics));
         influx.close();
-        log.info("Measurement points  for '"+projectname+"' added to InfluxDb.");
+        log.info("Added points  for '"+metrics.getRepositoryName()+"' to InfluxDb Measurement '"+properties.getInfluxMeasurementNameGithub()+"'.");
     }
 
     private List<Point> createPoints(GithubMetrics metrics) {
@@ -69,7 +75,7 @@ public class GithubService {
 
     private Point createTodaysPoint(GithubMetrics metrics) {
         Point.Builder point = Point.measurement(properties.getInfluxMeasurementNameGithub())
-            .time(getDateTimeInSeconds(0), TimeUnit.SECONDS)
+            .time(dateTimeConverter.getCurrentDateInSeconds(0), TimeUnit.SECONDS)
             .tag("projectName", metrics.getRepositoryName())
             .addField("contributors", metrics.getContributors())
             .addField("stars", metrics.getStars())
@@ -84,15 +90,11 @@ public class GithubService {
 
     private Point createYesterdaysPoint(GithubMetrics metrics){
         return Point.measurement(properties.getInfluxMeasurementNameGithub())
-            .time(getDateTimeInSeconds(1), TimeUnit.SECONDS)
+            .time(dateTimeConverter.getCurrentDateInSeconds(1), TimeUnit.SECONDS)
             .tag("projectName", metrics.getRepositoryName())
             .addField("totalVisits", metrics.getDailyVisits().getTotalVisits())
             .addField("uniqueVisits", metrics.getDailyVisits().getUniqueVisits())
             .build();
-    }
-
-    private long getDateTimeInSeconds(int minusDays) {
-        return baseDate.minusDays(minusDays).atStartOfDay(ZoneId.of("Z")).toEpochSecond();
     }
 
 }

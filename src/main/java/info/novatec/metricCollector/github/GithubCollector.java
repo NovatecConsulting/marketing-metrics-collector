@@ -27,7 +27,7 @@ import info.novatec.metricCollector.exception.UserDeniedException;
 
 @Slf4j
 @Component
-public class GithubCollector {
+class GithubCollector {
 
     private static final String BASE_URL = "https://api.github.com/repos/";
 
@@ -49,27 +49,6 @@ public class GithubCollector {
     private JsonObject buildJsonObject(String serializedJsonObject) {
         JsonReader jsonReader = Json.createReader(new StringReader(serializedJsonObject));
         return jsonReader.readObject();
-    }
-
-    public SortedMap<String, Integer> test() throws Exception {
-        String url = BASE_URL + "testIT-LivingDoc/livingdoc-core" + "/releases";
-        JsonReader jsonReader = Json.createReader(new StringReader(restRequester.sendRequest(url).getBody()));
-        JsonArray releases = jsonReader.readArray();
-
-        SortedMap<String, Integer> allDownloads = new TreeMap<>();
-
-        releases.stream().forEach(obj -> {
-            JsonObject release = (( JsonObject ) obj);
-            Map<String, Integer> releaseDownloads = release.getJsonArray("assets")
-                .stream()
-                .collect(
-                    Collectors.toMap(asset -> release.getString("tag_name") + ":" + (( JsonObject ) asset).getString("name"),
-                        asset -> (( JsonObject ) asset).getInt("download_count")));
-            allDownloads.putAll(releaseDownloads);
-        });
-
-        return allDownloads;
-
     }
 
     GithubMetrics collect(String projectName) {
@@ -163,7 +142,7 @@ public class GithubCollector {
             String url = BASE_URL + projectName + "/releases";
             JsonReader jsonReader = Json.createReader(new StringReader(restRequester.sendRequest(url).getBody()));
             JsonArray releases = jsonReader.readArray();
-            releases.stream().forEach(obj -> {
+            releases.forEach(obj -> {
                 JsonObject release = (( JsonObject ) obj);
                 Map<String, Integer> releaseDownloads = release.getJsonArray("assets")
                     .stream()

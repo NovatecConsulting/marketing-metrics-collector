@@ -27,6 +27,8 @@ public class ConfigProperties {
     String twitterConsumerSecret;
     String twitterOAuthToken;
     String twitterOauthTokenSecret;
+    String twitterUserName;
+    String twitterPassword;
 
 
 
@@ -49,8 +51,8 @@ public class ConfigProperties {
         twitterConsumerSecret = properties.getProperty("twitter.consumer.secret");
         twitterOAuthToken = properties.getProperty("twitter.access.token");
         twitterOauthTokenSecret = properties.getProperty("twitter.access.token.secret");
-
-
+        twitterUserName = properties.getProperty("twitter.username");
+        twitterPassword = properties.getProperty("twitter.password");
     }
 
     public ConfigProperties() {
