@@ -1,2 +1,4 @@
 .idea/
 target/
+*.iml
+mmc-commons/src/main/resources/config.properties

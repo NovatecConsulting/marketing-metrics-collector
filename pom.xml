@@ -5,8 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>info.novatec</groupId>
-    <artifactId>maketing-metrics-collector</artifactId>
+    <artifactId>marketing-metrics-collector</artifactId>
+    <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>mmc-commons</module>
+        <module>mmc-twitter</module>
+        <module>mmc-github</module>
+        <module>mmc-google-analytics</module>
+    </modules>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -23,6 +30,8 @@
         <version.json.api>1.0</version.json.api>
         <version.twitter4j>4.0.6</version.twitter4j>
         <version.influxdb>2.5</version.influxdb>
+        <version.google.analytics>v3-rev138-1.22.0</version.google.analytics>
+        <version.mmc.commons>1.0-SNAPSHOT</version.mmc.commons>
     </properties>
 
     <dependencies>
@@ -63,13 +72,6 @@
             <version>${version.lombok}</version>
             <scope>provided</scope>
             <optional>true</optional>
-        </dependency>
-
-        <!-- Twitter API -->
-        <dependency>
-            <groupId>org.twitter4j</groupId>
-            <artifactId>twitter4j-core</artifactId>
-            <version>${version.twitter4j}</version>
         </dependency>
 
     </dependencies>
