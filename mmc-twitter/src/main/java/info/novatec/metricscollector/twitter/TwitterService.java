@@ -1,19 +1,22 @@
 package info.novatec.metricscollector.twitter;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import org.influxdb.dto.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import twitter4j.TwitterException;
 
 import info.novatec.metricscollector.commons.ConfigProperties;
-import info.novatec.metricscollector.commons.DateTimeConverter;
 import info.novatec.metricscollector.commons.InfluxService;
 
 
@@ -27,15 +30,11 @@ public class TwitterService {
 
     private ConfigProperties properties;
 
-    @Getter
-    private DateTimeConverter dateTimeConverter;
-
     @Autowired
-    TwitterService(InfluxService influx, TwitterCollector collector, ConfigProperties properties, DateTimeConverter dateTimeConverter) {
+    TwitterService(InfluxService influx, TwitterCollector collector, ConfigProperties properties) {
         this.influx = influx;
         this.collector = collector;
         this.properties = properties;
-        this.dateTimeConverter = dateTimeConverter;
     }
 
     void setRetention(String retention) {
@@ -46,55 +45,51 @@ public class TwitterService {
         saveMetrics(collectMetrics(userName, atUserName));
     }
 
-    TwitterMetrics collectMetrics(String userName, String atUserName) throws TwitterException{
+    TwitterMetrics collectMetrics(String userName, String atUserName) throws TwitterException {
         return collector.collect(userName, atUserName);
     }
 
-    void saveMetrics(TwitterMetrics metrics){
+    void saveMetrics(TwitterMetrics metrics) {
         List<Point> points = createPoints(metrics);
         influx.savePoint(points);
         influx.close();
-        log.info("Saved points for user '"+metrics.getUserName()+"' to InfluxDb Measurement '"+properties.getInfluxMeasurementNameTwitter()+"'.");
+        log.info("Saved points for user '" + metrics.getUserName() + "' to InfluxDb Measurement '"
+            + properties.getInfluxMeasurementNameTwitter() + "'.");
     }
 
     private List<Point> createPoints(TwitterMetrics metrics) {
-
         List<Point> points = new ArrayList<>();
 
-        log.info("Adding measurement points for '" + metrics.getUserName()+"'...");
-
-        //create point for saving general metrics
-        points.add(createGeneralPoint(metrics));
-        log.info("General measurement point created.");
-
-        //create point for updating likes of mentions
-        points.addAll(createLikesPoints(metrics));
-        log.info("Likes Measurement point created.");
-        return points;
-    }
-
-    private Point createGeneralPoint(TwitterMetrics metrics) {
-        Point.Builder point = Point.measurement(properties.getInfluxMeasurementNameTwitter())
-            .time(dateTimeConverter.getCurrentDateInSeconds(0), TimeUnit.SECONDS)
-            .tag("atUserName", metrics.getAtUserName())
+        log.info("Adding measurement point for '" + metrics.getUserName() + " (@" + metrics.getAtUserName() + ")'...");
+        Point.Builder pointGeneral = Point.measurement(metrics.atUserName)
             .addField("tweets", metrics.getTweets())
             .addField("retweets", metrics.getReTweets())
             .addField("mentions", metrics.getMentions())
-            .addField("likes", metrics.getLikes())
             .addField("followers", metrics.getFollowers());
-        return point.build();
-    }
+        points.add(pointGeneral.build());
 
-    private List<Point> createLikesPoints(TwitterMetrics metrics){
-        List<Point> points = new ArrayList<>(metrics.getLikesOfMentions().size());
-        metrics.getLikesOfMentions().entrySet().forEach(likesOfMention -> {
-            Point point = Point.measurement(properties.getInfluxMeasurementNameTwitter())
-                .time(dateTimeConverter.getDateInSecondsMinusDays(likesOfMention.getKey(), 0), TimeUnit.SECONDS)
-                .tag("atUserName", metrics.getAtUserName())
-                .addField("likesOfMentions", likesOfMention.getValue())
-                .build();
-            points.add(point);
-        });
+
+        metrics.getLikesOfMentions().entrySet().forEach( likes -> {
+                Point.Builder pointLikes = Point.measurement(metrics.atUserName+"_Likes")
+                    .time(convertDateTime(likes.getKey()), TimeUnit.SECONDS)
+                    .addField("totalLikes", metrics.getLikes())
+                    .addField("likesOfMentions", likes.getValue());
+                points.add(pointLikes.build());
+            });
         return points;
     }
+
+    /**
+     * Example input: Mon Mar 20 21:44:45 CET 2017
+     * output: 2017-03-20T21:44:45
+     */
+    public long convertDateTime(String dateTime){
+        Locale dateLocale = Locale.UK;
+        DateTimeFormatter inFormatter = DateTimeFormatter.ofPattern("E MMM dd HH:mm:ss z yyyy", dateLocale);
+        TemporalAccessor date = inFormatter.parse(dateTime);
+        DateTimeFormatter outFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+        String out = outFormatter.format(date);
+        return LocalDateTime.parse(out).atZone(ZoneId.of("Z")).toEpochSecond();
+    }
+
 }
