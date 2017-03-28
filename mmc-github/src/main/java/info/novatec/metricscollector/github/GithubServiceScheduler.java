@@ -18,9 +18,7 @@ public class GithubServiceScheduler {
     private GithubCollector githubCollector;
 
     @Autowired
-    private GithubService githubService;
-
-    private static final String GITHUB_MAIN_URL = "https://github.com/";
+    private GithubRepository githubRepository;
 
     private List<String> urls = new ArrayList<>();
 
@@ -36,17 +34,15 @@ public class GithubServiceScheduler {
     //TODO replace with cron expression, cron = "0 0 0 * * *" - Every day once
     @Scheduled(fixedRate = 15000)
     private void updateAllGithubProjectsMetrics() {
-        githubService.setRetention("daily");
         if (!getUrls().isEmpty()) {
             getUrls().forEach(githubProjectUrl -> {
-                githubService.saveMetrics(collectMetrics(githubProjectUrl));
+                githubRepository.saveMetrics(collectMetrics(githubProjectUrl));
                 log.info("SCHEDULER " + githubProjectUrl + " completed.");
             });
         }
     }
 
     private GithubMetrics collectMetrics(String githubProjectUrl) {
-        String projectName = githubProjectUrl.substring(GITHUB_MAIN_URL.length());
-        return githubCollector.collect(projectName);
+        return githubCollector.collect(githubProjectUrl);
     }
 }

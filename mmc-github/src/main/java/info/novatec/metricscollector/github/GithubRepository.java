@@ -19,14 +19,11 @@ public class GithubRepository {
 
     private InfluxService influx;
 
-    private GithubCollector collector;
-
     private ConfigProperties properties;
 
     @Autowired
-    GithubRepository(InfluxService influx, GithubCollector collector, ConfigProperties properties) {
+    GithubRepository(InfluxService influx, ConfigProperties properties) {
         this.influx = influx;
-        this.collector = collector;
         this.properties = properties;
     }
 
@@ -38,22 +35,22 @@ public class GithubRepository {
         influx.savePoint(createPoints(metrics));
         influx.close();
         log.info("Added point  for '" + metrics.getRepositoryName() + "' to InfluxDb Measurement '"
-            + metrics.getRepositoryName() + "'.");
+                + metrics.getRepositoryName() + "'.");
     }
 
     private List<Point> createPoints(GithubMetrics metrics) {
-        log.info("Adding measurement point for '" + metrics.getRepositoryName()+"'...");
+        log.info("Adding measurement point for '" + metrics.getRepositoryName() + "'.");
 
         Point.Builder point = Point.measurement(metrics.getRepositoryName())
-            .addField("contributors", metrics.getContributors())
-            .addField("stars", metrics.getStars())
-            .addField("forks", metrics.getForks())
-            .addField("watchers", metrics.getWatchers())
-            .addField("openIssues", metrics.getOpenIssues())
-            .addField("closedIssues", metrics.getClosedIssues())
-            .addField("commits", metrics.getCommits())
-            .addField("YesterdaysTotalVisits", metrics.getDailyVisits().getTotalVisits())
-            .addField("YesterdaysUniqueVisits", metrics.getDailyVisits().getUniqueVisits());
+                .addField("contributors", metrics.getContributors())
+                .addField("stars", metrics.getStars())
+                .addField("forks", metrics.getForks())
+                .addField("watchers", metrics.getWatchers())
+                .addField("openIssues", metrics.getOpenIssues())
+                .addField("closedIssues", metrics.getClosedIssues())
+                .addField("commits", metrics.getCommits())
+                .addField("YesterdaysTotalVisits", metrics.getDailyVisits().getTotalVisits())
+                .addField("YesterdaysUniqueVisits", metrics.getDailyVisits().getUniqueVisits());
         metrics.getReleaseDownloads().entrySet().forEach(map -> point.addField(map.getKey(), map.getValue()));
 
         List<Point> points = new ArrayList<>();
