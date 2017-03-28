@@ -50,8 +50,9 @@ class GithubCollector {
         return jsonReader.readObject();
     }
 
-    GithubMetrics collect(String projectName) {
+    GithubMetrics collect(String githubUrl) {
 
+        String projectName = githubUrl.substring("https://github.com/".length());
         setHeadersForGithub();
         GithubMetrics metrics = new GithubMetrics();
         metrics.setRepositoryName(projectName.split("/")[1]);
@@ -145,6 +146,7 @@ class GithubCollector {
                 JsonObject release = (( JsonObject ) obj);
                 Map<String, Integer> releaseDownloads = release.getJsonArray("assets")
                     .stream()
+                    .filter(asset -> (( JsonObject ) asset).getInt("download_count")>0)
                     .collect(Collectors.toMap(
                         asset -> release.getString("tag_name") + ":" + (( JsonObject ) asset).getString("name"),
                         asset -> (( JsonObject ) asset).getInt("download_count")));

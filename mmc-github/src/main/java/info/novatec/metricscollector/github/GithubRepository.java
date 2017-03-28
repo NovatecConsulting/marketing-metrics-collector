@@ -15,7 +15,7 @@ import info.novatec.metricscollector.commons.InfluxService;
 
 @Slf4j
 @Component
-public class GithubService {
+public class GithubRepository {
 
     private InfluxService influx;
 
@@ -24,7 +24,7 @@ public class GithubService {
     private ConfigProperties properties;
 
     @Autowired
-    GithubService(InfluxService influx, GithubCollector collector, ConfigProperties properties) {
+    GithubRepository(InfluxService influx, GithubCollector collector, ConfigProperties properties) {
         this.influx = influx;
         this.collector = collector;
         this.properties = properties;
@@ -34,20 +34,11 @@ public class GithubService {
         influx.setRetention(retention);
     }
 
-    void collectAndSaveMetrics(String githubProjectURL) {
-        saveMetrics(collectMetrics(githubProjectURL));
-    }
-
-    GithubMetrics collectMetrics(String githubProjectURL) {
-        String projectname = githubProjectURL.substring("https://github.com/".length());
-        return collector.collect(projectname);
-    }
-
     void saveMetrics(GithubMetrics metrics) {
         influx.savePoint(createPoints(metrics));
         influx.close();
         log.info("Added point  for '" + metrics.getRepositoryName() + "' to InfluxDb Measurement '"
-            + properties.getInfluxMeasurementNameGithub() + "'.");
+            + metrics.getRepositoryName() + "'.");
     }
 
     private List<Point> createPoints(GithubMetrics metrics) {
