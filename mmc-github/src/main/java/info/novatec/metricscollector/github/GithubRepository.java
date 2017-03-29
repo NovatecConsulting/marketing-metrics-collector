@@ -34,12 +34,12 @@ public class GithubRepository {
     void saveMetrics(GithubMetrics metrics) {
         influx.savePoint(createPoints(metrics));
         influx.close();
-        log.info("Added point  for '" + metrics.getRepositoryName() + "' to InfluxDb Measurement '"
-                + metrics.getRepositoryName() + "'.");
+        log.info("Added point  for '" + metrics.getRepositoryName() + "' to InfluxDb Measurement");
     }
 
     private List<Point> createPoints(GithubMetrics metrics) {
         log.info("Adding measurement point for '" + metrics.getRepositoryName() + "'.");
+        List<Point> points = new ArrayList<>();
 
         Point.Builder point = Point.measurement(metrics.getRepositoryName())
                 .addField("contributors", metrics.getContributors())
@@ -49,12 +49,25 @@ public class GithubRepository {
                 .addField("openIssues", metrics.getOpenIssues())
                 .addField("closedIssues", metrics.getClosedIssues())
                 .addField("commits", metrics.getCommits())
-                .addField("YesterdaysTotalVisits", metrics.getDailyVisits().getTotalVisits())
-                .addField("YesterdaysUniqueVisits", metrics.getDailyVisits().getUniqueVisits());
-        metrics.getReleaseDownloads().entrySet().forEach(map -> point.addField(map.getKey(), map.getValue()));
+                .addField("yesterdaysTotalVisits", metrics.getDailyVisits().getTotalVisits())
+                .addField("yesterdaysUniqueVisits", metrics.getDailyVisits().getUniqueVisits());
+        metrics.getReleaseDownloads().entrySet().forEach(
+            download -> point.addField(download.getKey(), download.getValue())
+        );
 
-        List<Point> points = new ArrayList<>();
+
+        metrics.getReferringSitesLast14Days().entrySet().forEach( referrer -> {
+            Point pointReferrer = Point
+                .measurement(metrics.getRepositoryName()+"_Referrer")
+                .tag("referringSite", referrer.getKey())
+                .addField("clicksLast14Days", referrer.getValue().getTotalVisits())
+                .addField("uniqueClicksLast14Days", referrer.getValue().getUniqueVisits())
+                .build();
+            points.add(pointReferrer);
+        });
+
         points.add(point.build());
+
         return points;
     }
 

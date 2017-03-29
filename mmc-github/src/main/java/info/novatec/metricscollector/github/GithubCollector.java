@@ -18,8 +18,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 
 import lombok.extern.slf4j.Slf4j;
+
 import info.novatec.metricscollector.commons.ConfigProperties;
-import info.novatec.metricscollector.commons.DailyVisitsEntity;
+import info.novatec.metricscollector.commons.DailyClicks;
 import info.novatec.metricscollector.commons.RestRequester;
 import info.novatec.metricscollector.commons.exception.UserDeniedException;
 
@@ -156,14 +157,14 @@ class GithubCollector {
         return allDownloads;
     }
 
-    private DailyVisitsEntity collectDailyVisitsLast14Days(String projectName) {
+    private DailyClicks collectDailyVisitsLast14Days(String projectName) {
         String url = BASE_URL + projectName + "/traffic/views";
         JsonObject visitors = buildJsonObject(restRequester.sendRequest(url).getBody());
         JsonObject visitAsJSON = getYesterdaysVisits(visitors.getJsonArray("views"));
         String timestamp = visitAsJSON.getString("timestamp");
         int totalVisits = visitAsJSON.getInt("count");
         int uniqueVisits = visitAsJSON.getInt("uniques");
-        return new DailyVisitsEntity(timestamp, totalVisits, uniqueVisits);
+        return new DailyClicks(timestamp, totalVisits, uniqueVisits);
     }
 
     /**
@@ -186,18 +187,24 @@ class GithubCollector {
 
     /**
      * Contribution to the traffic from sites referring to the given Github repository @projectName.
-     * The method collects the top 10 referrers and their non-unique visits over the last 14 days.
+     * The method collects the top 10 referrers and their total and unique visits over the last 14 days.
      *
      * @param projectName The GitHub repository. pattern: '<user>/<repository>'
+     * @return Map: key=name of referring site; value=timestamp, total clicks, unique clicks
      */
-    private SortedMap<String, Integer> collectReferringSitesLast14Days(String projectName) {
+    private Map<String, DailyClicks> collectReferringSitesLast14Days(String projectName) {
         String url = BASE_URL + projectName + "/traffic/popular/referrers";
         JsonArray sitesJsonArray = buildJsonArray(restRequester.sendRequest(url).getBody());
-        SortedMap<String, Integer> sitesMap = new TreeMap<>();
+        SortedMap<String, DailyClicks> sitesMap = new TreeMap<>();
 
         for (int referrerIndex = 0; referrerIndex < sitesJsonArray.size(); referrerIndex++) {
-            JsonObject referringSite = sitesJsonArray.getJsonObject(referrerIndex);
-            sitesMap.put(referringSite.getString("referrer"), referringSite.getInt("count"));
+            JsonObject referringSiteJson = sitesJsonArray.getJsonObject(referrerIndex);
+            String nameOfReferringsite = referringSiteJson.getString("referrer");
+            int totalClicks = referringSiteJson.getInt("count");
+            int uniqueClicks = referringSiteJson.getInt("uniques");
+
+            DailyClicks referringSite = new DailyClicks(null, totalClicks, uniqueClicks);
+            sitesMap.put(nameOfReferringsite, referringSite);
         }
         return sitesMap;
     }

@@ -26,7 +26,7 @@ public class InfluxService {
     InfluxService(ConfigProperties properties) {
         influxDB = InfluxDBFactory.connect(properties.getInfluxUrl());
         dbName = properties.getInfluxDbName();
-        retention = "default";
+        retention = "weekly";
         configureInflux();
     }
 

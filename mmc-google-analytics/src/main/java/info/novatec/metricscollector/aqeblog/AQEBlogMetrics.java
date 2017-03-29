@@ -2,14 +2,14 @@ package info.novatec.metricscollector.aqeblog;
 
 import lombok.Getter;
 import lombok.Setter;
-import info.novatec.metricscollector.commons.DailyVisitsEntity;
+import info.novatec.metricscollector.commons.DailyClicks;
 
 
 @Getter
 @Setter
 class AQEBlogMetrics {
 
-    DailyVisitsEntity dailyVisits;
+    DailyClicks dailyVisits;
     Integer sessions;
     Integer bounces;
     Integer bounceRate;

@@ -4,7 +4,7 @@ import lombok.Getter;
 
 
 @Getter
-public class DailyVisitsEntity {
+public class DailyClicks {
 
     private String timestamp;
 
@@ -12,7 +12,7 @@ public class DailyVisitsEntity {
 
     private Integer uniqueVisits;
 
-    public DailyVisitsEntity(String timestamp, Integer totalVisits, Integer uniqueVisits) {
+    public DailyClicks(String timestamp, Integer totalVisits, Integer uniqueVisits) {
         this.timestamp = timestamp;
         this.totalVisits = totalVisits;
         this.uniqueVisits = uniqueVisits;

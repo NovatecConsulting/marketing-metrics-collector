@@ -1,15 +1,17 @@
 package info.novatec.metricscollector.github;
 
-import info.novatec.metricscollector.commons.exception.UserDeniedException;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+
+import info.novatec.metricscollector.commons.exception.UserDeniedException;
 
 @Slf4j
 @Component
@@ -31,15 +33,11 @@ public class GithubScheduler {
     private void updateAllGithubProjectsMetrics() {
         try {
             getUrls().forEach(githubProjectUrl -> {
-                githubRepository.saveMetrics(collectMetrics(githubProjectUrl));
-                log.info("SCHEDULER " + githubProjectUrl + " completed.\n");
+                GithubMetrics metrics = githubCollector.collect(githubProjectUrl);
+                githubRepository.saveMetrics(metrics);
             });
         } catch (UserDeniedException e) {
             log.warn(e.getMessage());
         }
-    }
-
-    private GithubMetrics collectMetrics(String githubProjectUrl) {
-        return githubCollector.collect(githubProjectUrl);
     }
 }
