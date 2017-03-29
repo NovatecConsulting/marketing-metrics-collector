@@ -1,5 +1,7 @@
 package info.novatec.metricscollector.github;
 
+import info.novatec.metricscollector.commons.exception.UserDeniedException;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -12,7 +14,7 @@ import java.util.List;
 @Slf4j
 @Component
 @ConfigurationProperties(prefix = "github.project")
-public class GithubServiceScheduler {
+public class GithubScheduler {
 
     @Autowired
     private GithubCollector githubCollector;
@@ -20,25 +22,20 @@ public class GithubServiceScheduler {
     @Autowired
     private GithubRepository githubRepository;
 
+    @Getter
     private List<String> urls = new ArrayList<>();
 
-    /**
-     * Accesses the urls from application.yml
-     *
-     * @return List of Strings with the respective urls
-     */
-    public List<String> getUrls() {
-        return this.urls;
-    }
+    private static final String CRON_EXPRESSION = "0 0 0 * * *";
 
-    //TODO replace with cron expression, cron = "0 0 0 * * *" - Every day once
-    @Scheduled(fixedRate = 15000)
+    @Scheduled(cron = CRON_EXPRESSION)
     private void updateAllGithubProjectsMetrics() {
-        if (!getUrls().isEmpty()) {
+        try {
             getUrls().forEach(githubProjectUrl -> {
                 githubRepository.saveMetrics(collectMetrics(githubProjectUrl));
-                log.info("SCHEDULER " + githubProjectUrl + " completed.");
+                log.info("SCHEDULER " + githubProjectUrl + " completed.\n");
             });
+        } catch (UserDeniedException e) {
+            log.warn(e.getMessage());
         }
     }
 
