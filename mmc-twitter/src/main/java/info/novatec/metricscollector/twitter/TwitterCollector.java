@@ -38,7 +38,6 @@ public class TwitterCollector {
         twitter = initialize();
     }
 
-
     private Twitter initialize() {
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
@@ -46,8 +45,8 @@ public class TwitterCollector {
             .setOAuthConsumerSecret(properties.getTwitterConsumerSecret())
             .setOAuthAccessToken(properties.getTwitterOAuthToken())
             .setOAuthAccessTokenSecret(properties.getTwitterOauthTokenSecret())
-        .setUser(properties.getTwitterUserName())
-        .setPassword(properties.getTwitterPassword());
+            .setUser(properties.getTwitterUserName())
+            .setPassword(properties.getTwitterPassword());
         return new TwitterFactory(cb.build()).getInstance();
     }
 
@@ -72,7 +71,7 @@ public class TwitterCollector {
         int tweets = 0;
         Paging paging = new Paging(1, 200);
         List<Status> results = twitter.getUserTimeline(atUserName, paging);
-        for(int pageIndex=2; results.size()>0; pageIndex++){
+        for (int pageIndex = 2; results.size() > 0; pageIndex++) {
             tweets += results.stream().filter(tweet -> !tweet.isRetweeted()).count();
             paging = new Paging(pageIndex, 200);
             results = twitter.getUserTimeline(atUserName, paging);
@@ -83,11 +82,11 @@ public class TwitterCollector {
     /**
      * Returns the number of retweets. Tweets that have been retweeted by {#atUserName} will be ignored.
      */
-    private void collectNumberOfReTweets(TwitterMetrics metrics, String atUserName) throws TwitterException{
+    private void collectNumberOfReTweets(TwitterMetrics metrics, String atUserName) throws TwitterException {
         int reTweets = 0;
         Paging paging = new Paging(1, 200);
         List<Status> results = twitter.getUserTimeline(atUserName, paging);
-        for(int pageIndex=2; results.size()>0; pageIndex++){
+        for (int pageIndex = 2; results.size() > 0; pageIndex++) {
             reTweets += results.stream()
                 //filter out tweets from other users
                 .filter(tweet -> !tweet.isRetweeted())
@@ -98,22 +97,23 @@ public class TwitterCollector {
         metrics.setReTweets(reTweets);
     }
 
-    private void collectNumberOfMentions(TwitterMetrics metrics, String userName, String atUserName) throws TwitterException{
-        Query query = new Query("@"+atUserName);
+    private void collectNumberOfMentions(TwitterMetrics metrics, String userName, String atUserName)
+        throws TwitterException {
+        Query query = new Query("@" + atUserName);
         QueryResult result = twitter.search(query);
 
         //filter out mentions from user itself
         long mentioned = result.getTweets().stream()
-            .filter( tweet -> !tweet.getUser().getName().equals(userName))
+            .filter(tweet -> !tweet.getUser().getName().equals(userName))
             .count();
         metrics.setMentions(Ints.checkedCast(mentioned));
     }
 
-    private void collectNumberOfLikes(TwitterMetrics metrics) throws TwitterException{
+    private void collectNumberOfLikes(TwitterMetrics metrics) throws TwitterException {
         int likes = 0;
         Paging paging = new Paging(1, 200);
         List<Status> results = twitter.getUserTimeline("NT_AQE", paging);
-        for(int pageIndex=2; results.size()>0; pageIndex++){
+        for (int pageIndex = 2; results.size() > 0; pageIndex++) {
             likes += results.stream().mapToInt(Status::getFavoriteCount).sum();
             paging = new Paging(pageIndex, 200);
             results = twitter.getUserTimeline("NT_AQE", paging);
@@ -121,19 +121,19 @@ public class TwitterCollector {
         metrics.setLikes(likes);
     }
 
-    private void collectNumberOfLikesOfMentions(TwitterMetrics metrics, String userName, String atUserName) throws TwitterException{
-        Query query = new Query("@"+atUserName);
+    private void collectNumberOfLikesOfMentions(TwitterMetrics metrics, String userName, String atUserName)
+        throws TwitterException {
+        Query query = new Query("@" + atUserName);
         query.setCount(20);
         List<Status> allTweets = getAllTweets(query);
 
         //filter out mentions from user itself
         Map<String, Integer> likesOfMentions = allTweets.stream()
-            .filter( tweet -> !tweet.getUser().getName().equals(userName) )
-            .filter( tweet -> tweet.getRetweetedStatus() != null)
-            .collect(Collectors.toMap(
-                tweet -> tweet.getCreatedAt().toString(),
-                tweet -> tweet.getRetweetedStatus().getFavoriteCount()
-            ));
+            .filter(tweet -> !tweet.getUser().getName().equals(userName))
+            .filter(tweet -> tweet.getRetweetedStatus() != null)
+            .filter(tweet -> tweet.getRetweetedStatus().getFavoriteCount() > 0)
+            .collect(Collectors.toMap(tweet -> tweet.getCreatedAt().toString(),
+                tweet -> tweet.getRetweetedStatus().getFavoriteCount()));
 
         metrics.setLikesOfMentions(likesOfMentions);
     }
@@ -143,12 +143,12 @@ public class TwitterCollector {
         metrics.setFollowers(followers);
     }
 
-    private List<Status> getAllTweets(Query query) throws TwitterException{
+    private List<Status> getAllTweets(Query query) throws TwitterException {
         List<Status> allTweets = new ArrayList<>();
         List<Status> tweetsFromLastResult = twitter.search(query).getTweets();
-        while(tweetsFromLastResult.size()>0){
+        while (tweetsFromLastResult.size() > 0) {
             allTweets.addAll(tweetsFromLastResult);
-            query.setMaxId(tweetsFromLastResult.get(tweetsFromLastResult.size()-1).getId()-1);
+            query.setMaxId(tweetsFromLastResult.get(tweetsFromLastResult.size() - 1).getId() - 1);
             tweetsFromLastResult = twitter.search(query).getTweets();
         }
         return allTweets;

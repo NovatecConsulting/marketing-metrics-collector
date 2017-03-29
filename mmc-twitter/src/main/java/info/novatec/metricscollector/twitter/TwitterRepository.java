@@ -14,39 +14,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
-import twitter4j.TwitterException;
 
-import info.novatec.metricscollector.commons.ConfigProperties;
 import info.novatec.metricscollector.commons.InfluxService;
 
 
 @Slf4j
 @Component
-public class TwitterService {
+public class TwitterRepository {
 
     private InfluxService influx;
 
-    private TwitterCollector collector;
-
-    private ConfigProperties properties;
-
     @Autowired
-    TwitterService(InfluxService influx, TwitterCollector collector, ConfigProperties properties) {
+    TwitterRepository(InfluxService influx) {
         this.influx = influx;
-        this.collector = collector;
-        this.properties = properties;
     }
 
     void setRetention(String retention) {
         influx.setRetention(retention);
-    }
-
-    void collectAndSaveMetrics(String userName, String atUserName) throws TwitterException {
-        saveMetrics(collectMetrics(userName, atUserName));
-    }
-
-    TwitterMetrics collectMetrics(String userName, String atUserName) throws TwitterException {
-        return collector.collect(userName, atUserName);
     }
 
     void saveMetrics(TwitterMetrics metrics) {
@@ -54,7 +38,7 @@ public class TwitterService {
         influx.savePoint(points);
         influx.close();
         log.info("Saved points for user '" + metrics.getUserName() + "' to InfluxDb Measurement '"
-            + properties.getInfluxMeasurementNameTwitter() + "'.");
+            + metrics.getAtUserName() + "' and '"+metrics.getAtUserName()+"_Likes'.");
     }
 
     private List<Point> createPoints(TwitterMetrics metrics) {
