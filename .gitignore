@@ -1,4 +1,5 @@
 .idea/
-target/
+.gradle/
+build/
 *.iml
 application.yml

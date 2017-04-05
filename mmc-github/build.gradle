@@ -1,0 +1,5 @@
+
+description = 'GitHub Metrics Collector'
+dependencies {
+  compile project(':mmc-commons')
+}

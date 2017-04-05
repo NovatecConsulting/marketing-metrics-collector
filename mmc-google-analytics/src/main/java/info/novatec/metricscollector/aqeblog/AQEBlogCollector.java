@@ -2,13 +2,9 @@ package info.novatec.metricscollector.aqeblog;
 
 import org.springframework.stereotype.Component;
 
-import info.novatec.metricscollector.commons.ConfigProperties;
-
 
 @Component
 public class AQEBlogCollector {
-
-    private ConfigProperties properties;
 
     AQEBlogMetrics collect() {
         AQEBlogMetrics metrics = new AQEBlogMetrics();

@@ -1,0 +1,5 @@
+description = 'Metrics Collector for Google Analytics Projects'
+dependencies {
+    compile project(':mmc-commons')
+    compile group: 'com.google.apis', name: 'google-api-services-analytics', version: 'v3-rev138-1.22.0'
+}

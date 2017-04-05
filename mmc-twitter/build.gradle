@@ -1,0 +1,5 @@
+description = 'Twitter Metrics Collector'
+dependencies {
+    compile project(':mmc-commons')
+    compile group: 'org.twitter4j', name: 'twitter4j-core', version: '4.0.6'
+}
