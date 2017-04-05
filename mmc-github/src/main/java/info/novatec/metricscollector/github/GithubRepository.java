@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 
-import info.novatec.metricscollector.commons.ConfigProperties;
 import info.novatec.metricscollector.commons.InfluxService;
 
 
@@ -19,12 +18,9 @@ public class GithubRepository {
 
     private InfluxService influx;
 
-    private ConfigProperties properties;
-
     @Autowired
-    GithubRepository(InfluxService influx, ConfigProperties properties) {
+    GithubRepository(InfluxService influx) {
         this.influx = influx;
-        this.properties = properties;
     }
 
     void setRetention(String retention) {

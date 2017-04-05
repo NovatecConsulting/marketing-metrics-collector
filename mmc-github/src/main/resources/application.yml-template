@@ -1,0 +1,11 @@
+influx:
+    url:
+    dbName:
+    retention:
+github:
+  token:
+  cron:
+  urls:
+    - URL1
+    - URL2
+    - URL3

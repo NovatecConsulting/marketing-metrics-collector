@@ -1,0 +1,13 @@
+influx:
+    url:
+    dbName:
+    retention:
+twitter:
+  cron:
+  consumerKey:
+  consumerSecret:
+  accessToken:
+  accessSecret:
+  users:
+    atUsername1: username1
+    atUsername2: username2

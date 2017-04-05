@@ -10,47 +10,29 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.primitives.Ints;
 
+import lombok.Setter;
 import twitter4j.Paging;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.conf.ConfigurationBuilder;
-
-import info.novatec.metricscollector.commons.ConfigProperties;
 
 
 @Component
 public class TwitterCollector {
 
-    private ConfigProperties properties;
-
+    @Setter
     private Twitter twitter;
 
     private TwitterMetrics metrics;
 
     @Autowired
-    public TwitterCollector(ConfigProperties properties, TwitterMetrics metrics) {
-        this.properties = properties;
+    public TwitterCollector(TwitterMetrics metrics) {
         this.metrics = metrics;
-        twitter = initialize();
     }
 
-    private Twitter initialize() {
-        ConfigurationBuilder cb = new ConfigurationBuilder();
-        cb.setDebugEnabled(true)
-            .setOAuthConsumerKey(properties.getTwitterConsumerKey())
-            .setOAuthConsumerSecret(properties.getTwitterConsumerSecret())
-            .setOAuthAccessToken(properties.getTwitterOAuthToken())
-            .setOAuthAccessTokenSecret(properties.getTwitterOauthTokenSecret())
-            .setUser(properties.getTwitterUserName())
-            .setPassword(properties.getTwitterPassword());
-        return new TwitterFactory(cb.build()).getInstance();
-    }
-
-    TwitterMetrics collect(String userName, String atUserName) throws TwitterException {
+    TwitterMetrics collect(String atUserName,String userName) throws TwitterException {
         metrics.setUserName(userName);
         metrics.setAtUserName(atUserName);
 
@@ -65,7 +47,7 @@ public class TwitterCollector {
     }
 
     /**
-     * Returns the number or tweets. Tweets that have been retweeted by {#atUserName} will be ignored.
+     * Returns the number of tweets. Tweets that have been retweeted by {#atUserName} will be ignored.
      */
     private void collectNumberOfTweets(TwitterMetrics metrics, String atUserName) throws TwitterException {
         int tweets = 0;

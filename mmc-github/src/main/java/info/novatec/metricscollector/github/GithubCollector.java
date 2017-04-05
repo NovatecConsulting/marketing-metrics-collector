@@ -17,9 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import info.novatec.metricscollector.commons.ConfigProperties;
 import info.novatec.metricscollector.commons.DailyClicks;
 import info.novatec.metricscollector.commons.RestRequester;
 import info.novatec.metricscollector.commons.exception.UserDeniedException;
@@ -33,12 +33,12 @@ class GithubCollector {
 
     private RestRequester restRequester;
 
-    private ConfigProperties properties;
+    @Setter
+    private String token;
 
     @Autowired
-    GithubCollector(RestRequester restRequester, ConfigProperties properties) {
+    GithubCollector(RestRequester restRequester) {
         this.restRequester = restRequester;
-        this.properties = properties;
     }
 
     private JsonArray buildJsonArray(String serializedJsonObject) {
@@ -83,7 +83,7 @@ class GithubCollector {
 
     private void setHeadersForGithub() {
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set("Authorization", "token " + properties.getGitHubToken());
+        httpHeaders.set("Authorization", "token " + token);
         restRequester.setHeaders(httpHeaders);
     }
 

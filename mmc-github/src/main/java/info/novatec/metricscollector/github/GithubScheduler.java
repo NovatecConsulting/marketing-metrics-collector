@@ -1,43 +1,43 @@
 package info.novatec.metricscollector.github;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import info.novatec.metricscollector.commons.exception.UserDeniedException;
 
 @Slf4j
 @Component
-@ConfigurationProperties(prefix = "github.project")
 public class GithubScheduler {
 
-    @Autowired
-    private GithubCollector githubCollector;
+    private GithubCollector collector;
+
+    private GithubRepository repository;
+
+    private List<String> urls;
 
     @Autowired
-    private GithubRepository githubRepository;
+    public GithubScheduler(GithubCollector collector, GithubRepository repository, List<String> urls){
+        this.collector = collector;
+        this.repository = repository;
+        this.urls = urls;
+    }
 
-    @Getter
-    private List<String> urls = new ArrayList<>();
-
-    private static final String CRON_EXPRESSION = "0 0 0 * * *";
-
-    @Scheduled(cron = CRON_EXPRESSION)
+    @Scheduled(cron = "${github.cron}")
     private void updateAllGithubProjectsMetrics() {
-        try {
-            getUrls().forEach(githubProjectUrl -> {
-                GithubMetrics metrics = githubCollector.collect(githubProjectUrl);
-                githubRepository.saveMetrics(metrics);
+
+            urls.forEach(githubProjectUrl -> {
+                try {
+                    GithubMetrics metrics = collector.collect(githubProjectUrl);
+                    repository.saveMetrics(metrics);
+                } catch (UserDeniedException e) {
+                    log.warn("Cannot collect github metrics for '"+githubProjectUrl+"'. " + e.getMessage());
+                }
             });
-        } catch (UserDeniedException e) {
-            log.warn(e.getMessage());
-        }
+
     }
 }

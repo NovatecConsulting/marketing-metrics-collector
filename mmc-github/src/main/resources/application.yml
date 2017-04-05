@@ -1,7 +1,0 @@
-github.project:
-  urls:
-    - https://github.com/testIT-LivingDoc/livingdoc-core
-    - https://github.com/testIT-WebTester/webtester-core
-    - https://github.com/testIT-WebTester/webtester2-core
-    - https://github.com/testIT-ResultRepository/resultrepository-core
-    - https://github.com/nt-ca-aqe/testit-testutils
