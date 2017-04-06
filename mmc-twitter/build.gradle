@@ -3,3 +3,15 @@ dependencies {
     compile project(':mmc-commons')
     compile group: 'org.twitter4j', name: 'twitter4j-core', version: '4.0.6'
 }
+
+task(run, dependsOn: 'build', type: JavaExec) {
+    description 'Runs Twitter Collector Application.'
+    def baseDir = "/build/libs/"
+    def fileNames = []
+    fileTree(baseDir).visit { FileVisitDetails details ->
+        fileNames = details.file.name
+    }
+    classpath = files(baseDir + fileNames)
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'info.novatec.metricscollector.twitter.ApplicationInitializerTwitter'
+}
