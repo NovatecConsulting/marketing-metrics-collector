@@ -1,4 +1,4 @@
-package info.novatec.metricscollector.aqeblog;
+package info.novatec.metricscollector.google.aqeblog;
 
 import org.springframework.stereotype.Component;
 

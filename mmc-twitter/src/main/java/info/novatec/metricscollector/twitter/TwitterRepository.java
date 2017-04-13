@@ -33,7 +33,7 @@ public class TwitterRepository {
         influx.setRetention(retention);
     }
 
-    void saveMetrics(TwitterMetrics metrics) {
+    void saveMetrics(TwitterMetricsResult metrics) {
         List<Point> points = createPoints(metrics);
         influx.savePoint(points);
         influx.close();
@@ -41,7 +41,7 @@ public class TwitterRepository {
             + metrics.getAtUserName() + "' and '"+metrics.getAtUserName()+"_Likes'.");
     }
 
-    private List<Point> createPoints(TwitterMetrics metrics) {
+    private List<Point> createPoints(TwitterMetricsResult metrics) {
         List<Point> points = new ArrayList<>();
 
         log.info("Adding measurement point for '" + metrics.getUserName() + " (@" + metrics.getAtUserName() + ")'...");

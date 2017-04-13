@@ -33,7 +33,7 @@ public class TwitterScheduler {
             users.forEach((atUsername, username) -> {
                 atUsername = atUsername.charAt(0)=='@' ? atUsername.substring(1) : atUsername;
                 try {
-                    TwitterMetrics metrics = collector.collect(atUsername, username);
+                    TwitterMetricsResult metrics = collector.collect(atUsername, username);
                     repository.saveMetrics(metrics);
                 } catch (TwitterException e) {
                     log.warn("Cannot collect twitter metrics for '"+atUsername+"'. " + e.getMessage());

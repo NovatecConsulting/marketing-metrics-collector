@@ -5,12 +5,18 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter
 @Getter
 @Component
-public class TwitterMetrics {
+@NoArgsConstructor
+public class TwitterMetricsResult {
+
+    public TwitterMetricsResult(String atUserName) {
+        this.atUserName = atUserName;
+    }
 
     String userName;
     String atUserName;

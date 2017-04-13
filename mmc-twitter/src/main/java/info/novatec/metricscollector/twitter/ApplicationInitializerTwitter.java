@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 import lombok.Getter;
 import lombok.Setter;
+import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -46,16 +47,19 @@ public class ApplicationInitializerTwitter {
 
     @Bean
     @Autowired
-    public TwitterCollector twitterCollector(TwitterMetrics metrics){
+    public TwitterCollector twitterCollector(TwitterMetricsResult metrics, Twitter twitter){
+        return new TwitterCollector(metrics, twitter);
+    }
+
+    @Bean
+    public Twitter twitter(){
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
             .setOAuthConsumerKey(consumerKey)
             .setOAuthConsumerSecret(consumerSecret)
             .setOAuthAccessToken(accessToken)
             .setOAuthAccessTokenSecret(accessSecret);
-        TwitterCollector collector = new TwitterCollector(metrics);
-        collector.setTwitter(new TwitterFactory(cb.build()).getInstance());
-        return collector;
+        return new TwitterFactory(cb.build()).getInstance();
     }
 
     @Bean
