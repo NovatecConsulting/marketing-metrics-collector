@@ -1,4 +1,4 @@
-package info.novatec.metricscollector.twitter.metriken;
+package info.novatec.metricscollector.twitter.metrics;
 
 import java.util.List;
 import java.util.Map;

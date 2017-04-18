@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
-import info.novatec.metricscollector.twitter.metriken.TwitterMetric;
+import info.novatec.metricscollector.twitter.metrics.TwitterMetric;
 
 
 @Component

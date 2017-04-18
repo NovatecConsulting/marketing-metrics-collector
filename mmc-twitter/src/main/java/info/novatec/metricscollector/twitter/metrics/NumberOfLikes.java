@@ -1,4 +1,4 @@
-package info.novatec.metricscollector.twitter.metriken;
+package info.novatec.metricscollector.twitter.metrics;
 
 import org.springframework.stereotype.Component;
 
