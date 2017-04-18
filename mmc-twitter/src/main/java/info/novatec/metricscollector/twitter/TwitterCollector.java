@@ -3,7 +3,6 @@ package info.novatec.metricscollector.twitter;
 import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.SimpleBeanDefinitionRegistry;
@@ -14,6 +13,7 @@ import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
 import org.springframework.stereotype.Component;
 
+import lombok.Setter;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
@@ -23,6 +23,7 @@ import info.novatec.metricscollector.twitter.metrics.TwitterMetric;
 @Component
 public class TwitterCollector implements ApplicationContextAware{
 
+    @Setter
     private ApplicationContext applicationContext;
 
     private Twitter twitter;
@@ -47,19 +48,14 @@ public class TwitterCollector implements ApplicationContextAware{
     }
 
     private List<String> getMetricsBeanName() {
-        BeanDefinitionRegistry bdr = new SimpleBeanDefinitionRegistry();
-        ClassPathBeanDefinitionScanner s = new ClassPathBeanDefinitionScanner(bdr);
+        BeanDefinitionRegistry beanRegistry = new SimpleBeanDefinitionRegistry();
+        ClassPathBeanDefinitionScanner beanScanner = new ClassPathBeanDefinitionScanner(beanRegistry);
 
-        TypeFilter tf = new AssignableTypeFilter(TwitterMetric.class);
-        s.setIncludeAnnotationConfig(false);
-        s.addIncludeFilter(tf);
-        s.scan(TwitterMetric.class.getPackage().getName());
-        return Arrays.asList(bdr.getBeanDefinitionNames());
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
+        TypeFilter typeFilter = new AssignableTypeFilter(TwitterMetric.class);
+        beanScanner.setIncludeAnnotationConfig(false);
+        beanScanner.addIncludeFilter(typeFilter);
+        beanScanner.scan(TwitterMetric.class.getPackage().getName());
+        return Arrays.asList(beanRegistry.getBeanDefinitionNames());
     }
 
 }

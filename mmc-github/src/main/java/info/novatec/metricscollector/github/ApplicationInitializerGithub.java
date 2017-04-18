@@ -15,7 +15,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import info.novatec.metricscollector.commons.ApplicationInitializerCommons;
-import info.novatec.metricscollector.commons.RestRequester;
+import info.novatec.metricscollector.commons.RestService;
 
 
 @SpringBootApplication
@@ -36,8 +36,8 @@ public class ApplicationInitializerGithub {
 
     @Bean
     @Autowired
-    public GithubCollector githubCollector(RestRequester restRequester){
-        GithubCollector collector = new GithubCollector(restRequester);
+    public GithubCollector githubCollector(RestService restService, GithubMetricsResult metrics){
+        GithubCollector collector = new GithubCollector(metrics, restService);
         collector.setToken(token);
         return collector;
     }

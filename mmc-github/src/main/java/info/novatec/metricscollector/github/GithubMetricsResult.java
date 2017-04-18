@@ -3,6 +3,8 @@ package info.novatec.metricscollector.github;
 import java.util.Map;
 import java.util.SortedMap;
 
+import org.springframework.stereotype.Component;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +13,8 @@ import info.novatec.metricscollector.commons.DailyClicks;
 
 @Getter
 @Setter
-class GithubMetrics {
+@Component
+public class GithubMetricsResult {
 
     private String repositoryName;
     private Integer contributors;

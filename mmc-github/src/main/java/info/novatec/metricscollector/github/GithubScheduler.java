@@ -32,7 +32,7 @@ public class GithubScheduler {
 
             urls.forEach(githubProjectUrl -> {
                 try {
-                    GithubMetrics metrics = collector.collect(githubProjectUrl);
+                    GithubMetricsResult metrics = collector.collect(githubProjectUrl);
                     repository.saveMetrics(metrics);
                 } catch (UserDeniedException e) {
                     log.warn("Cannot collect github metrics for '"+githubProjectUrl+"'. " + e.getMessage());

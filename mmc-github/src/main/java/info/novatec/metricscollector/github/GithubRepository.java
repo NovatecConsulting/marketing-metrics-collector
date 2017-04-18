@@ -27,13 +27,13 @@ public class GithubRepository {
         influx.setRetention(retention);
     }
 
-    void saveMetrics(GithubMetrics metrics) {
+    void saveMetrics(GithubMetricsResult metrics) {
         influx.savePoint(createPoints(metrics));
         influx.close();
         log.info("Added point  for '" + metrics.getRepositoryName() + "' to InfluxDb Measurement");
     }
 
-    private List<Point> createPoints(GithubMetrics metrics) {
+    private List<Point> createPoints(GithubMetricsResult metrics) {
         log.info("Adding measurement point for '" + metrics.getRepositoryName() + "'.");
         List<Point> points = new ArrayList<>();
 

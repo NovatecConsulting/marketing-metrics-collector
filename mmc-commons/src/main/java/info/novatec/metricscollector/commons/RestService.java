@@ -9,14 +9,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
-public class RestRequester {
+public class RestService {
 
     private RestTemplate restTemplate;
 
     private HttpHeaders httpHeaders;
 
     @Autowired
-    public RestRequester(RestTemplate restTemplate){
+    public RestService(RestTemplate restTemplate){
         this.restTemplate = restTemplate;
         setDefaultHeaders();
     }
