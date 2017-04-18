@@ -2,18 +2,17 @@ package info.novatec.metricscollector.google.aqeblog;
 
 import lombok.Getter;
 import lombok.Setter;
-import info.novatec.metricscollector.commons.DailyClicks;
-
 
 @Getter
 @Setter
-class AQEBlogMetrics {
-
-    DailyClicks dailyVisits;
+class AqeBlogMetrics {
+    Integer pageViews;
+    Integer uniquePageViews;
     Integer sessions;
     Integer bounces;
-    Integer bounceRate;
-    Integer averageSessionDuration;
+    Double bounceRate;
+    Double avgSessionDuration;
+    Double avgTimeOnPage;
     String country;
     String comments;
     String share;
