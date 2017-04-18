@@ -1,13 +1,13 @@
 description = 'Metrics Collector for Google Analytics Projects'
 dependencies {
     compile project(':mmc-commons')
-    compile (group: 'com.google.apis', name: 'google-api-services-analytics', version: 'v3-rev138-1.22.0') {
-        exclude(group: 'com.google.http-client')
-    }
+    compile group: 'com.google.apis', name: 'google-api-services-analytics', version: 'v3-rev139-1.22.0'
+    compile group: 'com.google.apis', name: 'google-api-services-analyticsreporting', version: 'v4-rev110-1.22.0'
+    compile group: 'com.google.http-client', name: 'google-http-client-gson', version: '1.22.0'
 }
 
 task(run, dependsOn: 'build', type: JavaExec) {
-    description 'Runs Github Collector Application.'
+    description 'Runs Google Analytics Collector Application.'
     def baseDir = "/build/libs/"
     def fileNames = []
     fileTree(baseDir).visit { FileVisitDetails details ->
