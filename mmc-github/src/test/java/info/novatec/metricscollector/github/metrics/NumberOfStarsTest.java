@@ -6,30 +6,32 @@ import static org.mockito.Mockito.when;
 
 import javax.json.JsonObject;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import info.novatec.metricscollector.commons.RestService;
 import info.novatec.metricscollector.github.GithubMetricsResult;
-import info.novatec.metricscollector.github.TestConfig;
 import info.novatec.metricscollector.github.data.DataProvider;
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = TestConfig.class)
 public class NumberOfStarsTest {
 
     @MockBean
     private RestService restService;
 
-    @Autowired
     private GithubMetricsResult metrics;
 
     private DataProvider data = new DataProvider();
+
+    @Before
+    public void init(){
+
+        metrics = new GithubMetricsResult();
+    }
 
     @Test
     public void collectTest() {
