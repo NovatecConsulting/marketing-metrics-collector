@@ -5,10 +5,9 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -23,17 +22,20 @@ import info.novatec.metricscollector.twitter.metrics.TwitterMetric;
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {TestConfig.class})
 public class TweetsFromUserTimeLineTest {
 
     @MockBean
     private Twitter twitter;
 
-    @Autowired
     private TwitterMetricsResult metrics;
 
-    @Autowired
     DataProvider data;
+
+    @Before
+    public void init(){
+        metrics = new TwitterMetricsResult();
+        data = new DataProvider();
+    }
 
     @Test
     public void getSomeUnfilteredTweetsFromUserTimeLine() throws TwitterException {

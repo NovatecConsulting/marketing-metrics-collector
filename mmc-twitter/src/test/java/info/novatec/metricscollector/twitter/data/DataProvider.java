@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.stream.IntStream;
 
-import org.springframework.stereotype.Component;
-
 import twitter4j.Paging;
 import twitter4j.QueryResult;
 import twitter4j.RateLimitStatus;
@@ -18,7 +16,6 @@ import twitter4j.TwitterException;
 import twitter4j.User;
 
 
-@Component
 public class DataProvider {
 
     public static final String AT_USERNAME = "NT_AQE";

@@ -4,10 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -15,19 +14,21 @@ import twitter4j.IDs;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
-import info.novatec.metricscollector.twitter.TestConfig;
 import info.novatec.metricscollector.twitter.TwitterMetricsResult;
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = TestConfig.class)
 public class NumberOfFollowersTest {
 
     @MockBean
     private Twitter twitter;
 
-    @Autowired
     private TwitterMetricsResult metrics;
+
+    @Before
+    public void init(){
+        metrics = new TwitterMetricsResult();
+    }
 
     @Test
     public void collectNumberOfFollowers() throws TwitterException {

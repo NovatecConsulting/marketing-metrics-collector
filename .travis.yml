@@ -3,7 +3,9 @@ language: java
 jdk:
   - oraclejdk8
 
+dist: trusty
+
 install: true
 
 script:
-  - ./gradlew build
+  - ./gradlew build --stacktrace
