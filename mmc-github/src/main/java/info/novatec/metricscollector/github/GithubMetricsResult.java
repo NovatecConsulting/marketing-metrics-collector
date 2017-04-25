@@ -1,5 +1,6 @@
 package info.novatec.metricscollector.github;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.SortedMap;
 
@@ -28,4 +29,18 @@ public class GithubMetricsResult {
     private DailyClicks dailyVisits;
     private Map<String, DailyClicks> referringSitesLast14Days;
 
+    boolean hasNullValues() {
+        try {
+            Field[] fields = this.getClass().getDeclaredFields();
+            for (Field field : fields){
+                field.setAccessible(true);
+                if(field.get(this)==null){
+                    return true;
+                }
+            }
+        }catch(IllegalAccessException e){
+        }
+
+        return false;
+    }
 }

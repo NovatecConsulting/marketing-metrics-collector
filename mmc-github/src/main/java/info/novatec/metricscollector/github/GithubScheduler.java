@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import lombok.extern.slf4j.Slf4j;
 
 import info.novatec.metricscollector.commons.exception.UserDeniedException;
+import info.novatec.metricscollector.github.metrics.GithubMetric;
+
 
 @Slf4j
 @Component
@@ -28,11 +30,11 @@ public class GithubScheduler {
     }
 
     @Scheduled(cron = "${github.cron}")
-    private void updateAllGithubProjectsMetrics() {
+    void updateAllGithubProjectsMetrics() {
 
             urls.forEach(githubProjectUrl -> {
                 try {
-                    GithubMetricsResult metrics = collector.collect(githubProjectUrl);
+                    GithubMetricsResult metrics = collector.collect(githubProjectUrl, GithubMetric.class);
                     repository.saveMetrics(metrics);
                 } catch (UserDeniedException e) {
                     log.warn("Cannot collect github metrics for '"+githubProjectUrl+"'. " + e.getMessage());

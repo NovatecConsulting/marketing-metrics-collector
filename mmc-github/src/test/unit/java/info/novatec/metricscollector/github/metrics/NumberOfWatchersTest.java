@@ -4,45 +4,41 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import javax.json.JsonObject;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import info.novatec.metricscollector.github.util.DataProvider;
 
 import info.novatec.metricscollector.commons.RestService;
 import info.novatec.metricscollector.github.GithubMetricsResult;
-import info.novatec.metricscollector.github.data.DataProvider;
 
 
 @RunWith(SpringRunner.class)
-public class NumberOfContributorsTest {
+public class NumberOfWatchersTest {
 
     @MockBean
     private RestService restService;
 
     private GithubMetricsResult metrics;
 
-    private DataProvider data = new DataProvider();
-
     @Before
     public void init(){
-
         metrics = new GithubMetricsResult();
     }
 
     @Test
     public void collectTest() {
-        String mockedResponseBody = "[{},{},{}]";
-        ResponseEntity<String> mockedResponse = mock(ResponseEntity.class);
-
-        when(restService.sendRequest(data.getRestURL() + "/contributors")).thenReturn(mockedResponse);
-        when(mockedResponse.getBody()).thenReturn(mockedResponseBody);
-
-        NumberOfContributors numberOfContributors = new NumberOfContributors(restService, metrics);
-        numberOfContributors.setProjectName(data.NON_EXISTING_PROJECT);
-        numberOfContributors.collect();
-        assertThat(metrics.getContributors()).isEqualTo(3);
+        NumberOfWatchers numberOfWatchers = new NumberOfWatchers(restService, metrics);
+        numberOfWatchers.setProjectName(DataProvider.NON_EXISTING_PROJECT);
+        JsonObject mockedRepository = mock(JsonObject.class);
+        when(mockedRepository.getInt("subscribers_count")).thenReturn(4);
+        numberOfWatchers.setProjectRepository(mockedRepository);
+        numberOfWatchers.collect();
+        assertThat(metrics.getWatchers()).isEqualTo(4);
     }
 }

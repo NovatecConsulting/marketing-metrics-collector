@@ -12,12 +12,12 @@ import info.novatec.metricscollector.github.GithubMetricsResult;
 
 
 /**
- * Github API v3 provides page-visits for the last fortnight. These data will be updated every morning, including
- * 'today' from midnight to mordning. To ensure correct data for the whole day, this method checks the latest entry
+ * Github API v3 provides page-visits for the last fortnight. These util will be updated every morning, including
+ * 'today' from midnight to mordning. To ensure correct util for the whole day, this method checks the latest entry
  * for its timestamp. If it is 'today' the return value is the entry for 'yesterday' resp. next to the last one.
  */
 @Component
-public class YesterdaysVisits extends GithubMetric {
+public class YesterdaysVisits extends GithubMetricAbstract implements GithubMetric {
 
     public YesterdaysVisits(RestService restService, GithubMetricsResult metrics) {
         super(restService, metrics);
@@ -35,8 +35,8 @@ public class YesterdaysVisits extends GithubMetric {
     }
 
     /**
-     * Github API v3 provides page-visits for the last fortnight. These data will be updated every morning, including
-     * 'today' from midnight to morning. To ensure correct data for the whole day, this method checks the latest entry
+     * Github API v3 provides page-visits for the last fortnight. These util will be updated every morning, including
+     * 'today' from midnight to morning. To ensure correct util for the whole day, this method checks the latest entry
      * for its timestamp. If it is 'today' the return value is the entry for 'yesterday' resp. next to the last one.
      *
      * @param visits List of visits-metrics received from github api v3

@@ -7,7 +7,7 @@ import info.novatec.metricscollector.github.GithubMetricsResult;
 
 
 @Component
-public class NumberOfOpenIssues extends GithubMetric{
+public class NumberOfOpenIssues extends GithubMetricAbstract implements GithubMetric {
 
     public NumberOfOpenIssues(RestService restService, GithubMetricsResult metrics) {
         super(restService, metrics);

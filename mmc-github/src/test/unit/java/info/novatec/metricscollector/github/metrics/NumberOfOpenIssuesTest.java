@@ -12,9 +12,10 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import info.novatec.metricscollector.github.util.DataProvider;
+
 import info.novatec.metricscollector.commons.RestService;
 import info.novatec.metricscollector.github.GithubMetricsResult;
-import info.novatec.metricscollector.github.data.DataProvider;
 
 
 @RunWith(SpringRunner.class)
@@ -25,18 +26,15 @@ public class NumberOfOpenIssuesTest {
 
     private GithubMetricsResult metrics;
 
-    private DataProvider data = new DataProvider();
-
     @Before
-    public void init(){
-
+    public void init() {
         metrics = new GithubMetricsResult();
     }
 
     @Test
     public void collectTest() {
         NumberOfOpenIssues numberOfOpenIssues = new NumberOfOpenIssues(restService, metrics);
-        numberOfOpenIssues.setProjectName(data.NON_EXISTING_PROJECT);
+        numberOfOpenIssues.setProjectName(DataProvider.NON_EXISTING_PROJECT);
         JsonObject mockedRepository = mock(JsonObject.class);
         when(mockedRepository.getInt("open_issues_count")).thenReturn(4);
         numberOfOpenIssues.setProjectRepository(mockedRepository);
