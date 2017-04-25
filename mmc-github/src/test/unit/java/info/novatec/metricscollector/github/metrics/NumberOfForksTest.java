@@ -12,35 +12,33 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import info.novatec.metricscollector.github.util.DataProvider;
+
 import info.novatec.metricscollector.commons.RestService;
 import info.novatec.metricscollector.github.GithubMetricsResult;
-import info.novatec.metricscollector.github.data.DataProvider;
 
 
 @RunWith(SpringRunner.class)
-public class NumberOfWatchersTest {
+public class NumberOfForksTest {
 
     @MockBean
     private RestService restService;
 
     private GithubMetricsResult metrics;
 
-    private DataProvider data = new DataProvider();
-
     @Before
-    public void init(){
-
+    public void init() {
         metrics = new GithubMetricsResult();
     }
 
     @Test
     public void collectTest() {
-        NumberOfWatchers numberOfWatchers = new NumberOfWatchers(restService, metrics);
-        numberOfWatchers.setProjectName(data.NON_EXISTING_PROJECT);
+        NumberOfForks numberOfForks = new NumberOfForks(restService, metrics);
+        numberOfForks.setProjectName(DataProvider.NON_EXISTING_PROJECT);
         JsonObject mockedRepository = mock(JsonObject.class);
-        when(mockedRepository.getInt("subscribers_count")).thenReturn(4);
-        numberOfWatchers.setProjectRepository(mockedRepository);
-        numberOfWatchers.collect();
-        assertThat(metrics.getWatchers()).isEqualTo(4);
+        when(mockedRepository.getInt("forks_count")).thenReturn(4);
+        numberOfForks.setProjectRepository(mockedRepository);
+        numberOfForks.collect();
+        assertThat(metrics.getForks()).isEqualTo(4);
     }
 }

@@ -21,7 +21,7 @@ import info.novatec.metricscollector.github.GithubMetricsResult;
  * Stores the artifact-name with pattern: 'releaseVersion:artifact'
  */
 @Component
-public class ReleaseDownloads extends GithubMetric {
+public class ReleaseDownloads extends GithubMetricAbstract implements GithubMetric {
 
     public ReleaseDownloads(RestService restService, GithubMetricsResult metrics) {
         super(restService, metrics);

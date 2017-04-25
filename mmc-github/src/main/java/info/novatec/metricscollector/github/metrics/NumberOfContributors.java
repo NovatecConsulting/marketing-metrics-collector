@@ -9,7 +9,7 @@ import info.novatec.metricscollector.github.GithubMetricsResult;
 
 
 @Component
-public class NumberOfContributors extends GithubMetric {
+public class NumberOfContributors extends GithubMetricAbstract implements GithubMetric {
 
     public NumberOfContributors(RestService restService, GithubMetricsResult metrics) {
         super(restService, metrics);

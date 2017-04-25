@@ -1,16 +1,11 @@
 package info.novatec.metricscollector.github;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.SimpleBeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
-import org.springframework.core.type.filter.AssignableTypeFilter;
-import org.springframework.core.type.filter.TypeFilter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
@@ -18,25 +13,25 @@ import org.springframework.web.client.HttpClientErrorException;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+import info.novatec.metricscollector.commons.GeneralMetric;
 import info.novatec.metricscollector.commons.RestService;
 import info.novatec.metricscollector.commons.exception.UserDeniedException;
-import info.novatec.metricscollector.github.metrics.GithubMetric;
+import info.novatec.metricscollector.github.metrics.GithubMetricAbstract;
 
 
 @Slf4j
 @Component
+@Setter
 class GithubCollector implements ApplicationContextAware{
 
-    public static final String BASE_URL = "https://api.github.com/repos/";
+    public static final String GITHUB_BASE_URL = "https://github.com/";
 
     private GithubMetricsResult metrics;
 
     private RestService restService;
 
-    @Setter
     private String token;
 
-    @Setter
     private ApplicationContext applicationContext;
 
     @Autowired
@@ -45,16 +40,16 @@ class GithubCollector implements ApplicationContextAware{
         this.restService = restService;
     }
 
-    GithubMetricsResult collect(String githubUrl) {
+    GithubMetricsResult collect(String githubUrl, Class<? extends GeneralMetric> metricType) {
 
-        String projectName = githubUrl.substring("https://github.com/".length());
+        String projectName = extractProjectName(githubUrl);
         setHeadersForGithub();
-        metrics.setRepositoryName(projectName.split("/")[1]);
 
         try {
-            for (String beanName : getMetricsBeanName()) {
-                GithubMetric metric = ( GithubMetric ) applicationContext.getBean(beanName, restService, metrics);
+            for (Map.Entry<String, ?> entry : getBeanNameFromApplicationContext(metricType)) {
+                GithubMetricAbstract metric = ( GithubMetricAbstract )entry.getValue();
                 metric.setProjectName(projectName);
+                metric.setMetrics(metrics);
                 metric.collect();
             }
         } catch (HttpClientErrorException e) {
@@ -64,21 +59,31 @@ class GithubCollector implements ApplicationContextAware{
         return metrics;
     }
 
-    private void setHeadersForGithub() {
+    String extractProjectName(String githubUrl){
+        if(githubUrl==null || !githubUrl.startsWith(GITHUB_BASE_URL)){
+            throw new IllegalArgumentException("URL '"+githubUrl+"' must be a valid and complete Github URL");
+        }
+        String projectName = githubUrl.substring(GITHUB_BASE_URL.length());
+        try {
+            metrics.setRepositoryName(projectName.split("/")[1]);
+        }catch(ArrayIndexOutOfBoundsException e){
+            throw new IllegalArgumentException("URL '"+githubUrl+"' must be a valid and complete Github URL");
+        }
+        return projectName;
+    }
+
+    void setHeadersForGithub() {
+        if(token==null || token.equals("")){
+            log.error("Token '"+token+"' is not a valid Token. Please specify in properties." );
+            token = "";
+        }
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Authorization", "token " + token);
         restService.setHeaders(httpHeaders);
     }
 
-    private List<String> getMetricsBeanName() {
-        BeanDefinitionRegistry beanRegistry = new SimpleBeanDefinitionRegistry();
-        ClassPathBeanDefinitionScanner beanScanner = new ClassPathBeanDefinitionScanner(beanRegistry);
-
-        TypeFilter typeFilter = new AssignableTypeFilter(GithubMetric.class);
-        beanScanner.setIncludeAnnotationConfig(false);
-        beanScanner.addIncludeFilter(typeFilter);
-        beanScanner.scan(GithubMetric.class.getPackage().getName());
-        return Arrays.asList(beanRegistry.getBeanDefinitionNames());
+    Set<? extends Map.Entry<String, ?>> getBeanNameFromApplicationContext(Class<?> targetInterface) {
+       return applicationContext.getBeansOfType(targetInterface).entrySet();
     }
 
 }

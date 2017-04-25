@@ -24,6 +24,9 @@ public class GithubRepository {
     }
 
     void setRetention(String retention) {
+        if(retention == null || retention == ""){
+            return;
+        }
         influx.setRetention(retention);
     }
 
@@ -33,9 +36,13 @@ public class GithubRepository {
         log.info("Added point  for '" + metrics.getRepositoryName() + "' to InfluxDb Measurement");
     }
 
-    private List<Point> createPoints(GithubMetricsResult metrics) {
+    List<Point> createPoints(GithubMetricsResult metrics) {
         log.info("Adding measurement point for '" + metrics.getRepositoryName() + "'.");
         List<Point> points = new ArrayList<>();
+
+        if(metrics.hasNullValues()){
+            return points;
+        }
 
         Point.Builder point = Point.measurement(metrics.getRepositoryName())
                 .addField("contributors", metrics.getContributors())

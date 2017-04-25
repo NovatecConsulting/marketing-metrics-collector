@@ -17,7 +17,7 @@ import info.novatec.metricscollector.github.GithubMetricsResult;
  * The method collects the top 10 referrers and their total and unique visits over the last 14 days.
  */
 @Component
-public class ReferringSites extends GithubMetric{
+public class ReferringSites extends GithubMetricAbstract implements GithubMetric {
 
     public ReferringSites(RestService restService, GithubMetricsResult metrics) {
         super(restService, metrics);
