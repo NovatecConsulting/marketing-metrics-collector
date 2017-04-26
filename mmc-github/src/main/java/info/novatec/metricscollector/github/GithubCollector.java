@@ -8,6 +8,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+import info.novatec.metricscollector.commons.GeneralMetric;
 import info.novatec.metricscollector.commons.RestService;
 import info.novatec.metricscollector.commons.exception.UserDeniedException;
 import info.novatec.metricscollector.github.metrics.GithubMetricAbstract;

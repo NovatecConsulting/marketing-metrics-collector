@@ -68,4 +68,5 @@ public class GithubMetricsResult {
         }
         this.repositoryName = repositoryName;
     }
+
 }

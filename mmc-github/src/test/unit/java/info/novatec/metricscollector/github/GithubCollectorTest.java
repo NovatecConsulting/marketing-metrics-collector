@@ -76,5 +76,4 @@ public class GithubCollectorTest {
         collector.collect(new GithubMetricImpl(restService, metrics));
         assertThat(metrics.hasNullValues()).isFalse();
     }
-
 }

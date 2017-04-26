@@ -16,7 +16,6 @@ public class GithubSystemTests {
 
     @Test
     public void updateAllGithubProjectsMetricsTest(){
-
         githubScheduler.scheduleUpdateAllGithubProjectsMetrics();
         System.out.println("test");
     }

@@ -25,7 +25,7 @@ public class ReferringSitesTest {
     private ResponseEntity<String> response;
 
     private GithubMetricsResult metrics;
-
+  
     @Before
     public void init() {
         metrics = DataProvider.createEmptyMetrics();
