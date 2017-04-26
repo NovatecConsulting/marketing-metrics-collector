@@ -22,9 +22,9 @@ import info.novatec.metricscollector.commons.RestService;
 @EnableScheduling
 @Import(ApplicationInitializerCommons.class)
 @ConfigurationProperties(prefix="github")
+@Setter
 public class ApplicationInitializerGithub {
 
-    @Setter
     private String token;
 
     @Getter
@@ -36,8 +36,8 @@ public class ApplicationInitializerGithub {
 
     @Bean
     @Autowired
-    public GithubCollector githubCollector(RestService restService, GithubMetricsResult metrics){
-        GithubCollector collector = new GithubCollector(metrics, restService);
+    public GithubCollector githubCollector(RestService restService){
+        GithubCollector collector = new GithubCollector(restService);
         collector.setToken(token);
         return collector;
     }

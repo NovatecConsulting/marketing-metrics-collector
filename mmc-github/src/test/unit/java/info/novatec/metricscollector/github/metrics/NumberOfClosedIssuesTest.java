@@ -26,19 +26,17 @@ public class NumberOfClosedIssuesTest {
     private ResponseEntity<String> response;
 
     private GithubMetricsResult metrics;
-
-    private DataProvider data = new DataProvider();
-
+  
     @Before
     public void init() {
-        metrics = new GithubMetricsResult();
+        metrics = DataProvider.createEmptyMetrics();
     }
 
     @Test
     public void collectTest() {
         String mockedResponseBody = "[{},{},{}]";
 
-        when(restService.sendRequest(data.getRestURL() + "/issues/events")).thenReturn(response);
+        when(restService.sendRequest(DataProvider.getRestURL() + "/issues/events")).thenReturn(response);
         when(response.getBody()).thenReturn(mockedResponseBody);
 
         NumberOfClosedIssues numberOfClosedIssues = new NumberOfClosedIssues(restService, metrics);

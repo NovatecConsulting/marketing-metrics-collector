@@ -35,7 +35,7 @@ public class GithubRepositoryTest {
 
     @Before
     public void init(){
-        metrics = new DataProvider().fillMetrics(new GithubMetricsResult());
+        metrics = DataProvider.createMetrics();
         githubRepository = new GithubRepository(influxService);
     }
 

@@ -28,7 +28,7 @@ public class NumberOfForksTest {
 
     @Before
     public void init() {
-        metrics = new GithubMetricsResult();
+        metrics = DataProvider.createEmptyMetrics();
     }
 
     @Test

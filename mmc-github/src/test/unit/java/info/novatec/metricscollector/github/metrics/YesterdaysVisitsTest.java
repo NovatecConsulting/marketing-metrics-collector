@@ -27,11 +27,9 @@ public class YesterdaysVisitsTest {
 
     private GithubMetricsResult metrics;
 
-    private DataProvider data = new DataProvider();
-
     @Before
     public void init() {
-        metrics = new GithubMetricsResult();
+        metrics = DataProvider.createEmptyMetrics();
     }
 
     @Test
@@ -54,7 +52,7 @@ public class YesterdaysVisitsTest {
 
     private void collectYesterdaysVisits() {
         String mockedResponseBody = getMockedResponse();
-        when(restService.sendRequest(data.getRestURL() + "/traffic/views")).thenReturn(response);
+        when(restService.sendRequest(DataProvider.getRestURL() + "/traffic/views")).thenReturn(response);
         when(response.getBody()).thenReturn(mockedResponseBody);
         YesterdaysVisits yesterdaysVisits = new YesterdaysVisits(restService, metrics);
         yesterdaysVisits.setProjectName(DataProvider.NON_EXISTING_PROJECT);

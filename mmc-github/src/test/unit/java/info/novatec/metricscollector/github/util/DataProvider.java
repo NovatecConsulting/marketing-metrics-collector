@@ -14,14 +14,18 @@ public class DataProvider {
 
     public static final String NON_EXISTING_PROJECT = "nonExistingProject";
 
+    public static final String VALID_GITHUB_URL = "https://github.com/nt-ca-aqe/marketing-metrics-collector";
+    public static final String VALID_GITHUB_REPOSITORY = "nt-ca-aqe/marketing-metrics-collector";
+    public static final String VALID_GITHUB_PROJECTNAME = "marketing-metrics-collector";
+
     private static final String DAILY_VISITS_TIMESTAMP_2001_01_01 = "2001-01-01T00:00:00Z";
     private static final String DAILY_VISITS_TIMESTAMP_2002_02_02 = "2002-02-02T00:00:00Z";
 
-    public String getRestURL() {
+    public static String getRestURL() {
         return GithubMetricAbstract.BASE_URL + NON_EXISTING_PROJECT;
     }
 
-    public GithubMetricsResult fillMetrics(GithubMetricsResult metrics) {
+    public static GithubMetricsResult fillMetrics(GithubMetricsResult metrics) {
         metrics.setRepositoryName(NON_EXISTING_PROJECT);
         metrics.setContributors(1);
         metrics.setStars(2);
@@ -52,6 +56,14 @@ public class DataProvider {
         metrics.setReferringSitesLast14Days(referringSites);
 
         return metrics;
+    }
+
+    public static GithubMetricsResult createMetrics(){
+        return fillMetrics(createEmptyMetrics());
+    }
+
+    public static GithubMetricsResult createEmptyMetrics(){
+        return new GithubMetricsResult(VALID_GITHUB_URL);
     }
 
 }

@@ -27,11 +27,9 @@ public class ReleaseDownloadsTest {
 
     private GithubMetricsResult metrics;
 
-    private DataProvider data = new DataProvider();
-
     @Before
     public void init() {
-        metrics = new GithubMetricsResult();
+        metrics = DataProvider.createEmptyMetrics();
     }
 
     @Test
@@ -63,7 +61,7 @@ public class ReleaseDownloadsTest {
 
     private void collectReleaseDownloads(boolean dataWithZeroDownloads) {
         String mockedResponseBody = dataWithZeroDownloads ? getMockedResponseWithZeroDownloads() : getMockedResponse();
-        when(restService.sendRequest(data.getRestURL() + "/releases")).thenReturn(response);
+        when(restService.sendRequest(DataProvider.getRestURL() + "/releases")).thenReturn(response);
         when(response.getBody()).thenReturn(mockedResponseBody);
         ReleaseDownloads releaseDownloads = new ReleaseDownloads(restService, metrics);
         releaseDownloads.setProjectName(DataProvider.NON_EXISTING_PROJECT);
