@@ -8,25 +8,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import lombok.Setter;
+
+
 @Component
 public class RestService {
 
     private RestTemplate restTemplate;
 
+    @Setter
     private HttpHeaders httpHeaders;
 
     @Autowired
     public RestService(RestTemplate restTemplate){
         this.restTemplate = restTemplate;
-        setDefaultHeaders();
+        setDefaultHttpHeaders();
     }
 
-    private void setDefaultHeaders(){
+    private void setDefaultHttpHeaders(){
         this.httpHeaders = new HttpHeaders();
-    }
-
-    public void setHeaders(HttpHeaders httpHeaders){
-        this.httpHeaders = httpHeaders;
     }
 
     public ResponseEntity<String> sendRequest(String url){

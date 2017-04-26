@@ -27,18 +27,16 @@ public class NumberOfCommitsTest {
 
     private GithubMetricsResult metrics;
 
-    private DataProvider data = new DataProvider();
-
     @Before
     public void init() {
-        metrics = new GithubMetricsResult();
+        metrics = DataProvider.createEmptyMetrics();
     }
 
     @Test
     public void collectTest() {
         String mockedResponseBody = "[{},{},{}]";
 
-        when(restService.sendRequest(data.getRestURL() + "/commits")).thenReturn(response);
+        when(restService.sendRequest(DataProvider.getRestURL() + "/commits")).thenReturn(response);
         when(response.getBody()).thenReturn(mockedResponseBody);
 
         NumberOfCommits numberOfCommits = new NumberOfCommits(restService, metrics);

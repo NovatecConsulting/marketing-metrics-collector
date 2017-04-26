@@ -2,6 +2,10 @@ package info.novatec.metricscollector.github;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -12,16 +16,16 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import info.novatec.metricscollector.github.util.DataProvider;
+import org.springframework.web.client.HttpClientErrorException;
 
 import info.novatec.metricscollector.commons.RestService;
+import info.novatec.metricscollector.commons.exception.UserDeniedException;
+import info.novatec.metricscollector.github.metrics.GithubMetricImpl;
+import info.novatec.metricscollector.github.util.DataProvider;
 
 
 @RunWith(SpringRunner.class)
 public class GithubCollectorTest {
-
-    private static final String VALID_URL = "https://github.com/nt-ca-aqe/marketing-metrics-collector";
 
     @MockBean
     private RestService restService;
@@ -30,40 +34,13 @@ public class GithubCollectorTest {
 
     @Before
     public void init() {
-        DataProvider data = new DataProvider();
-        GithubMetricsResult metrics = data.fillMetrics(new GithubMetricsResult());
-        collector = new GithubCollector(metrics, restService);
-    }
-
-    @Test
-    public void extractValidProjectNameTest() throws Throwable {
-        String projectName = collector.extractProjectName(VALID_URL);
-        assertThat(projectName).isEqualTo("nt-ca-aqe/marketing-metrics-collector");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void extractProjectNameWithInvalidUrlStringTest() throws Throwable {
-        String url = "https:github.comnt-ca-aqemarketing-metrics-collector";
-        collector.extractProjectName(url);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void extractProjectNameWithInvalidProjectNameInUrlStringTest() throws Throwable {
-        String url = "https://github.com/nt-ca-aqemarketing-metrics-collector";
-        collector.extractProjectName(url);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void extractProjectNameWithEmptyUrlStringTest() throws Throwable {
-        String url = "";
-        collector.extractProjectName(url);
+        collector = new GithubCollector(restService);
     }
 
     @Test
     public void setHeadersIsInvokedTest() throws Throwable {
         collector.setHeadersForGithub();
-        verify(restService, times(1)).setHeaders(any(HttpHeaders.class));
+        verify(restService, times(1)).setHttpHeaders(any(HttpHeaders.class));
     }
 
     @Test
@@ -71,7 +48,7 @@ public class GithubCollectorTest {
         collector.setToken("aToken");
         ArgumentCaptor<HttpHeaders> argument = ArgumentCaptor.forClass(HttpHeaders.class);
         collector.setHeadersForGithub();
-        verify(restService).setHeaders(argument.capture());
+        verify(restService).setHttpHeaders(argument.capture());
         assertThat(argument.getValue().get("Authorization").get(0)).isEqualTo("token aToken");
     }
 
@@ -80,8 +57,24 @@ public class GithubCollectorTest {
         collector.setToken("");
         ArgumentCaptor<HttpHeaders> argument = ArgumentCaptor.forClass(HttpHeaders.class);
         collector.setHeadersForGithub();
-        verify(restService).setHeaders(argument.capture());
+        verify(restService).setHttpHeaders(argument.capture());
         assertThat(argument.getValue().get("Authorization").get(0)).isEqualTo("token ");
+    }
+
+    @Test(expected = UserDeniedException.class)
+    public void checkIfCollectionIsIgnoredWithNonAuthorizedUserTest() throws Exception{
+        collector = spy(collector);
+        GithubMetricImpl mockedMetric = mock(GithubMetricImpl.class);
+        doNothing().when(collector).setHeadersForGithub();
+        doThrow(HttpClientErrorException.class).when(mockedMetric).collect();
+        collector.collect(mockedMetric);
+    }
+
+    @Test
+    public void successfulCollectionTest(){
+        GithubMetricsResult metrics = DataProvider.createEmptyMetrics();
+        collector.collect(new GithubMetricImpl(restService, metrics));
+        assertThat(metrics.hasNullValues()).isFalse();
     }
 
 }

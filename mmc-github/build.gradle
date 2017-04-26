@@ -3,29 +3,7 @@ dependencies {
   compile project(':mmc-commons')
 }
 
-sourceSets {
-    test {
-        java.srcDir 'src/test/unit/java'
-    }
-    integration {
-        java.srcDir 'src/test/integration/java'
-        resources.srcDir 'src/test/resources'
-        compileClasspath += main.output + test.output
-        runtimeClasspath += main.output + test.output
-    }
-}
-
-configurations {
-    integrationCompile.extendsFrom testCompile
-    integrationRuntime.extendsFrom testRuntime
-}
-
-task integration(type: Test, description: 'Runs the integration tests.', group: 'Verification') {
-    testClassesDir = sourceSets.integration.output.classesDir
-    classpath = sourceSets.integration.runtimeClasspath
-}
-
-task(run, dependsOn: 'build', type: JavaExec) {
+task run ( dependsOn: 'build', type: JavaExec) {
     description 'Runs Github Collector Application.'
     def baseDir = "/build/libs/"
     def fileNames = []

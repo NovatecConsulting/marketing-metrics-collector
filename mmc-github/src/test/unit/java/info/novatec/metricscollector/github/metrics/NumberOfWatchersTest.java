@@ -28,7 +28,7 @@ public class NumberOfWatchersTest {
 
     @Before
     public void init(){
-        metrics = new GithubMetricsResult();
+        metrics = DataProvider.createEmptyMetrics();
     }
 
     @Test

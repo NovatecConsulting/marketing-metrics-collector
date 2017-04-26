@@ -17,7 +17,7 @@ public class GithubMetricImpl extends GithubMetricAbstract implements GithubMetr
     }
 
     public void collect() {
-        new DataProvider().fillMetrics(getMetrics());
+        DataProvider.fillMetrics(getMetrics());
     }
 
 }

@@ -31,6 +31,7 @@ public class GithubRepository {
     }
 
     void saveMetrics(GithubMetricsResult metrics) {
+        influx.connect();
         influx.savePoint(createPoints(metrics));
         influx.close();
         log.info("Added point  for '" + metrics.getRepositoryName() + "' to InfluxDb Measurement");

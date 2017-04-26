@@ -27,18 +27,16 @@ public class NumberOfContributorsTest {
 
     private GithubMetricsResult metrics;
 
-    private DataProvider data = new DataProvider();
-
     @Before
     public void init() {
-        metrics = new GithubMetricsResult();
+        metrics = DataProvider.createEmptyMetrics();
     }
 
     @Test
     public void collectTest() {
         String mockedResponseBody = "[{},{},{}]";
 
-        when(restService.sendRequest(data.getRestURL() + "/contributors")).thenReturn(response);
+        when(restService.sendRequest(DataProvider.getRestURL() + "/contributors")).thenReturn(response);
         when(response.getBody()).thenReturn(mockedResponseBody);
 
         NumberOfContributors numberOfContributors = new NumberOfContributors(restService, metrics);
