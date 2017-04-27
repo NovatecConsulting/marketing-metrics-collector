@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import lombok.extern.slf4j.Slf4j;
 
 import info.novatec.metricscollector.commons.InfluxService;
+import info.novatec.metricscollector.commons.MetricsResultCheck;
 
 
 @Slf4j
@@ -24,25 +25,32 @@ public class TwitterRepository {
 
     private InfluxService influx;
 
-    @Autowired
-    TwitterRepository(InfluxService influx) {
-        this.influx = influx;
-    }
+    private MetricsResultCheck metricsResultCheck;
 
-    void setRetention(String retention) {
-        influx.setRetention(retention);
+    @Autowired
+    TwitterRepository(InfluxService influx, MetricsResultCheck metricsResultCheck) {
+        this.influx = influx;
+        this.metricsResultCheck = metricsResultCheck;
     }
 
     void saveMetrics(TwitterMetricsResult metrics) {
         List<Point> points = createPoints(metrics);
-        influx.savePoint(points);
+        if(points.size()>0){
+            influx.savePoint(points);
+            log.info("Saved points for user '" + metrics.getUserName() + "' to InfluxDb Measurement '"
+                + metrics.getAtUserName() + "' and '"+metrics.getAtUserName()+"_Likes'.");
+        }else{
+            log.info("Saved no points for user '" + metrics.getUserName());
+        }
         influx.close();
-        log.info("Saved points for user '" + metrics.getUserName() + "' to InfluxDb Measurement '"
-            + metrics.getAtUserName() + "' and '"+metrics.getAtUserName()+"_Likes'.");
     }
 
-    private List<Point> createPoints(TwitterMetricsResult metrics) {
+    List<Point> createPoints(TwitterMetricsResult metrics) {
         List<Point> points = new ArrayList<>();
+
+        if(metricsResultCheck.hasNullValues(metrics)){
+            return points;
+        }
 
         log.info("Adding measurement point for '" + metrics.getUserName() + " (@" + metrics.getAtUserName() + ")'...");
         Point.Builder pointGeneral = Point.measurement(metrics.atUserName)

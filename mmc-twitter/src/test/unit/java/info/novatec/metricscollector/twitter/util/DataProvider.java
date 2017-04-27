@@ -1,10 +1,12 @@
-package info.novatec.metricscollector.twitter.data;
+package info.novatec.metricscollector.twitter.util;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.stream.IntStream;
 
 import twitter4j.Paging;
@@ -15,16 +17,43 @@ import twitter4j.Status;
 import twitter4j.TwitterException;
 import twitter4j.User;
 
+import info.novatec.metricscollector.twitter.TwitterMetricsResult;
+
 
 public class DataProvider {
 
+    public static final String USERNAME = "Agile Quality Engineering";
     public static final String AT_USERNAME = "NT_AQE";
 
-    private static final String USERNAME = "Agile Quality Engineering";
+    private static final String LIKES_OF_MENTIONS_TIMESTAMP_2001_01_01 = "Mon Jan 01 00:00:00 CET 2001";
+    private static final String LIKES_OF_MENTIONS_TIMESTAMP_2002_02_02 = "Sat Feb 02 00:00:00 CET 2002";
+
+    public static TwitterMetricsResult fillMetrics(TwitterMetricsResult metrics) {
+        metrics.setUserName(USERNAME);
+        metrics.setAtUserName(AT_USERNAME);
+        metrics.setTweets(1);
+        metrics.setReTweets(2);
+        metrics.setMentions(3);
+        metrics.setLikes(4);
+        SortedMap<String, Integer> likesOfMentions = new TreeMap<>();
+        likesOfMentions.put(LIKES_OF_MENTIONS_TIMESTAMP_2001_01_01, 5);
+        likesOfMentions.put(LIKES_OF_MENTIONS_TIMESTAMP_2002_02_02, 6);
+        metrics.setLikesOfMentions(likesOfMentions);
+        metrics.setFollowers(7);
+        return metrics;
+    }
+
+    public static TwitterMetricsResult createMetrics(){
+        return fillMetrics(createEmptyMetrics());
+    }
+
+    public static TwitterMetricsResult createEmptyMetrics(){
+        return new TwitterMetricsResult();
+    }
 
     public QueryResult mockQueryResult(ResponseList<Status> tweets) throws TwitterException {
         QueryResult queryResult = mock(QueryResult.class);
-        ResponseList<Status> emptyList = new CustomResponseList<>();
+        ResponseList<Status> emptyList = new DataProvider.CustomResponseList<>();
         when(queryResult.getTweets()).thenReturn(tweets).thenReturn(emptyList);
         return queryResult;
     }
@@ -34,7 +63,7 @@ public class DataProvider {
     }
 
     public ResponseList<Status> createTweets(int numberOfTweets) throws TwitterException {
-        ResponseList<Status> tweets = new CustomResponseList<>();
+        ResponseList<Status> tweets = new DataProvider.CustomResponseList<>();
         for (int i = 0; i < numberOfTweets; i++) {
             tweets.add(mock(Status.class));
         }

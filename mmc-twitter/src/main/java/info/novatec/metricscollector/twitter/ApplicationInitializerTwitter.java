@@ -19,22 +19,19 @@ import twitter4j.conf.ConfigurationBuilder;
 import info.novatec.metricscollector.commons.ApplicationInitializerCommons;
 
 
+@Setter
 @SpringBootApplication
 @EnableScheduling
 @Import(ApplicationInitializerCommons.class)
 @ConfigurationProperties(prefix="twitter")
 public class ApplicationInitializerTwitter {
 
-    @Setter
     private String consumerKey;
 
-    @Setter
     private String consumerSecret;
 
-    @Setter
     private String accessToken;
 
-    @Setter
     private String accessSecret;
 
     @Getter
@@ -42,11 +39,6 @@ public class ApplicationInitializerTwitter {
 
     public static void main(String[] args) {
         SpringApplication.run(ApplicationInitializerTwitter.class, args);
-    }
-
-    @Bean
-    public TwitterCollector twitterCollector(TwitterMetricsResult metrics, Twitter twitter){
-        return new TwitterCollector(metrics, twitter);
     }
 
     @Bean

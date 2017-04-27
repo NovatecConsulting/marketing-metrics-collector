@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import info.novatec.metricscollector.github.util.DataProvider;
 
-import info.novatec.metricscollector.commons.RestService;
+import info.novatec.metricscollector.github.RestService;
 import info.novatec.metricscollector.github.GithubMetricsResult;
 
 
@@ -36,11 +36,10 @@ public class NumberOfCommitsTest {
     public void collectTest() {
         String mockedResponseBody = "[{},{},{}]";
 
-        when(restService.sendRequest(DataProvider.getRestURL() + "/commits")).thenReturn(response);
+        when(restService.sendRequest(DataProvider.getRestURL(metrics.getRepositoryName()) + "/commits")).thenReturn(response);
         when(response.getBody()).thenReturn(mockedResponseBody);
 
         NumberOfCommits numberOfCommits = new NumberOfCommits(restService, metrics);
-        numberOfCommits.setProjectName(DataProvider.NON_EXISTING_PROJECT);
         numberOfCommits.collect();
         assertThat(metrics.getCommits()).isEqualTo(3);
     }

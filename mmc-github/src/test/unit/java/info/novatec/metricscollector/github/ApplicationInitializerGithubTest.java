@@ -3,19 +3,17 @@ package info.novatec.metricscollector.github;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import info.novatec.metricscollector.commons.RestService;
-
 
 @RunWith(SpringRunner.class)
 public class ApplicationInitializerGithubTest {
+
+    private static final String TOKEN = "aToken";
 
     ApplicationInitializerGithub initializer;
 
@@ -27,17 +25,14 @@ public class ApplicationInitializerGithubTest {
     @Test
     public void createGithubCollector(){
         GithubCollector githubCollector = initializer.githubCollector(mock(RestService.class));
-        assertThat(githubCollector).isInstanceOf(GithubCollector.class);
+        assertThat(githubCollector).isNotNull();
     }
 
     @Test
-    public void createUrls(){
-        List<String> urls = new ArrayList<>();
-        urls.add("url1");
-        urls.add("url2");
-        urls.add("url3");
-        initializer.setUrls(urls);
-        List<String> bean = initializer.urls();
-        assertThat(bean.size()).isEqualTo(3);
+    public void createToken(){
+        initializer.setToken(TOKEN);
+        String token = initializer.token();
+        assertThat(token).isEqualTo(TOKEN);
     }
+
 }

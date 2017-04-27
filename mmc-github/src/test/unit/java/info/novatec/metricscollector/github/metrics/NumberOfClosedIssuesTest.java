@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import info.novatec.metricscollector.github.util.DataProvider;
 
-import info.novatec.metricscollector.commons.RestService;
+import info.novatec.metricscollector.github.RestService;
 import info.novatec.metricscollector.github.GithubMetricsResult;
 
 
@@ -35,12 +35,10 @@ public class NumberOfClosedIssuesTest {
     @Test
     public void collectTest() {
         String mockedResponseBody = "[{},{},{}]";
-
-        when(restService.sendRequest(DataProvider.getRestURL() + "/issues/events")).thenReturn(response);
+        when(restService.sendRequest(DataProvider.getRestURL(metrics.getRepositoryName()) + "/issues/events")).thenReturn(response);
         when(response.getBody()).thenReturn(mockedResponseBody);
 
         NumberOfClosedIssues numberOfClosedIssues = new NumberOfClosedIssues(restService, metrics);
-        numberOfClosedIssues.setProjectName(DataProvider.NON_EXISTING_PROJECT);
         numberOfClosedIssues.collect();
         assertThat(metrics.getClosedIssues()).isEqualTo(3);
     }

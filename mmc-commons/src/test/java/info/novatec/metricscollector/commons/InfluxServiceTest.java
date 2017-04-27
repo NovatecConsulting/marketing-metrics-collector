@@ -1,11 +1,8 @@
 package info.novatec.metricscollector.commons;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -55,17 +52,6 @@ public class InfluxServiceTest {
     public void checkIfCloseMethodIsInvokedTest() {
         influxService.close();
         verify(influxDB, times(1)).close();
-    }
-
-    @Test
-    public void checkIfConfigMethodIsInvokedTest() {
-        influxService = spy(new InfluxService());
-        doReturn(influxDB).when(influxService).createInfluxDb();
-        influxService.setDbName(DB_NAME);
-        influxService.setUrl(DB_URL);
-        influxService.setRetention(RETENTION);
-        influxService.connect();
-        assertThat(influxService.getInfluxDB()).isNotNull();
     }
 
 }

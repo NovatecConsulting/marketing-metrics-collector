@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import info.novatec.metricscollector.github.util.DataProvider;
 
-import info.novatec.metricscollector.commons.RestService;
+import info.novatec.metricscollector.github.RestService;
 import info.novatec.metricscollector.github.GithubMetricsResult;
 
 
@@ -52,10 +52,9 @@ public class YesterdaysVisitsTest {
 
     private void collectYesterdaysVisits() {
         String mockedResponseBody = getMockedResponse();
-        when(restService.sendRequest(DataProvider.getRestURL() + "/traffic/views")).thenReturn(response);
+        when(restService.sendRequest(DataProvider.getRestURL(metrics.getRepositoryName()) + "/traffic/views")).thenReturn(response);
         when(response.getBody()).thenReturn(mockedResponseBody);
         YesterdaysVisits yesterdaysVisits = new YesterdaysVisits(restService, metrics);
-        yesterdaysVisits.setProjectName(DataProvider.NON_EXISTING_PROJECT);
         yesterdaysVisits.collect();
     }
 

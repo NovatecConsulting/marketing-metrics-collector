@@ -12,20 +12,26 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
 import info.novatec.metricscollector.twitter.TwitterMetricsResult;
+import info.novatec.metricscollector.twitter.exception.TwitterRuntimeException;
 
 
 @Component
-public class NumberOfLikesOfMentions extends TwitterMetric{
+public class NumberOfLikesOfMentions extends TwitterMetricAbstract implements TwitterMetric{
     public NumberOfLikesOfMentions(Twitter twitter, TwitterMetricsResult metrics) {
         super(twitter, metrics);
     }
 
     @Override
-    public void collect() throws TwitterException{
+    public void collect() {
         Query query = new Query("@" + metrics.getAtUserName());
         query.setCount(20);
 
-        List<Status> allTweets = getAllTweets(query);
+        List<Status> allTweets;
+        try {
+            allTweets = getAllTweets(query);
+        }catch(TwitterException e){
+            throw new TwitterRuntimeException(e);
+        }
 
         //filter out mentions from user itself
         Map<String, Integer> likesOfMentions = allTweets.stream()

@@ -21,14 +21,8 @@ public class ApplicationInitializerCommonsTest {
     }
 
     @Test
-    public void createInfluxService(){
-        InfluxService influxService = initializer.influxService();
-        assertThat(influxService).isInstanceOf(InfluxService.class);
-    }
-
-    @Test
     public void createRestTemplate(){
         RestTemplate influxService = initializer.restTemplate();
-        assertThat(influxService).isInstanceOf(RestTemplate.class);
+        assertThat(influxService).isNotNull();
     }
 }
