@@ -1,6 +1,9 @@
 package info.novatec.metricscollector.twitter.metrics;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -9,13 +12,15 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
 import info.novatec.metricscollector.twitter.TwitterMetricsResult;
-import info.novatec.metricscollector.twitter.data.DataProvider;
+import info.novatec.metricscollector.twitter.exception.TwitterRuntimeException;
+import info.novatec.metricscollector.twitter.util.DataProvider;
 
 
 @RunWith(SpringRunner.class)
@@ -54,5 +59,11 @@ public class NumberOfReTweetsTest {
         when(twitter.getUserTimeline(data.AT_USERNAME, data.getPaging(3))).thenReturn(data.createTweets(0));
         new NumberOfReTweets(twitter, metrics).collect();
         assertThat(metrics.getReTweets()).isEqualTo(300);
+    }
+
+    @Test(expected = TwitterRuntimeException.class)
+    public void twitterRuntimeExceptionInsteadOfTwitterExceptionIsThrown() throws Exception{
+        doThrow(TwitterException.class).when(twitter).getUserTimeline(eq(metrics.getAtUserName()), any(Paging.class));
+        new NumberOfReTweets(twitter, metrics).collect();
     }
 }

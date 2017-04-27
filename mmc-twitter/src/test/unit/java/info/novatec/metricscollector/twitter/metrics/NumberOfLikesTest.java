@@ -15,7 +15,7 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
 import info.novatec.metricscollector.twitter.TwitterMetricsResult;
-import info.novatec.metricscollector.twitter.data.DataProvider;
+import info.novatec.metricscollector.twitter.util.DataProvider;
 
 
 @RunWith(SpringRunner.class)

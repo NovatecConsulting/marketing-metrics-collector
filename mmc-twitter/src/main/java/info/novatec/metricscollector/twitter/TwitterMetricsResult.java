@@ -14,17 +14,18 @@ import lombok.Setter;
 @NoArgsConstructor
 public class TwitterMetricsResult {
 
-    public TwitterMetricsResult(String atUserName) {
+    public TwitterMetricsResult(String atUserName, String userName) {
         this.atUserName = atUserName;
+        this.userName = userName;
     }
 
-    String userName;
     String atUserName;
+    String userName;
     Integer tweets;
     Integer reTweets;
     Integer mentions;
     Integer likes;
-    Map<String, Integer> likesOfMentions;
+    Map<String, Integer> likesOfMentions; //timestamp, likes of mentions
     Integer followers;
 
 }

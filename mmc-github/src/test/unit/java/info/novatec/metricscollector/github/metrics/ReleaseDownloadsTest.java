@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import info.novatec.metricscollector.github.util.DataProvider;
 
-import info.novatec.metricscollector.commons.RestService;
+import info.novatec.metricscollector.github.RestService;
 import info.novatec.metricscollector.github.GithubMetricsResult;
 
 
@@ -61,10 +61,9 @@ public class ReleaseDownloadsTest {
 
     private void collectReleaseDownloads(boolean dataWithZeroDownloads) {
         String mockedResponseBody = dataWithZeroDownloads ? getMockedResponseWithZeroDownloads() : getMockedResponse();
-        when(restService.sendRequest(DataProvider.getRestURL() + "/releases")).thenReturn(response);
+        when(restService.sendRequest(DataProvider.getRestURL(metrics.getRepositoryName()) + "/releases")).thenReturn(response);
         when(response.getBody()).thenReturn(mockedResponseBody);
         ReleaseDownloads releaseDownloads = new ReleaseDownloads(restService, metrics);
-        releaseDownloads.setProjectName(DataProvider.NON_EXISTING_PROJECT);
         releaseDownloads.collect();
     }
 

@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 import info.novatec.metricscollector.github.util.DataProvider;
 
-import info.novatec.metricscollector.commons.RestService;
+import info.novatec.metricscollector.github.RestService;
 import info.novatec.metricscollector.github.GithubMetricsResult;
 
 

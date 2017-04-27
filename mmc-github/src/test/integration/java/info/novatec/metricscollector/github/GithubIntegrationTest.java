@@ -9,13 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import info.novatec.metricscollector.commons.RestService;
+import info.novatec.metricscollector.commons.MetricsResultCheck;
 import info.novatec.metricscollector.github.metrics.GithubMetricImpl;
 
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestConfig.class)
-public class GithubIntegrationTests {
+public class GithubIntegrationTest {
 
     private static final String VALID_URL = "https://github.com/nt-ca-aqe/marketing-metrics-collector";
 
@@ -27,6 +27,9 @@ public class GithubIntegrationTests {
     @Autowired
     private GithubCollector collector;
 
+    @Autowired
+    private MetricsResultCheck metricsResultCheck;
+
     @Before
     public void init() {
         metrics = new GithubMetricsResult(VALID_URL);
@@ -36,7 +39,7 @@ public class GithubIntegrationTests {
     @Test
     public void collectMetricsTest(){
         collector.collect(new GithubMetricImpl(restService, metrics));
-        assertThat(metrics.hasNullValues()).isFalse();
+        assertThat(metricsResultCheck.hasNullValues(metrics)).isFalse();
     }
 
 }

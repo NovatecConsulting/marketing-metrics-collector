@@ -4,7 +4,7 @@ import javax.json.JsonArray;
 
 import org.springframework.stereotype.Component;
 
-import info.novatec.metricscollector.commons.RestService;
+import info.novatec.metricscollector.github.RestService;
 import info.novatec.metricscollector.github.GithubMetricsResult;
 
 
@@ -17,7 +17,7 @@ public class NumberOfCommits extends GithubMetricAbstract implements GithubMetri
 
     @Override
     public void collect() {
-        String url = BASE_URL + projectName + "/commits";
+        String url = getBaseRequestUrl() + "/commits";
         JsonArray commits = createJsonArray(restService.sendRequest(url).getBody());
         metrics.setCommits(commits.size());
     }

@@ -18,6 +18,7 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import info.novatec.metricscollector.commons.MetricsResultCheck;
 import info.novatec.metricscollector.github.util.DataProvider;
 
 import info.novatec.metricscollector.commons.InfluxService;
@@ -29,6 +30,9 @@ public class GithubRepositoryTest {
     @MockBean
     private InfluxService influxService;
 
+    @MockBean
+    private MetricsResultCheck metricsResultCheck;
+
     private GithubRepository githubRepository;
 
     private GithubMetricsResult metrics;
@@ -36,13 +40,13 @@ public class GithubRepositoryTest {
     @Before
     public void init(){
         metrics = DataProvider.createMetrics();
-        githubRepository = new GithubRepository(influxService);
+        githubRepository = new GithubRepository(influxService, metricsResultCheck);
     }
 
     @Test
     public void createPointsWithValidMetricsTest() {
         metrics = spy(metrics);
-        doReturn(false).when(metrics).hasNullValues();
+        doReturn(false).when(metricsResultCheck).hasNullValues(metrics);
         List<Point> points = githubRepository.createPoints(metrics);
         assertThat(points.size()).isEqualTo(3);
     }
@@ -50,7 +54,7 @@ public class GithubRepositoryTest {
     @Test
     public void createPointsWithNullValueMetricsTest() {
         metrics = mock(GithubMetricsResult.class);
-        when(metrics.hasNullValues()).thenReturn(true);
+        when(metricsResultCheck.hasNullValues(metrics)).thenReturn(true);
         List<Point> points = githubRepository.createPoints(metrics);
         assertThat(points.size()).isEqualTo(0);
     }
@@ -60,29 +64,6 @@ public class GithubRepositoryTest {
         githubRepository.saveMetrics(metrics);
         verify(influxService, times(1)).savePoint(anyListOf(Point.class));
         verify(influxService, times(1)).close();
-    }
-
-    @Test
-    public void checkIfSetRetentionMethodWithValidRetentionWasInvokedTest() {
-        String retention = "daily";
-        githubRepository = new GithubRepository(influxService);
-        githubRepository.setRetention(retention);
-        verify(influxService, times(1)).setRetention(retention);
-    }
-
-    @Test
-    public void checkIfSetRetentionMethodWithEmptyParameterWasInvokedTest() {
-        String retention = "";
-        githubRepository = new GithubRepository(influxService);
-        githubRepository.setRetention(retention);
-        verify(influxService, times(0)).setRetention(retention);
-    }
-
-    @Test
-    public void checkIfSetRetentionMethodWithNullParameterWasInvokedTest() {
-        githubRepository = new GithubRepository(influxService);
-        githubRepository.setRetention(null);
-        verify(influxService, times(0)).setRetention(null);
     }
 
 }

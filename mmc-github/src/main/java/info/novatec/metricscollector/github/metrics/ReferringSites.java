@@ -8,7 +8,7 @@ import javax.json.JsonObject;
 import org.springframework.stereotype.Component;
 
 import info.novatec.metricscollector.commons.DailyClicks;
-import info.novatec.metricscollector.commons.RestService;
+import info.novatec.metricscollector.github.RestService;
 import info.novatec.metricscollector.github.GithubMetricsResult;
 
 
@@ -25,7 +25,7 @@ public class ReferringSites extends GithubMetricAbstract implements GithubMetric
 
     @Override
     public void collect() {
-        String url = BASE_URL + projectName + "/traffic/popular/referrers";
+        String url = getBaseRequestUrl() + "/traffic/popular/referrers";
         JsonArray referringSites = createJsonArray(restService.sendRequest(url).getBody());
         SortedMap<String, DailyClicks> sitesMap = new TreeMap<>();
 

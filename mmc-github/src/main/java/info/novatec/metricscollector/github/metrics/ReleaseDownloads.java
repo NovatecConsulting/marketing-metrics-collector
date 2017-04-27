@@ -12,7 +12,7 @@ import javax.json.JsonReader;
 
 import org.springframework.stereotype.Component;
 
-import info.novatec.metricscollector.commons.RestService;
+import info.novatec.metricscollector.github.RestService;
 import info.novatec.metricscollector.github.GithubMetricsResult;
 
 
@@ -32,7 +32,7 @@ public class ReleaseDownloads extends GithubMetricAbstract implements GithubMetr
         SortedMap<String, Integer> allDownloads = new TreeMap<>();
 
         if (projectRepository == null || projectRepository.getBoolean("has_downloads")) {
-            String url = BASE_URL + projectName + "/releases";
+            String url = getBaseRequestUrl() + "/releases";
             JsonReader jsonReader = Json.createReader(new StringReader(restService.sendRequest(url).getBody()));
             JsonArray releases = jsonReader.readArray();
             releases.forEach(obj -> {

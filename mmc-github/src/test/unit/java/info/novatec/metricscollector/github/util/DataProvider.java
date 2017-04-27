@@ -21,8 +21,8 @@ public class DataProvider {
     private static final String DAILY_VISITS_TIMESTAMP_2001_01_01 = "2001-01-01T00:00:00Z";
     private static final String DAILY_VISITS_TIMESTAMP_2002_02_02 = "2002-02-02T00:00:00Z";
 
-    public static String getRestURL() {
-        return GithubMetricAbstract.BASE_URL + NON_EXISTING_PROJECT;
+    public static String getRestURL(String repositoryName) {
+        return GithubMetricAbstract.GITHUB_URL + repositoryName;
     }
 
     public static GithubMetricsResult fillMetrics(GithubMetricsResult metrics) {

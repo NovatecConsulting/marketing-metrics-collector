@@ -10,19 +10,6 @@ import info.novatec.metricscollector.github.util.DataProvider;
 public class GithubMetricsResultTest {
 
     @Test
-    public void checkMetricsHavingNullValuesTest() {
-        GithubMetricsResult metrics = DataProvider.createEmptyMetrics();
-        metrics.setCommits(2);
-        assertThat(metrics.hasNullValues()).isTrue();
-    }
-
-    @Test
-    public void checkMetricsHavingNoNullValuesTest() {
-        GithubMetricsResult metrics = DataProvider.createMetrics();
-        assertThat(metrics.hasNullValues()).isFalse();
-    }
-
-    @Test
     public void extractValidProjectNameTest() throws Throwable {
         GithubMetricsResult metrics = new GithubMetricsResult(DataProvider.VALID_GITHUB_URL);
         assertThat(metrics.getProjectName()).isEqualTo(DataProvider.VALID_GITHUB_PROJECTNAME);

@@ -14,7 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import info.novatec.metricscollector.commons.GeneralMetric;
-import info.novatec.metricscollector.commons.RestService;
+import info.novatec.metricscollector.github.RestService;
 import info.novatec.metricscollector.github.GithubMetricsResult;
 
 
@@ -22,9 +22,7 @@ import info.novatec.metricscollector.github.GithubMetricsResult;
 @Setter
 public abstract class GithubMetricAbstract implements GeneralMetric{
 
-    public static final String BASE_URL = "https://api.github.com/repos/";
-
-    String projectName;
+    public static final String GITHUB_URL = "https://api.github.com/repos/";
 
     JsonObject projectRepository;
 
@@ -40,7 +38,7 @@ public abstract class GithubMetricAbstract implements GeneralMetric{
     }
 
     ResponseEntity<String> getProjectRepository(String projectName) {
-        return restService.sendRequest(BASE_URL + projectName);
+        return restService.sendRequest(getBaseRequestUrl());
     }
 
     JsonArray createJsonArray(String serializedJsonObject) {
@@ -51,5 +49,9 @@ public abstract class GithubMetricAbstract implements GeneralMetric{
     JsonObject createJsonObject(String serializedJsonObject) {
         JsonReader jsonReader = Json.createReader(new StringReader(serializedJsonObject));
         return jsonReader.readObject();
+    }
+
+    public String getBaseRequestUrl(){
+        return GITHUB_URL + metrics.getRepositoryName();
     }
 }

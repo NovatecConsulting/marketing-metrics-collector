@@ -44,7 +44,8 @@ public class GithubSchedulerTest {
         List<String> urls = new ArrayList<>();
         urls.add(DataProvider.VALID_GITHUB_URL+1);
         urls.add(DataProvider.VALID_GITHUB_URL+2);
-        scheduler = new GithubScheduler(collector, repository, urls);
+        scheduler = new GithubScheduler(collector, repository);
+        scheduler.setUrls(urls);
     }
 
     @Test

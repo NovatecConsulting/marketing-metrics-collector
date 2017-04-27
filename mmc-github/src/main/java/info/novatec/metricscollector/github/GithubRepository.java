@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import lombok.extern.slf4j.Slf4j;
 
 import info.novatec.metricscollector.commons.InfluxService;
+import info.novatec.metricscollector.commons.MetricsResultCheck;
 
 
 @Slf4j
@@ -18,30 +19,27 @@ public class GithubRepository {
 
     private InfluxService influx;
 
-    @Autowired
-    GithubRepository(InfluxService influx) {
-        this.influx = influx;
-    }
+    private MetricsResultCheck metricsResultCheck;
 
-    void setRetention(String retention) {
-        if(retention == null || retention == ""){
-            return;
-        }
-        influx.setRetention(retention);
+    @Autowired
+    GithubRepository(InfluxService influx, MetricsResultCheck metricsResultCheck) {
+
+        this.influx = influx;
+        this.metricsResultCheck = metricsResultCheck;
     }
 
     void saveMetrics(GithubMetricsResult metrics) {
-        influx.connect();
         influx.savePoint(createPoints(metrics));
         influx.close();
-        log.info("Added point  for '" + metrics.getRepositoryName() + "' to InfluxDb Measurement");
     }
 
     List<Point> createPoints(GithubMetricsResult metrics) {
-        log.info("Adding measurement point for '" + metrics.getRepositoryName() + "'.");
+        log.info("Start creating points for '" + metrics.getRepositoryName() + "'.");
         List<Point> points = new ArrayList<>();
 
-        if(metrics.hasNullValues()){
+        if(metricsResultCheck.hasNullValues(metrics)){
+            log.error("Since there are null values in metrics result creating points for '" + metrics.getRepositoryName() + "' isn't possible!"
+                + metrics.toString());
             return points;
         }
 
@@ -71,6 +69,8 @@ public class GithubRepository {
         });
 
         points.add(point.build());
+
+        log.info("Created "+points.size()+" points for '" + metrics.getRepositoryName() + "'.");
 
         return points;
     }

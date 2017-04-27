@@ -1,6 +1,9 @@
 package info.novatec.metricscollector.twitter.metrics;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -17,7 +20,8 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
 import info.novatec.metricscollector.twitter.TwitterMetricsResult;
-import info.novatec.metricscollector.twitter.data.DataProvider;
+import info.novatec.metricscollector.twitter.exception.TwitterRuntimeException;
+import info.novatec.metricscollector.twitter.util.DataProvider;
 
 
 @RunWith(SpringRunner.class)
@@ -46,5 +50,12 @@ public class NumberOfMentionsTest {
         when(twitter.search(query)).thenReturn(result);
         new NumberOfMentions(twitter, metrics).collect();
         assertThat(metrics.getMentions()).isEqualTo(200);
+    }
+
+    @Test(expected = TwitterRuntimeException.class)
+    public void twitterRuntimeExceptionInsteadOfTwitterExceptionIsThrown() throws Exception{
+        NumberOfMentions thisMetric = spy(new NumberOfMentions(twitter, metrics));
+        doThrow(TwitterException.class).when(thisMetric).getAllTweets(any(Query.class));
+        thisMetric.collect();
     }
 }

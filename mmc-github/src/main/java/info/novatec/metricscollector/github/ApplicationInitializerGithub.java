@@ -15,7 +15,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import info.novatec.metricscollector.commons.ApplicationInitializerCommons;
-import info.novatec.metricscollector.commons.RestService;
 
 
 @SpringBootApplication
@@ -38,13 +37,12 @@ public class ApplicationInitializerGithub {
     @Autowired
     public GithubCollector githubCollector(RestService restService){
         GithubCollector collector = new GithubCollector(restService);
-        collector.setToken(token);
         return collector;
     }
 
     @Bean
-    public List<String> urls(){
-        return urls;
+    public String token(){
+        return token;
     }
 
 }

@@ -7,7 +7,7 @@ import javax.json.JsonObject;
 import org.springframework.stereotype.Component;
 
 import info.novatec.metricscollector.commons.DailyClicks;
-import info.novatec.metricscollector.commons.RestService;
+import info.novatec.metricscollector.github.RestService;
 import info.novatec.metricscollector.github.GithubMetricsResult;
 
 
@@ -25,7 +25,7 @@ public class YesterdaysVisits extends GithubMetricAbstract implements GithubMetr
 
     @Override
     public void collect() {
-        String url = BASE_URL + projectName + "/traffic/views";
+        String url = getBaseRequestUrl() + "/traffic/views";
         JsonObject visitors = createJsonObject(restService.sendRequest(url).getBody());
         JsonObject visits = getYesterdaysVisits(visitors.getJsonArray("views"));
         String timestamp = visits.getString("timestamp");
