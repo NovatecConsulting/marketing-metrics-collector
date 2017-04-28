@@ -8,13 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import static info.novatec.metricscollector.google.GaDimensionsEnum.*;
 import static info.novatec.metricscollector.google.GaFilterOperatorsEnum.*;
 import static info.novatec.metricscollector.google.GaMetricsEnum.*;
+import static java.time.format.DateTimeFormatter.*;
 
 @Component
 public class AqeBlogReportRequestBuilder implements IGaReportRequestBuilder {
@@ -24,26 +27,23 @@ public class AqeBlogReportRequestBuilder implements IGaReportRequestBuilder {
     private GaConfigProperties gaConfigProperties;
 
     @Autowired
-    public AqeBlogReportRequestBuilder(AnalyticsReporting service, GaConfigProperties customConfigurationProperties) {
+    public AqeBlogReportRequestBuilder(AnalyticsReporting service, GaConfigProperties gaConfigProperties) {
         this.service = service;
-        this.gaConfigProperties = customConfigurationProperties;
+        this.gaConfigProperties = gaConfigProperties;
     }
 
     @Override
     public GetReportsResponse sendReportRequest() throws IOException {
-        DateRange dateRange = createDateRange(gaConfigProperties.getStartPeriod(), gaConfigProperties.getEndPeriod());
+        DateRange dateRange = createDataRangeWithEqualStartEndDate(getCurrentDateMinusNdays(1));
         List<DimensionFilter> dimensionFilters = new ArrayList<>();
         List<ReportRequest> reportRequests = new ArrayList<>();
 
-        Metric metric = createMetrics();
-        Dimension dimension = createDimension();
-        DimensionFilter hostNameDimensionFilter = createDimensionFilter(GA_HOST_NAME.toString(), EXACT.toString(), gaConfigProperties.getHostName());
-        DimensionFilter pagePathDimensionFilter = createDimensionFilter(GA_PAGE_PATH.toString(), REGEXP.toString(), "");
+        DimensionFilter hostNameDimensionFilter = createDimensionFilter(GA_HOST_NAME.toString(), EXACT.toString(),
+                gaConfigProperties.getHostName());
         dimensionFilters.add(hostNameDimensionFilter);
-        dimensionFilters.add(pagePathDimensionFilter);
         DimensionFilterClause dimensionFilterClause = createDimensionFilterClause(AND.toString(), dimensionFilters);
 
-        ReportRequest reportRequest = createReportRequest(gaConfigProperties.getViewId(), dateRange, metric, dimension, dimensionFilterClause);
+        ReportRequest reportRequest = createReportRequest(gaConfigProperties.getViewId(), dateRange, dimensionFilterClause);
         reportRequests.add(reportRequest);
 
         GetReportsRequest getReport = new GetReportsRequest()
@@ -66,32 +66,39 @@ public class AqeBlogReportRequestBuilder implements IGaReportRequestBuilder {
         return dateRange;
     }
 
-    /**
-     * Creates the Metric object with its required values. Metric is a termin coming from Google Analytics Reporting API.
-     *
-     * @return the Metric object
-     */
-    private Metric createMetrics() {
-        return new Metric()
-                .setExpression(GA_PAGE_VIEWS.toString())
-                .setExpression(GA_UNIQUE_PAGE_VIEWS.toString())
-                .setExpression(GA_SESSION.toString())
-                .setExpression(GA_BOUNCES.toString())
-                .setExpression(GA_BOUNCE_RATE.toString())
-                .setExpression(GA_AVG_SESSION_DURATION.toString())
-                .setExpression(GA_AVG_TIME_ON_PAGE.toString());
+    private DateRange createDataRangeWithEqualStartEndDate(String date) {
+        return createDateRange(date, date);
     }
 
     /**
-     * Creates the Dimension object with its required values. Dimension is a termin coming from Google Analytics Reporting API.
+     * Creates the Metric objects with its required values. Metric is a termin coming from Google Analytics Reporting API.
+     * Maximum number of metrics for a GA Request is 10
      *
-     * @return the Dimension object
+     * @return List of Metric objects
      */
-    private Dimension createDimension() {
-        return new Dimension()
-                .setName(GA_PAGE_TITLE.toString())
-                .setName(GA_HOST_NAME.toString())
-                .setName(GA_PAGE_PATH.toString());
+    private List<Metric> createMetrics() {
+        return Arrays.asList(
+                new Metric().setExpression(GA_PAGE_VIEWS.toString()),
+                new Metric().setExpression(GA_UNIQUE_PAGE_VIEWS.toString()),
+                new Metric().setExpression(GA_BOUNCES.toString()),
+                new Metric().setExpression(GA_SESSION.toString()),
+                new Metric().setExpression(GA_BOUNCE_RATE.toString()),
+                new Metric().setExpression(GA_AVG_SESSION_DURATION.toString()),
+                new Metric().setExpression(GA_AVG_TIME_ON_PAGE.toString())
+        );
+    }
+
+    /**
+     * Creates the Dimension objects with its required values. Dimension is a termin coming from Google Analytics Reporting API.
+     * Maximum number of Dimensions for a GA request is 7.
+     *
+     * @return List of Dimension objects
+     */
+    private List<Dimension> createDimensions() {
+        return Arrays.asList(
+                new Dimension().setName(GA_PAGE_TITLE.toString()),
+                new Dimension().setName(GA_HOST_NAME.toString()),
+                new Dimension().setName(GA_PAGE_PATH.toString()));
     }
 
     /**
@@ -123,12 +130,18 @@ public class AqeBlogReportRequestBuilder implements IGaReportRequestBuilder {
                 .setFilters(dimensionFilters);
     }
 
-    private ReportRequest createReportRequest(String viewId, DateRange dateRange, Metric metric, Dimension dimension, DimensionFilterClause dimensionFilterClause) {
+    private ReportRequest createReportRequest(String viewId, DateRange dateRange, DimensionFilterClause dimensionFilterClause) {
         return new ReportRequest()
                 .setViewId(viewId)
                 .setDateRanges(Collections.singletonList(dateRange))
-                .setMetrics(Collections.singletonList(metric))
-                .setDimensions(Collections.singletonList(dimension))
+                .setMetrics(createMetrics())
+                .setDimensions(createDimensions())
                 .setDimensionFilterClauses(Collections.singletonList(dimensionFilterClause));
+    }
+
+    private String getCurrentDateMinusNdays(long nDays) {
+        String gaDateFormatPattern = "yyyy-MM-dd";
+        LocalDate localDate = LocalDate.now().minusDays(nDays);
+        return localDate.format(ofPattern(gaDateFormatPattern));
     }
 }

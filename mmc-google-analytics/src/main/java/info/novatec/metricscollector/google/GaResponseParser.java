@@ -1,8 +1,6 @@
 package info.novatec.metricscollector.google;
 
 import com.google.api.services.analyticsreporting.v4.model.*;
-import info.novatec.metricscollector.google.GaDimensionsEnum;
-import info.novatec.metricscollector.google.GaMetricsEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -49,7 +47,7 @@ public class GaResponseParser {
 
                         pagePathDataMap.put(pagePath, innerDataMap);
                     });
-
+                    log.info(String.format("Total count of result rows is %d.", reportRows.size()));
                     responseList.add(pagePathDataMap);
                 }
         );
