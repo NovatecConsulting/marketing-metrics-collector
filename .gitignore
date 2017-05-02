@@ -3,5 +3,3 @@
 build/
 *.iml
 application.yml
-mmc-github/src/test/java/info/novatec/metricscollector/github/GithubTest.java
-mmc-twitter/src/test/java/info/novatec/metricscollector/twitter/TwitterTest.java

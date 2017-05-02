@@ -8,11 +8,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ApplicationInitializerGithub.class)
+@SpringBootTest(classes = GithubApplicationInitializer.class)
 public class GithubSystemTest {
 
     @Autowired
-    private GithubScheduler githubScheduler;
+    private Scheduler githubScheduler;
 
     @Test
     public void updateAllGithubProjectsMetricsTest(){

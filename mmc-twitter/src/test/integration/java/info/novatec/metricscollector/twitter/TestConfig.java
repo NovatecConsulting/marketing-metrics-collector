@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Import;
 
 
 @TestConfiguration
-@Import(ApplicationInitializerTwitter.class)
+@Import(TwitterApplicationInitializer.class)
 public class TestConfig {
 
 }

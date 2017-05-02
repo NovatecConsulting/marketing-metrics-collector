@@ -8,11 +8,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ApplicationInitializerTwitter.class)
+@SpringBootTest(classes = TwitterApplicationInitializer.class)
 public class TwitterSystemTest {
 
     @Autowired
-    private TwitterScheduler twitterScheduler;
+    private Scheduler twitterScheduler;
 
     @Test
     public void updateAllGithubProjectsMetricsTest(){

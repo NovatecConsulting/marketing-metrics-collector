@@ -16,7 +16,7 @@ import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
-import info.novatec.metricscollector.twitter.metrics.TwitterMetricAbstract;
+import info.novatec.metricscollector.twitter.collector.TwitterBasicMetricCollector;
 import info.novatec.metricscollector.twitter.util.CustomTwitterMetric;
 import info.novatec.metricscollector.twitter.util.DataProvider;
 
@@ -27,19 +27,19 @@ public class TweetsFromUserTimeLineTest {
     @MockBean
     private Twitter twitter;
 
-    private TwitterMetricsResult metrics;
+    private Metrics metrics;
 
     DataProvider data;
 
     @Before
     public void init(){
-        metrics = new TwitterMetricsResult();
+        metrics = new Metrics();
         data = new DataProvider();
     }
 
     @Test
     public void getSomeUnfilteredTweetsFromUserTimeLine() throws TwitterException {
-        TwitterMetricAbstract customTwitterMetric = new CustomTwitterMetric(twitter, metrics);
+        TwitterBasicMetricCollector customTwitterMetric = new CustomTwitterMetric(twitter, metrics);
         when(twitter.getUserTimeline(data.AT_USERNAME, data.getPaging(1))).thenReturn(data.createTweets(10));
         List<Status> tweets = customTwitterMetric.getUserTimeLine(data.AT_USERNAME);
         assertThat(tweets.size()).isEqualTo(10);
