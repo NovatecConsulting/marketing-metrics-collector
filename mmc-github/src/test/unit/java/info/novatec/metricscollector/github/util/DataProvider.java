@@ -5,9 +5,9 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import info.novatec.metricscollector.commons.DailyClicks;
-import info.novatec.metricscollector.github.GithubMetricsResult;
-import info.novatec.metricscollector.github.metrics.GithubMetricAbstract;
+import info.novatec.metricscollector.commons.PageViews;
+import info.novatec.metricscollector.github.Metrics;
+import info.novatec.metricscollector.github.collector.GithubBasicMetricCollector;
 
 
 public class DataProvider {
@@ -22,10 +22,10 @@ public class DataProvider {
     private static final String DAILY_VISITS_TIMESTAMP_2002_02_02 = "2002-02-02T00:00:00Z";
 
     public static String getRestURL(String repositoryName) {
-        return GithubMetricAbstract.GITHUB_URL + repositoryName;
+        return GithubBasicMetricCollector.GITHUB_URL + repositoryName;
     }
 
-    public static GithubMetricsResult fillMetrics(GithubMetricsResult metrics) {
+    public static Metrics fillMetrics(Metrics metrics) {
         metrics.setRepositoryName(NON_EXISTING_PROJECT);
         metrics.setContributors(1);
         metrics.setStars(2);
@@ -43,14 +43,14 @@ public class DataProvider {
         releaseDownloads.put("v3:project1.jar", 3);
         metrics.setReleaseDownloads(releaseDownloads);
 
-        DailyClicks dailyClicks = new DailyClicks(DAILY_VISITS_TIMESTAMP_2001_01_01, 10, 2);
+        PageViews dailyClicks = new PageViews(DAILY_VISITS_TIMESTAMP_2001_01_01, 10, 2);
         metrics.setDailyVisits(dailyClicks);
 
-        Map<String, DailyClicks> referringSites = new HashMap<>();
-        DailyClicks referrersVisits = new DailyClicks(DAILY_VISITS_TIMESTAMP_2001_01_01, 2, 1);
+        Map<String, PageViews> referringSites = new HashMap<>();
+        PageViews referrersVisits = new PageViews(DAILY_VISITS_TIMESTAMP_2001_01_01, 2, 1);
         referringSites.put("www.novatec.de", referrersVisits);
         referringSites.put("www.google.de", referrersVisits);
-        referrersVisits = new DailyClicks(DAILY_VISITS_TIMESTAMP_2002_02_02, 4, 2);
+        referrersVisits = new PageViews(DAILY_VISITS_TIMESTAMP_2002_02_02, 4, 2);
         referringSites.put("www.novatec.de", referrersVisits);
         referringSites.put("www.google.de", referrersVisits);
         metrics.setReferringSitesLast14Days(referringSites);
@@ -58,12 +58,12 @@ public class DataProvider {
         return metrics;
     }
 
-    public static GithubMetricsResult createMetrics(){
+    public static Metrics createMetrics(){
         return fillMetrics(createEmptyMetrics());
     }
 
-    public static GithubMetricsResult createEmptyMetrics(){
-        return new GithubMetricsResult(VALID_GITHUB_URL);
+    public static Metrics createEmptyMetrics(){
+        return new Metrics(VALID_GITHUB_URL);
     }
 
 }

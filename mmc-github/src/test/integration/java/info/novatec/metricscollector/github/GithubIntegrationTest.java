@@ -1,45 +1,14 @@
 package info.novatec.metricscollector.github;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import info.novatec.metricscollector.commons.MetricsResultCheck;
-import info.novatec.metricscollector.github.metrics.GithubMetricImpl;
 
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestConfig.class)
 public class GithubIntegrationTest {
 
-    private static final String VALID_URL = "https://github.com/nt-ca-aqe/marketing-metrics-collector";
-
-    private GithubMetricsResult metrics;
-
-    @Autowired
-    private RestService restService;
-
-    @Autowired
-    private GithubCollector collector;
-
-    @Autowired
-    private MetricsResultCheck metricsResultCheck;
-
-    @Before
-    public void init() {
-        metrics = new GithubMetricsResult(VALID_URL);
-        metrics.setCommits(2);
-    }
-
-    @Test
-    public void collectMetricsTest(){
-        collector.collect(new GithubMetricImpl(restService, metrics));
-        assertThat(metricsResultCheck.hasNullValues(metrics)).isFalse();
-    }
+//    TODO: Integrationstest schreiben, um Speicherung nach InfluxDB zu testen
 
 }

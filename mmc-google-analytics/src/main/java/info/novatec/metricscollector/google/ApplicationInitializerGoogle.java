@@ -8,7 +8,7 @@ import com.google.api.client.json.gson.GsonFactory;
 
 import com.google.api.services.analyticsreporting.v4.*;
 
-import info.novatec.metricscollector.commons.ApplicationInitializerCommons;
+import info.novatec.metricscollector.commons.CommonsApplicationInitializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 @SpringBootApplication
-@Import(ApplicationInitializerCommons.class)
+@Import(CommonsApplicationInitializer.class)
 @ConfigurationProperties(prefix = "google")
 public class ApplicationInitializerGoogle {
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();

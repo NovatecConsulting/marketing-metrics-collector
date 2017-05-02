@@ -17,7 +17,7 @@ import twitter4j.Status;
 import twitter4j.TwitterException;
 import twitter4j.User;
 
-import info.novatec.metricscollector.twitter.TwitterMetricsResult;
+import info.novatec.metricscollector.twitter.Metrics;
 
 
 public class DataProvider {
@@ -28,7 +28,7 @@ public class DataProvider {
     private static final String LIKES_OF_MENTIONS_TIMESTAMP_2001_01_01 = "Mon Jan 01 00:00:00 CET 2001";
     private static final String LIKES_OF_MENTIONS_TIMESTAMP_2002_02_02 = "Sat Feb 02 00:00:00 CET 2002";
 
-    public static TwitterMetricsResult fillMetrics(TwitterMetricsResult metrics) {
+    public static Metrics fillMetrics(Metrics metrics) {
         metrics.setUserName(USERNAME);
         metrics.setAtUserName(AT_USERNAME);
         metrics.setTweets(1);
@@ -43,12 +43,12 @@ public class DataProvider {
         return metrics;
     }
 
-    public static TwitterMetricsResult createMetrics(){
+    public static Metrics createMetrics(){
         return fillMetrics(createEmptyMetrics());
     }
 
-    public static TwitterMetricsResult createEmptyMetrics(){
-        return new TwitterMetricsResult();
+    public static Metrics createEmptyMetrics(){
+        return new Metrics();
     }
 
     public QueryResult mockQueryResult(ResponseList<Status> tweets) throws TwitterException {
