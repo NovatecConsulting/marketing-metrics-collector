@@ -9,3 +9,6 @@ install: true
 
 script:
   - ./gradlew build --stacktrace
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

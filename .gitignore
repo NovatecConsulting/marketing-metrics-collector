@@ -3,3 +3,4 @@
 build/
 *.iml
 application.yml
+client_secrets.json

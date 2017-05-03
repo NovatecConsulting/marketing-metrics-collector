@@ -1,6 +1,7 @@
 description = 'Marketing Metrics Collector'
 allprojects {
     apply plugin: 'maven'
+    apply plugin: 'jacoco'
 
     group = 'info.novatec'
     version = '1.0-SNAPSHOT'
@@ -57,5 +58,13 @@ subprojects {
         classpath = sourceSets.integration.runtimeClasspath
     }
 
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+            html.enabled false
+        }
+    }
+
+    check.dependsOn jacocoTestReport
 
 }
