@@ -8,12 +8,12 @@ import org.springframework.stereotype.Component;
 @Component
 @Setter
 @Getter
-public class GaConfigProperties {
+public class ConfigProperties {
     private String viewId;
     private String hostName;
 
-    public GaConfigProperties(@Value("${analytics.viewId}") String viewId,
-                              @Value("${analytics.hostName}") String hostName) {
+    public ConfigProperties(@Value("${analytics.viewId}") String viewId,
+                            @Value("${analytics.hostName}") String hostName) {
         this.viewId = viewId;
         this.hostName = hostName;
     }

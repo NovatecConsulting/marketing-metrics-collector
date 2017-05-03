@@ -4,6 +4,6 @@ import com.google.api.services.analyticsreporting.v4.model.GetReportsResponse;
 
 import java.io.IOException;
 
-public interface IGaReportRequestBuilder {
+public interface ReportRequestBuilder {
     GetReportsResponse sendReportRequest() throws IOException;
 }

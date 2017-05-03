@@ -4,7 +4,7 @@ package info.novatec.metricscollector.google;
  * This enum supports the metrics defined by Google Analytics for quering the GA Reporting API based on metrics.
  * When a new metric is need it has to be added to the enum.
  */
-public enum GaMetricsEnum {
+public enum GoogleAnalyticsMetricsEnum {
     GA_PAGE_VIEWS("ga:pageviews"),
     GA_UNIQUE_PAGE_VIEWS("ga:uniquePageviews"),
     GA_SESSION("ga:sessions"),
@@ -16,7 +16,7 @@ public enum GaMetricsEnum {
 
     private String metricName;
 
-    GaMetricsEnum(String metricName) {
+    GoogleAnalyticsMetricsEnum(String metricName) {
         this.metricName = metricName;
     }
 
