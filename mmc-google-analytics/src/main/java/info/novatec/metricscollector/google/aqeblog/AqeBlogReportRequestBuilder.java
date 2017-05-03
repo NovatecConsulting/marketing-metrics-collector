@@ -2,8 +2,8 @@ package info.novatec.metricscollector.google.aqeblog;
 
 import com.google.api.services.analyticsreporting.v4.AnalyticsReporting;
 import com.google.api.services.analyticsreporting.v4.model.*;
-import info.novatec.metricscollector.google.GaConfigProperties;
-import info.novatec.metricscollector.google.IGaReportRequestBuilder;
+import info.novatec.metricscollector.google.ConfigProperties;
+import info.novatec.metricscollector.google.ReportRequestBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,22 +14,22 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static info.novatec.metricscollector.google.GaDimensionsEnum.*;
+import static info.novatec.metricscollector.google.GoogleAnalyticsDimensionsEnum.*;
 import static info.novatec.metricscollector.google.GaFilterOperatorsEnum.*;
-import static info.novatec.metricscollector.google.GaMetricsEnum.*;
+import static info.novatec.metricscollector.google.GoogleAnalyticsMetricsEnum.*;
 import static java.time.format.DateTimeFormatter.*;
 
 @Component
-public class AqeBlogReportRequestBuilder implements IGaReportRequestBuilder {
+public class AqeBlogReportRequestBuilder implements ReportRequestBuilder {
 
     private AnalyticsReporting service;
 
-    private GaConfigProperties gaConfigProperties;
+    private ConfigProperties configProperties;
 
     @Autowired
-    public AqeBlogReportRequestBuilder(AnalyticsReporting service, GaConfigProperties gaConfigProperties) {
+    public AqeBlogReportRequestBuilder(AnalyticsReporting service, ConfigProperties configProperties) {
         this.service = service;
-        this.gaConfigProperties = gaConfigProperties;
+        this.configProperties = configProperties;
     }
 
     @Override
@@ -39,11 +39,11 @@ public class AqeBlogReportRequestBuilder implements IGaReportRequestBuilder {
         List<ReportRequest> reportRequests = new ArrayList<>();
 
         DimensionFilter hostNameDimensionFilter = createDimensionFilter(GA_HOST_NAME.toString(), EXACT.toString(),
-                gaConfigProperties.getHostName());
+                configProperties.getHostName());
         dimensionFilters.add(hostNameDimensionFilter);
         DimensionFilterClause dimensionFilterClause = createDimensionFilterClause(AND.toString(), dimensionFilters);
 
-        ReportRequest reportRequest = createReportRequest(gaConfigProperties.getViewId(), dateRange, dimensionFilterClause);
+        ReportRequest reportRequest = createReportRequest(configProperties.getViewId(), dateRange, dimensionFilterClause);
         reportRequests.add(reportRequest);
 
         GetReportsRequest getReport = new GetReportsRequest()

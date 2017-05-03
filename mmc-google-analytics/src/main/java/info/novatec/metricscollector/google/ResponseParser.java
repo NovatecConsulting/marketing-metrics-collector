@@ -6,11 +6,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-import static info.novatec.metricscollector.google.GaDimensionsEnum.GA_PAGE_PATH;
+import static info.novatec.metricscollector.google.GoogleAnalyticsDimensionsEnum.GA_PAGE_PATH;
 
 @Component
 @Slf4j
-public class GaResponseParser {
+public class ResponseParser {
     private String pagePath;
 
     public List<Map<String, Map<String, Object>>> parseResponse(GetReportsResponse reportsResponse) {
@@ -29,7 +29,7 @@ public class GaResponseParser {
                         List<String> dimensionsData = row.getDimensions();
                         List<DateRangeValues> metricsData = row.getMetrics();
                         Map<String, Object> innerDataMap = new HashMap<>();
-                        List<GaDimensionsEnum> gaDimensions = getGaDimensionsAsList();
+                        List<GoogleAnalyticsDimensionsEnum> gaDimensions = getGaDimensionsAsList();
 
                         gaDimensions.forEach(gaDimension -> {
                             setPagePath(dimensionHeaders, dimensionsData, gaDimension.toString());
@@ -38,7 +38,7 @@ public class GaResponseParser {
                         });
 
                         metricsData.forEach(values -> {
-                            List<GaMetricsEnum> gaMetrics = getGaMetricsAsList();
+                            List<GoogleAnalyticsMetricsEnum> gaMetrics = getGaMetricsAsList();
                             List<String> metricValues = values.getValues();
                             List<String> metricHeadersAsString = getMetricHeaderEntriesAsStringList(metricHeaders);
                             gaMetrics.forEach(gaMetric -> addReportDataElementsIntoInnerMap(metricHeadersAsString, metricValues,
@@ -47,7 +47,7 @@ public class GaResponseParser {
 
                         pagePathDataMap.put(pagePath, innerDataMap);
                     });
-                    log.info(String.format("Total count of result rows is %d.", reportRows.size()));
+                    log.info(String.format("Total count of metrics returned in the report is %d.", reportRows.size()));
                     responseList.add(pagePathDataMap);
                 }
         );
@@ -82,12 +82,12 @@ public class GaResponseParser {
         }
     }
 
-    private List<GaDimensionsEnum> getGaDimensionsAsList() {
-        return new ArrayList<>(Arrays.asList(GaDimensionsEnum.values()));
+    private List<GoogleAnalyticsDimensionsEnum> getGaDimensionsAsList() {
+        return new ArrayList<>(Arrays.asList(GoogleAnalyticsDimensionsEnum.values()));
     }
 
-    private List<GaMetricsEnum> getGaMetricsAsList() {
-        return new ArrayList<>(Arrays.asList(GaMetricsEnum.values()));
+    private List<GoogleAnalyticsMetricsEnum> getGaMetricsAsList() {
+        return new ArrayList<>(Arrays.asList(GoogleAnalyticsMetricsEnum.values()));
     }
 
     private List<String> getMetricHeaderEntriesAsStringList(List<MetricHeaderEntry> metricHeaderEntries) {
