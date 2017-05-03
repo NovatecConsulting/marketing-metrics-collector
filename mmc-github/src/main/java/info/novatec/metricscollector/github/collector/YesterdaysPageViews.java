@@ -1,14 +1,17 @@
 package info.novatec.metricscollector.github.collector;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 
 import org.springframework.stereotype.Component;
 
+import lombok.Setter;
+
 import info.novatec.metricscollector.commons.PageViews;
-import info.novatec.metricscollector.github.RestService;
 import info.novatec.metricscollector.github.Metrics;
+import info.novatec.metricscollector.github.RestService;
 
 
 /**
@@ -17,10 +20,14 @@ import info.novatec.metricscollector.github.Metrics;
  * for its timestamp. If it is 'today' the return value is the entry for 'yesterday' resp. next to the last one.
  */
 @Component
-public class YesterdaysVisits extends GithubBasicMetricCollector implements GithubMetricCollector {
+public class YesterdaysPageViews extends GithubBasicMetricCollector implements GithubMetricCollector {
 
-    public YesterdaysVisits(RestService restService, Metrics metrics) {
+    @Setter
+    private Clock clock;
+
+    public YesterdaysPageViews(RestService restService, Metrics metrics) {
         super(restService, metrics);
+        clock = Clock.systemDefaultZone();
     }
 
     @Override
@@ -31,7 +38,7 @@ public class YesterdaysVisits extends GithubBasicMetricCollector implements Gith
         String timestamp = visits.getString("timestamp");
         int totalVisits = visits.getInt("count");
         int uniqueVisits = visits.getInt("uniques");
-        metrics.setDailyVisits(new PageViews(timestamp, totalVisits, uniqueVisits));
+        metrics.setYesterdaysPageViews(new PageViews(timestamp, totalVisits, uniqueVisits));
     }
 
     /**
@@ -46,7 +53,7 @@ public class YesterdaysVisits extends GithubBasicMetricCollector implements Gith
         JsonObject yesterdaysVisits = visits.getJsonObject(visits.size() - 1);
         String timestamp = yesterdaysVisits.getString("timestamp").split("T")[0];
 
-        if (LocalDate.parse(timestamp).toEpochDay() == LocalDate.now().toEpochDay()) {
+        if (LocalDate.parse(timestamp).toEpochDay() == LocalDate.now(clock).toEpochDay()) {
             yesterdaysVisits = visits.getJsonObject(visits.size() - 2);
         }
         return yesterdaysVisits;

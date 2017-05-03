@@ -6,7 +6,6 @@ import java.util.SortedMap;
 import org.springframework.stereotype.Component;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import info.novatec.metricscollector.commons.PageViews;
@@ -15,7 +14,6 @@ import info.novatec.metricscollector.commons.PageViews;
 @Getter
 @Setter
 @Component
-@NoArgsConstructor
 public class Metrics {
 
     private static final String GITHUB_BASE_URL = "https://github.com/";
@@ -31,7 +29,7 @@ public class Metrics {
     private Integer closedIssues;
     private Integer commits;
     private SortedMap<String, Integer> releaseDownloads;
-    private PageViews dailyVisits;
+    private PageViews yesterdaysPageViews;
     private Map<String, PageViews> referringSitesLast14Days;
 
     public Metrics(String githubUrl) {

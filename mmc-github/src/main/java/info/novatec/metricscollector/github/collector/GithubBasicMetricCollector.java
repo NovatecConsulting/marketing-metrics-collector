@@ -7,10 +7,8 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import lombok.Getter;
 import lombok.Setter;
 
 import info.novatec.metricscollector.commons.MetricCollector;
@@ -24,11 +22,10 @@ public abstract class GithubBasicMetricCollector implements MetricCollector {
 
     public static final String GITHUB_URL = "https://api.github.com/repos/";
 
-    JsonObject projectRepository;
+    private JsonObject projectRepository;
 
     RestService restService;
 
-    @Getter
     Metrics metrics;
 
     @Autowired
@@ -37,8 +34,15 @@ public abstract class GithubBasicMetricCollector implements MetricCollector {
         this.metrics = metrics;
     }
 
-    ResponseEntity<String> getProjectRepository(String projectName) {
-        return restService.sendRequest(getBaseRequestUrl());
+    JsonObject getProjectRepository() {
+        if(!projectRepositoryAlreadyRequested()){
+            projectRepository = createJsonObject(restService.sendRequest(getBaseRequestUrl()).getBody());
+        }
+        return projectRepository;
+    }
+
+    boolean projectRepositoryAlreadyRequested(){
+        return projectRepository==null ? false : true;
     }
 
     JsonArray createJsonArray(String serializedJsonObject) {

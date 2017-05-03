@@ -1,7 +1,7 @@
 package info.novatec.metricscollector.github.collector;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import javax.json.JsonObject;
@@ -12,10 +12,9 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import info.novatec.metricscollector.github.util.DataProvider;
-
-import info.novatec.metricscollector.github.RestService;
 import info.novatec.metricscollector.github.Metrics;
+import info.novatec.metricscollector.github.RestService;
+import info.novatec.metricscollector.github.util.DataProvider;
 
 
 @RunWith(SpringRunner.class)
@@ -26,18 +25,22 @@ public class StarsTest {
 
     private Metrics metrics;
 
+    Stars stars;
+
+    @MockBean
+    JsonObject mockedRepository;
+
     @Before
     public void init() {
         metrics = DataProvider.createEmptyMetrics();
+        stars = spy(new Stars(restService, metrics));
+        when(mockedRepository.getInt("stargazers_count")).thenReturn(4);
     }
 
     @Test
     public void collectTest() {
-        Stars numberOfStars = new Stars(restService, metrics);
-        JsonObject mockedRepository = mock(JsonObject.class);
-        when(mockedRepository.getInt("stargazers_count")).thenReturn(4);
-        numberOfStars.setProjectRepository(mockedRepository);
-        numberOfStars.collect();
+        stars.setProjectRepository(mockedRepository);
+        stars.collect();
         assertThat(metrics.getStars()).isEqualTo(4);
     }
 }

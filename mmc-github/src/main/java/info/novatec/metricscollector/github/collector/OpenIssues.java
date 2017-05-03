@@ -15,9 +15,6 @@ public class OpenIssues extends GithubBasicMetricCollector implements GithubMetr
 
     @Override
     public void collect() {
-        if(projectRepository==null){
-            projectRepository = createJsonObject(getProjectRepository(metrics.getProjectName()).getBody());
-        }
-        metrics.setOpenIssues( projectRepository.getInt("open_issues_count"));
+        metrics.setOpenIssues( getProjectRepository().getInt("open_issues_count"));
     }
 }

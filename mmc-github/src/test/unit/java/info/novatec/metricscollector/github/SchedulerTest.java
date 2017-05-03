@@ -19,6 +19,7 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.HttpClientErrorException;
 
 import info.novatec.metricscollector.commons.exception.UserDeniedException;
 import info.novatec.metricscollector.github.collector.GithubMetricCollector;
@@ -49,7 +50,7 @@ public class SchedulerTest {
     }
 
     @Test
-    public void checkIfCollectorIsInvokedWithUrlsTest() {
+    public void collectWithInterfaceThatHasImplementations() {
         mockApplicationContext(scheduler);
         scheduler.updateAllGithubProjectsMetrics(GithubMetricCollectorWithImplementations.class);
 
@@ -58,7 +59,7 @@ public class SchedulerTest {
     }
 
     @Test
-    public void tryFindingCollectorsWithInterfaceThatHasNoImplementations(){
+    public void collectWithInterfaceThatHasNoImplementations(){
         mockApplicationContext(scheduler);
         scheduler.updateAllGithubProjectsMetrics(GithubMetricCollectorWithoutImplementations.class);
         //since there is no collector implemented, execution is not invoked
@@ -66,7 +67,7 @@ public class SchedulerTest {
     }
 
     @Test
-    public void checkThatNextCollectionIsInvokedWithNonAuthorizedUserTest(){
+    public void nextCollectionIsInvokedWithUserDeniedExceptionTest(){
         mockApplicationContext(scheduler);
         doThrow(UserDeniedException.class).when(scheduler).executeCollection(anyObject(), anyObject());
         scheduler.updateAllGithubProjectsMetrics(GithubMetricCollectorWithImplementations.class);
@@ -75,10 +76,23 @@ public class SchedulerTest {
     }
 
     @Test
-    public void checkIfCollectionIsInvokedBySchedulerMethodTest(){
+    public void collectionIsInvokedBySchedulerMethodTest(){
         doNothing().when(scheduler).updateAllGithubProjectsMetrics(GithubMetricCollector.class);
         scheduler.scheduleUpdateAllGithubProjectsMetrics();
         verify(scheduler).updateAllGithubProjectsMetrics(GithubMetricCollector.class);
+    }
+
+    @Test(expected = UserDeniedException.class)
+    public void throwUserDeniedException(){
+        Metrics metrics = mock(Metrics.class);
+        GithubMetricFakeCollector metric = spy(new GithubMetricFakeCollector(restService, metrics));
+        doThrow(HttpClientErrorException.class).when(metric).collect();
+        scheduler.executeCollection(metric, metrics);
+    }
+
+    @Test
+    public void getterMethodForUrlsExist() {
+        List<String> urls = scheduler.getUrls();
     }
 
     @SuppressWarnings("unchecked")

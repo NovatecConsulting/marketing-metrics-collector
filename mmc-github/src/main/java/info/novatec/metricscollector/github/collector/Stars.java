@@ -15,9 +15,6 @@ public class Stars extends GithubBasicMetricCollector implements GithubMetricCol
 
     @Override
     public void collect() {
-        if(projectRepository==null){
-            projectRepository = createJsonObject(getProjectRepository(metrics.getProjectName()).getBody());
-        }
-        metrics.setStars( projectRepository.getInt("stargazers_count"));
+        metrics.setStars( getProjectRepository().getInt("stargazers_count"));
     }
 }

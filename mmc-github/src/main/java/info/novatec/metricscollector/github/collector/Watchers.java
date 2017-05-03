@@ -15,9 +15,6 @@ public class Watchers extends GithubBasicMetricCollector implements GithubMetric
 
     @Override
     public void collect() {
-        if(projectRepository==null){
-            projectRepository = createJsonObject(getProjectRepository(metrics.getProjectName()).getBody());
-        }
-        metrics.setWatchers( projectRepository.getInt("subscribers_count"));
+        metrics.setWatchers( getProjectRepository().getInt("subscribers_count"));
     }
 }
