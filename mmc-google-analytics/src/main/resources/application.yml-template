@@ -1,0 +1,9 @@
+influx:
+    url:
+    dbName:
+    retention:
+analytics:
+    applicationName:
+    viewId:
+    keyFileLocation:
+    hostName:
