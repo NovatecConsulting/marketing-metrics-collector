@@ -2,6 +2,7 @@ package info.novatec.metricscollector.github.collector;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import javax.json.JsonObject;
@@ -12,10 +13,9 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import info.novatec.metricscollector.github.util.DataProvider;
-
-import info.novatec.metricscollector.github.RestService;
 import info.novatec.metricscollector.github.Metrics;
+import info.novatec.metricscollector.github.RestService;
+import info.novatec.metricscollector.github.util.DataProvider;
 
 
 @RunWith(SpringRunner.class)
@@ -26,18 +26,24 @@ public class WatchersTest {
 
     private Metrics metrics;
 
+    Watchers watchers;
+
+    @MockBean
+    JsonObject mockedRepository;
+
     @Before
     public void init(){
         metrics = DataProvider.createEmptyMetrics();
+        watchers = spy(new Watchers(restService, metrics));
+        when(mockedRepository.getInt("subscribers_count")).thenReturn(4);
     }
 
     @Test
     public void collectTest() {
-        Watchers numberOfWatchers = new Watchers(restService, metrics);
         JsonObject mockedRepository = mock(JsonObject.class);
         when(mockedRepository.getInt("subscribers_count")).thenReturn(4);
-        numberOfWatchers.setProjectRepository(mockedRepository);
-        numberOfWatchers.collect();
+        watchers.setProjectRepository(mockedRepository);
+        watchers.collect();
         assertThat(metrics.getWatchers()).isEqualTo(4);
     }
 }

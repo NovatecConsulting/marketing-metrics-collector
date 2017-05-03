@@ -15,9 +15,6 @@ public class Forks extends GithubBasicMetricCollector implements GithubMetricCol
 
     @Override
     public void collect() {
-        if(projectRepository==null){
-            projectRepository = createJsonObject(getProjectRepository(metrics.getProjectName()).getBody());
-        }
-        metrics.setForks( projectRepository.getInt("forks_count"));
+        metrics.setForks( getProjectRepository().getInt("forks_count"));
     }
 }

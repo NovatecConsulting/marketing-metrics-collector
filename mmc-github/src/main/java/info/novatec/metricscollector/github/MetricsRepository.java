@@ -51,8 +51,8 @@ public class MetricsRepository {
                 .addField("openIssues", metrics.getOpenIssues())
                 .addField("closedIssues", metrics.getClosedIssues())
                 .addField("commits", metrics.getCommits())
-                .addField("yesterdaysTotalVisits", metrics.getDailyVisits().getTotalVisits())
-                .addField("yesterdaysUniqueVisits", metrics.getDailyVisits().getUniqueVisits());
+                .addField("yesterdaysTotalVisits", metrics.getYesterdaysPageViews().getTotalVisits())
+                .addField("yesterdaysUniqueVisits", metrics.getYesterdaysPageViews().getUniqueVisits());
         metrics.getReleaseDownloads().entrySet().forEach(
             download -> point.addField(download.getKey(), download.getValue())
         );

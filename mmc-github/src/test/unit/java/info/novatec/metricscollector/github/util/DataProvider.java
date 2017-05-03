@@ -1,5 +1,6 @@
 package info.novatec.metricscollector.github.util;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
@@ -11,6 +12,12 @@ import info.novatec.metricscollector.github.collector.GithubBasicMetricCollector
 
 
 public class DataProvider {
+
+    public static final String LOCALDATE_TODAY = "2017-01-01";
+    public static final String LOCALDATE_YESTERDAY = "2016-12-31";
+    public static final String TIMESTAMP_TODAY = "2017-01-01T00:00:00Z";
+    public static final String TIMESTAMP_YESTERDAY = "2016-12-31T00:00:00Z";
+    public static final String TIMESTAMP_DAY_BEFORE_YESTERDAY = "2016-12-30T00:00:00Z";
 
     public static final String NON_EXISTING_PROJECT = "nonExistingProject";
 
@@ -44,7 +51,7 @@ public class DataProvider {
         metrics.setReleaseDownloads(releaseDownloads);
 
         PageViews dailyClicks = new PageViews(DAILY_VISITS_TIMESTAMP_2001_01_01, 10, 2);
-        metrics.setDailyVisits(dailyClicks);
+        metrics.setYesterdaysPageViews(dailyClicks);
 
         Map<String, PageViews> referringSites = new HashMap<>();
         PageViews referrersVisits = new PageViews(DAILY_VISITS_TIMESTAMP_2001_01_01, 2, 1);
@@ -64,6 +71,24 @@ public class DataProvider {
 
     public static Metrics createEmptyMetrics(){
         return new Metrics(VALID_GITHUB_URL);
+    }
+
+    public static String createResponseBodyWithYesterdaysData() {
+        return "{\"views\":["
+            + "{" + "\"timestamp\": \""+TIMESTAMP_DAY_BEFORE_YESTERDAY+"\"," + "\"count\": 26," + "\"uniques\": 4" + "},"
+            + "{" + "\"timestamp\": \""+TIMESTAMP_YESTERDAY+"\"," + "\"count\": 27," + "\"uniques\": 5" + "}]"
+            + "}";
+    }
+
+    public static String createResponseBodyWithYesterdaysAndTodaysData() {
+        return "{\"views\":["
+            + "{" + "\"timestamp\": \""+TIMESTAMP_YESTERDAY+"\"," + "\"count\": 27," + "\"uniques\": 5" + "},"
+            + "{" + "\"timestamp\": \""+TIMESTAMP_TODAY+"\"," + "\"count\": 28," + "\"uniques\": 6" + "}]"
+            + "}";
+    }
+
+    public static LocalDate getLocalDateToday(){
+        return LocalDate.parse(LOCALDATE_TODAY);
     }
 
 }

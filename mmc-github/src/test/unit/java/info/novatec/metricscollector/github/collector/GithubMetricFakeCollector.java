@@ -18,7 +18,7 @@ public class GithubMetricFakeCollector extends GithubBasicMetricCollector implem
     }
 
     public void collect() {
-        DataProvider.fillMetrics(getMetrics());
+        DataProvider.fillMetrics(metrics);
     }
 
 }

@@ -21,6 +21,12 @@ public class MetricsTest {
         assertThat(metrics.getRepositoryName()).isEqualTo(DataProvider.VALID_GITHUB_REPOSITORY);
     }
 
+    @Test
+    public void extractValidGithubUrlTest() throws Throwable {
+        Metrics metrics = new Metrics(DataProvider.VALID_GITHUB_URL);
+        assertThat(metrics.getGithubUrl()).isEqualTo(DataProvider.VALID_GITHUB_URL);
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void extractProjectNameWithInvalidUrlStringTest() throws Throwable {
         new Metrics("https:github.comnt-ca-aqemarketing-metrics-collector");
