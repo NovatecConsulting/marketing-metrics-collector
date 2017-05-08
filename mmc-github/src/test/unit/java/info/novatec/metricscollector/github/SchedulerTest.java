@@ -21,11 +21,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.HttpClientErrorException;
 
-import info.novatec.metricscollector.commons.exception.UserDeniedException;
 import info.novatec.metricscollector.github.collector.GithubMetricCollector;
 import info.novatec.metricscollector.github.collector.GithubMetricCollectorWithImplementations;
 import info.novatec.metricscollector.github.collector.GithubMetricCollectorWithoutImplementations;
 import info.novatec.metricscollector.github.collector.GithubMetricFakeCollector;
+import info.novatec.metricscollector.github.exception.UserDeniedException;
 import info.novatec.metricscollector.github.util.DataProvider;
 
 

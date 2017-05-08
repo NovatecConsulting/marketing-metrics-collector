@@ -1,4 +1,4 @@
-package info.novatec.metricscollector.commons.exception;
+package info.novatec.metricscollector.github.exception;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
+
 
 @RunWith(SpringRunner.class)
 public class UserDeniedExceptionTest {
