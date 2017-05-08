@@ -19,13 +19,13 @@ public class MetricsRepository {
 
     private InfluxService influx;
 
-    private MetricsValidator metricsResultCheck;
+    private MetricsValidator metricsValidator;
 
     @Autowired
     MetricsRepository(InfluxService influx, MetricsValidator metricsValidator) {
 
         this.influx = influx;
-        this.metricsResultCheck = metricsValidator;
+        this.metricsValidator = metricsValidator;
     }
 
     void saveMetrics(Metrics metrics) {
@@ -37,7 +37,7 @@ public class MetricsRepository {
         log.info("Start creating points for repository '" + metrics.getRepositoryName() + "'.");
         List<Point> points = new ArrayList<>();
 
-        if(metricsResultCheck.hasNullValues(metrics)){
+        if(metricsValidator.hasNullValues(metrics)){
             log.error("Since there are null values in metrics, creating points for repository '"
                 + metrics.getRepositoryName() + "' isn't possible!\n" + metrics.toString());
             return points;

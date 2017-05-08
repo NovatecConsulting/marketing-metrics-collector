@@ -1,98 +1,64 @@
 package info.novatec.metricscollector.google;
 
-import com.google.api.services.analyticsreporting.v4.model.*;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import com.google.api.services.analyticsreporting.v4.model.GetReportsResponse;
+import com.google.api.services.analyticsreporting.v4.model.MetricHeaderEntry;
+import com.google.api.services.analyticsreporting.v4.model.Report;
 
-import static info.novatec.metricscollector.google.GoogleAnalyticsDimensionsEnum.GA_PAGE_PATH;
+import lombok.extern.slf4j.Slf4j;
 
-@Component
 @Slf4j
+@Component
 public class ResponseParser {
-    private String pagePath;
 
-    public List<Map<String, Map<String, Object>>> parseResponse(GetReportsResponse reportsResponse) {
-        List<Map<String, Map<String, Object>>> responseList = new ArrayList<>();
-        if (reportsResponse.getReports().size() == 0) {
-            log.info("No data for the requested report has been found.");
-        }
-        reportsResponse.getReports().forEach(report -> {
-                    ColumnHeader columnHeader = report.getColumnHeader();
-                    List<String> dimensionHeaders = columnHeader.getDimensions();
-                    List<MetricHeaderEntry> metricHeaders = columnHeader.getMetricHeader().getMetricHeaderEntries();
-                    List<ReportRow> reportRows = report.getData().getRows();
-                    Map<String, Map<String, Object>> pagePathDataMap = new HashMap<>();
+    private static final String GA_PAGE_PATH = "ga:pagePath";
 
-                    reportRows.forEach(row -> {
-                        List<String> dimensionsData = row.getDimensions();
-                        List<DateRangeValues> metricsData = row.getMetrics();
-                        Map<String, Object> innerDataMap = new HashMap<>();
-                        List<GoogleAnalyticsDimensionsEnum> gaDimensions = getGaDimensionsAsList();
+    public void parse(GetReportsResponse reportsResponse, List<Metrics> targetListOfMetrics){
+        Report report = reportsResponse.getReports().get(0);
+        List<String> dimensionsHeaders = report.getColumnHeader().getDimensions();
+        List<MetricHeaderEntry> metricsHeaders = report.getColumnHeader().getMetricHeader().getMetricHeaderEntries();
 
-                        gaDimensions.forEach(gaDimension -> {
-                            setPagePath(dimensionHeaders, dimensionsData, gaDimension.toString());
-                            addReportDataElementsIntoInnerMap(dimensionHeaders, dimensionsData,
-                                    gaDimension.toString(), innerDataMap);
-                        });
-
-                        metricsData.forEach(values -> {
-                            List<GoogleAnalyticsMetricsEnum> gaMetrics = getGaMetricsAsList();
-                            List<String> metricValues = values.getValues();
-                            List<String> metricHeadersAsString = getMetricHeaderEntriesAsStringList(metricHeaders);
-                            gaMetrics.forEach(gaMetric -> addReportDataElementsIntoInnerMap(metricHeadersAsString, metricValues,
-                                    gaMetric.toString(), innerDataMap));
-                        });
-
-                        pagePathDataMap.put(pagePath, innerDataMap);
-                    });
-                    log.info(String.format("Total count of metrics returned in the report is %d.", reportRows.size()));
-                    responseList.add(pagePathDataMap);
-                }
-        );
-        return responseList;
+        report.getData().getRows().forEach(row -> {
+            Metrics metrics = new Metrics();
+            List<String> dimensionsValues = row.getDimensions();
+            List<String> metricsValues = row.getMetrics().get(0).getValues(); //parse only first daterange
+            getDimensionsValues(dimensionsHeaders, dimensionsValues, metrics);
+            getMetricsValues(metricsHeaders, metricsValues, metrics);
+            log.info("Collected {} metrics for pagePath '{}'.", metrics.getMetrics().size(), metrics.getPagePath());
+            targetListOfMetrics.add(metrics);
+        });
+        log.info("Collected metrics for {} pages.", targetListOfMetrics.size());
     }
 
-    private void addReportDataElementsIntoInnerMap(List<String> headers, List<String> elementValues, String elementName,
-                                                   Map<String, Object> innerDataMap) {
-        int index;
-        if (headers.contains(elementName)) {
-            index = headers.indexOf(elementName);
-            try {
-                innerDataMap.put(elementName, elementValues.get(index));
-                log.info("Elements ( " + elementName + ", " + elementValues.get(index) + " ) added to map.");
-            } catch (IndexOutOfBoundsException e) {
-                log.error(e.getMessage());
-            }
-        } else {
-            log.info("No element with name " + elementName + " is found in header list.");
-        }
-    }
-
-    private void setPagePath(List<String> dimensionHeaders, List<String> dimensionValues, String gaDimensionsValue) {
-        if (gaDimensionsValue.equals(GA_PAGE_PATH.toString())) {
-            int pagePathIndex = dimensionHeaders.indexOf(gaDimensionsValue);
-            try {
-                pagePath = dimensionValues.get(pagePathIndex);
-                log.info("Page path: " + pagePath + " added.");
-            } catch (IndexOutOfBoundsException e) {
-                log.error(e.getMessage());
+    private void getDimensionsValues(List<String> dimensionsHeaders, List<String> dimensionsValues, Metrics metrics){
+        for(int headersIndex=0; headersIndex<dimensionsHeaders.size(); headersIndex++){
+            String headerName = dimensionsHeaders.get(headersIndex);
+            String fieldValue = dimensionsValues.get(headersIndex);
+            if(headerName.equals(GA_PAGE_PATH)){
+                metrics.setPagePath(fieldValue);
+            } else{
+                metrics.addDimension(headerName, fieldValue);
             }
         }
     }
 
-    private List<GoogleAnalyticsDimensionsEnum> getGaDimensionsAsList() {
-        return new ArrayList<>(Arrays.asList(GoogleAnalyticsDimensionsEnum.values()));
+    private void getMetricsValues(List<MetricHeaderEntry> metricsHeaders, List<String> metricsValues, Metrics metrics){
+        for (int headersIndex=0; headersIndex<metricsHeaders.size(); headersIndex++){
+            String headerName =  metricsHeaders.get(headersIndex).getName();
+            Double fieldValue = cutDecimals(metricsValues.get(headersIndex));
+            metrics.addMetric(headerName, fieldValue);
+        }
     }
 
-    private List<GoogleAnalyticsMetricsEnum> getGaMetricsAsList() {
-        return new ArrayList<>(Arrays.asList(GoogleAnalyticsMetricsEnum.values()));
+    private Double cutDecimals(String number){
+        String[] result = number.split("\\.");
+        if(result.length>1 && result[1].length()>1){
+            number = result[0]+"."+result[1].substring(0, 2);
+        }
+        return Double.parseDouble(number);
     }
 
-    private List<String> getMetricHeaderEntriesAsStringList(List<MetricHeaderEntry> metricHeaderEntries) {
-        List<String> metricHeaders = new ArrayList<>();
-        metricHeaderEntries.forEach(metricHeaderEntry -> metricHeaders.add(metricHeaderEntry.getName()));
-        return metricHeaders;
-    }
 }

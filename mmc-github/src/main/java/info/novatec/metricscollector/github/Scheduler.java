@@ -17,9 +17,9 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import info.novatec.metricscollector.commons.MetricCollector;
-import info.novatec.metricscollector.commons.exception.UserDeniedException;
-import info.novatec.metricscollector.github.collector.GithubMetricCollector;
 import info.novatec.metricscollector.github.collector.GithubBasicMetricCollector;
+import info.novatec.metricscollector.github.collector.GithubMetricCollector;
+import info.novatec.metricscollector.github.exception.UserDeniedException;
 
 
 @Slf4j

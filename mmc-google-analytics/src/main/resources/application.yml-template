@@ -1,9 +1,20 @@
 influx:
-    url:
-    dbName:
-    retention:
-analytics:
-    applicationName:
-    viewId:
-    keyFileLocation:
+  url:
+  dbName:
+  retention:
+google-analytics:
+  cron:
+  applicationName: Google Analytics Metrics Collector
+  viewId:
+  keyFileLocation:
+  aqe-blog:
     hostName:
+    metrics:
+      -
+      -
+    dimensions:
+      -
+      -
+    excluded-urls:
+      -
+      -
