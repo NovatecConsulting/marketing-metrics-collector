@@ -41,6 +41,7 @@ public class StarsTest {
     public void collectTest() {
         stars.setProjectRepository(mockedRepository);
         stars.collect();
-        assertThat(metrics.getStars()).isEqualTo(4);
+        assertThat(metrics.getMetrics().size()).isEqualTo(1);
+        assertThat(metrics.getMetrics().entrySet().iterator().next().getValue()).isEqualTo(4);
     }
 }

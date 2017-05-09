@@ -1,6 +1,8 @@
 package info.novatec.metricscollector.twitter.collector;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -15,6 +17,7 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
 import info.novatec.metricscollector.twitter.Metrics;
+import info.novatec.metricscollector.twitter.exception.TwitterRuntimeException;
 import info.novatec.metricscollector.twitter.util.DataProvider;
 
 
@@ -43,6 +46,13 @@ public class LikesTest {
         tweets = data.createTweets(0);
         when(twitter.getUserTimeline(data.AT_USERNAME, data.getPaging(2))).thenReturn(tweets);
         new Likes(twitter, metrics).collect();
-        assertThat(metrics.getLikes()).isEqualTo(5);
+        assertThat(metrics.getMetrics().size()).isEqualTo(1);
+        assertThat(metrics.getMetrics().entrySet().iterator().next().getValue()).isEqualTo(5);
+    }
+
+    @Test(expected = TwitterRuntimeException.class)
+    public void twitterRuntimeExceptionInsteadOfTwitterExceptionIsThrown() throws Exception{
+        doThrow(TwitterException.class).when(twitter).getUserTimeline(anyObject(), anyObject());
+        new Likes(twitter, metrics).collect();
     }
 }

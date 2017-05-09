@@ -19,6 +19,6 @@ public class ClosedIssues extends GithubBasicMetricCollector implements GithubMe
     public void collect() {
         String url = getBaseRequestUrl() + "/issues/events";
         JsonArray closedIssues = createJsonArray(restService.sendRequest(url).getBody());
-        metrics.setClosedIssues(closedIssues.size());
+        metrics.addMetric("closedIssues", closedIssues.size());
     }
 }

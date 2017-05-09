@@ -41,6 +41,7 @@ public class ContributorsTest {
 
         Contributors numberOfContributors = new Contributors(restService, metrics);
         numberOfContributors.collect();
-        assertThat(metrics.getContributors()).isEqualTo(3);
+        assertThat(metrics.getMetrics().size()).isEqualTo(1);
+        assertThat(metrics.getMetrics().entrySet().iterator().next().getValue()).isEqualTo(3);
     }
 }

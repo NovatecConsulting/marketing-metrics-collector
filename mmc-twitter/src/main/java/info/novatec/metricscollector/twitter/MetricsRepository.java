@@ -48,22 +48,17 @@ public class MetricsRepository {
         }
 
         log.info("Adding measurement point for '" + metrics.getUserName() + " (@" + metrics.getAtUserName() + ")'...");
-        Point.Builder pointGeneral = Point.measurement(metrics.atUserName)
-            .addField("tweets", metrics.getTweets())
-            .addField("retweets", metrics.getReTweets())
-            .addField("mentions", metrics.getMentions())
-            .addField("followers", metrics.getFollowers());
-        points.add(pointGeneral.build());
+        Point.Builder point = Point.measurement(metrics.getAtUserName());
+        metrics.getMetrics().forEach(point::addField);
+        points.add(point.build());
 
-
-        metrics.getLikesOfMentions().entrySet().forEach( likes -> {
-                Point.Builder pointLikes = Point.measurement(metrics.atUserName+"_Likes")
-                    .time(convertDateTime(likes.getKey()), TimeUnit.SECONDS)
-                    .addField("totalLikes", metrics.getLikes())
-                    .addField("likesOfMentions", likes.getValue());
-                points.add(pointLikes.build());
-            });
-
+        metrics.getLikesOfMentions().forEach((key, value) -> {
+            Point.Builder pointLikes = Point.measurement(metrics.getAtUserName() + "_Likes")
+                .time(convertDateTime(key), TimeUnit.SECONDS)
+                .addField("totalLikes", metrics.getMetrics().get("likes"))
+                .addField("likesOfMentions", value);
+            points.add(pointLikes.build());
+        });
         log.info("Created "+points.size()+" points for user '" + metrics.getAtUserName() + "'.");
 
         return points;
@@ -73,7 +68,7 @@ public class MetricsRepository {
      * Example input: Mon Mar 20 21:44:45 CET 2017
      * output: 2017-03-20T21:44:45
      */
-    public long convertDateTime(String dateTime){
+    long convertDateTime(String dateTime){
         Locale dateLocale = Locale.UK;
         DateTimeFormatter inFormatter = DateTimeFormatter.ofPattern("E MMM dd HH:mm:ss z yyyy", dateLocale);
         TemporalAccessor date = inFormatter.parse(dateTime);

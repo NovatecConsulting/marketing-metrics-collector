@@ -1,6 +1,5 @@
 package info.novatec.metricscollector.github.util;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
@@ -34,13 +33,15 @@ public class DataProvider {
 
     public static Metrics fillMetrics(Metrics metrics) {
         metrics.setRepositoryName(NON_EXISTING_PROJECT);
-        metrics.setContributors(1);
-        metrics.setStars(2);
-        metrics.setForks(3);
-        metrics.setWatchers(4);
-        metrics.setOpenIssues(5);
-        metrics.setClosedIssues(6);
-        metrics.setCommits(7);
+        metrics.addMetric("contributors", 1);
+        metrics.addMetric("stars", 2);
+        metrics.addMetric("forks", 3);
+        metrics.addMetric("watchers", 4);
+        metrics.addMetric("openIssues", 5);
+        metrics.addMetric("closedIssues", 6);
+        metrics.addMetric("commits", 7);
+        metrics.addMetric("yesterdaysTotalVisits", 10);
+        metrics.addMetric("yesterdaysUniqueVisits", 2);
 
         SortedMap<String, Integer> releaseDownloads = new TreeMap<>();
         releaseDownloads.put("v1:project1.jar", 1);
@@ -49,9 +50,6 @@ public class DataProvider {
         releaseDownloads.put("v2:project2.jar", 1);
         releaseDownloads.put("v3:project1.jar", 3);
         metrics.setReleaseDownloads(releaseDownloads);
-
-        PageViews dailyClicks = new PageViews(DAILY_VISITS_TIMESTAMP_2001_01_01, 10, 2);
-        metrics.setYesterdaysPageViews(dailyClicks);
 
         Map<String, PageViews> referringSites = new HashMap<>();
         PageViews referrersVisits = new PageViews(DAILY_VISITS_TIMESTAMP_2001_01_01, 2, 1);
@@ -85,10 +83,6 @@ public class DataProvider {
             + "{" + "\"timestamp\": \""+TIMESTAMP_YESTERDAY+"\"," + "\"count\": 27," + "\"uniques\": 5" + "},"
             + "{" + "\"timestamp\": \""+TIMESTAMP_TODAY+"\"," + "\"count\": 28," + "\"uniques\": 6" + "}]"
             + "}";
-    }
-
-    public static LocalDate getLocalDateToday(){
-        return LocalDate.parse(LOCALDATE_TODAY);
     }
 
 }

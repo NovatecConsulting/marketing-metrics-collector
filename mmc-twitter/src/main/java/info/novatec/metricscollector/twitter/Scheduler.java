@@ -1,17 +1,14 @@
 package info.novatec.metricscollector.twitter;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import twitter4j.Twitter;
@@ -23,25 +20,19 @@ import info.novatec.metricscollector.twitter.exception.TwitterRuntimeException;
 
 
 @Slf4j
-@Setter
 @Component
+@RequiredArgsConstructor
 @ConfigurationProperties(prefix = "twitter")
 public class Scheduler implements ApplicationContextAware {
 
+    @Setter
     private ApplicationContext applicationContext;
 
-    private Twitter twitter;
+    private final TwitterProperties properties;
 
-    private MetricsRepository repository;
+    private final Twitter twitter;
 
-    @Getter
-    private Map<String, String> users;
-
-    @Autowired
-    public Scheduler(Twitter twitter, MetricsRepository repository) {
-        this.twitter = twitter;
-        this.repository = repository;
-    }
+    private final MetricsRepository repository;
 
     @Scheduled(cron = "${twitter.cron}")
     void scheduleUpdateAllTwitterUsersMetrics() {
@@ -49,9 +40,7 @@ public class Scheduler implements ApplicationContextAware {
     }
 
     void updateAllTwitterUsersMetrics(Class<? extends MetricCollector> metricClass) {
-        Map<String, String> appliedUsers = new HashMap<>();
-
-        users.forEach((atUsername, username) -> {
+        properties.getUsers().forEach((atUsername, username) -> {
             try {
                 atUsername = atUsername.charAt(0) == '@' ? atUsername.substring(1) : atUsername;
                 Metrics metrics = new Metrics(atUsername, username);
@@ -63,9 +52,7 @@ public class Scheduler implements ApplicationContextAware {
                     executeCollection(metricBean, metrics);
                 }
                 repository.saveMetrics(metrics);
-                appliedUsers.put(atUsername, username);
             } catch (TwitterRuntimeException e) {
-                appliedUsers.forEach(users::remove);
                 log.warn("Cannot collect twitter metrics for '" + atUsername + "'.\n" + e.getMessage());
             }
         });

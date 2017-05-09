@@ -1,19 +1,20 @@
 package info.novatec.metricscollector.github;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
 
 import org.springframework.stereotype.Component;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import info.novatec.metricscollector.commons.PageViews;
 
 
-@Getter
-@Setter
+@Data
 @Component
+@NoArgsConstructor
 public class Metrics {
 
     private static final String GITHUB_BASE_URL = "https://github.com/";
@@ -21,20 +22,20 @@ public class Metrics {
     private String githubUrl;
     private String repositoryName;
     private String projectName;
-    private Integer contributors;
-    private Integer stars;
-    private Integer forks;
-    private Integer watchers;
-    private Integer openIssues;
-    private Integer closedIssues;
-    private Integer commits;
+
     private SortedMap<String, Integer> releaseDownloads;
-    private PageViews yesterdaysPageViews;
     private Map<String, PageViews> referringSitesLast14Days;
+
+    private Map<String, Integer> metrics;
 
     public Metrics(String githubUrl) {
         this.githubUrl = githubUrl;
         extractProjectAndRepositoryNameFromGithubUrl();
+        metrics = new HashMap<>();
+    }
+
+    public void addMetric(String metricName, Integer value){
+        metrics.put(metricName, value);
     }
 
     void extractProjectAndRepositoryNameFromGithubUrl() {

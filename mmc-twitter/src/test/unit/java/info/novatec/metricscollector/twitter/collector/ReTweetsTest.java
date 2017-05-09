@@ -46,7 +46,8 @@ public class ReTweetsTest {
         when(twitter.getUserTimeline(data.AT_USERNAME, data.getPaging(1))).thenReturn(tweets);
         when(twitter.getUserTimeline(data.AT_USERNAME, data.getPaging(2))).thenReturn(data.createTweets(0));
         new ReTweets(twitter, metrics).collect();
-        assertThat(metrics.getReTweets()).isEqualTo(50);
+        assertThat(metrics.getMetrics().size()).isEqualTo(1);
+        assertThat(metrics.getMetrics().entrySet().iterator().next().getValue()).isEqualTo(50);
     }
 
     @Test
@@ -58,7 +59,8 @@ public class ReTweetsTest {
         when(twitter.getUserTimeline(data.AT_USERNAME, data.getPaging(2))).thenReturn(tweets);
         when(twitter.getUserTimeline(data.AT_USERNAME, data.getPaging(3))).thenReturn(data.createTweets(0));
         new ReTweets(twitter, metrics).collect();
-        assertThat(metrics.getReTweets()).isEqualTo(300);
+        assertThat(metrics.getMetrics().size()).isEqualTo(1);
+        assertThat(metrics.getMetrics().entrySet().iterator().next().getValue()).isEqualTo(300);
     }
 
     @Test(expected = TwitterRuntimeException.class)

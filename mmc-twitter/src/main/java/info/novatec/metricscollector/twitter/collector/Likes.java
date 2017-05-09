@@ -19,9 +19,9 @@ public class Likes extends TwitterBasicMetricCollector implements TwitterMetricC
     @Override
     public void collect() {
         try {
-            int likes =
-                getUserTimeLine(metrics.getAtUserName(), acceptTweets -> true).stream().mapToInt(Status::getFavoriteCount).sum();
-            metrics.setLikes(likes);
+            int likes = getUserTimeLine(metrics.getAtUserName(), acceptTweets -> true).stream()
+                .mapToInt(Status::getFavoriteCount).sum();
+            metrics.addMetric("likes", likes);
         }catch(TwitterException e){
             throw new TwitterRuntimeException(e);
         }

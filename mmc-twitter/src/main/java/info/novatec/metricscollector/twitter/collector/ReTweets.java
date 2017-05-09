@@ -21,7 +21,7 @@ public class ReTweets extends TwitterBasicMetricCollector implements TwitterMetr
         try {
             UserTimeLineFilter filter = tweet -> !tweet.isRetweeted();
             int reTweets = getUserTimeLine(metrics.getAtUserName(), filter).stream().mapToInt(Status::getRetweetCount).sum();
-            metrics.setReTweets(reTweets);
+            metrics.addMetric("retweets", reTweets);
         }catch(TwitterException e){
             throw new TwitterRuntimeException(e);
         }

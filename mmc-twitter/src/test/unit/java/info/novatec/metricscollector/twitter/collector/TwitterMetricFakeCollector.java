@@ -17,7 +17,7 @@ public class TwitterMetricFakeCollector extends TwitterBasicMetricCollector impl
     }
 
     public void collect() {
-        DataProvider.fillMetrics(getMetrics());
+        DataProvider.fillMetrics(metrics);
     }
 
 }

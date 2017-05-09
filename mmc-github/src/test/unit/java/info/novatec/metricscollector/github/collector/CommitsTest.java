@@ -41,6 +41,7 @@ public class CommitsTest {
 
         Commits numberOfCommits = new Commits(restService, metrics);
         numberOfCommits.collect();
-        assertThat(metrics.getCommits()).isEqualTo(3);
+        assertThat(metrics.getMetrics().size()).isEqualTo(1);
+        assertThat(metrics.getMetrics().entrySet().iterator().next().getValue()).isEqualTo(3);
     }
 }

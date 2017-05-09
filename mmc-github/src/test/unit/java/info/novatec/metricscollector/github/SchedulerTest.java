@@ -8,6 +8,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,9 @@ public class SchedulerTest {
     @MockBean
     private MetricsRepository repository;
 
+    @MockBean
+    private GithubProperties properties;
+
     private Scheduler scheduler;
 
     @Before
@@ -45,8 +49,8 @@ public class SchedulerTest {
         List<String> urls = new ArrayList<>();
         urls.add(DataProvider.VALID_GITHUB_URL+1);
         urls.add(DataProvider.VALID_GITHUB_URL+2);
-        scheduler = spy(new Scheduler(restService, repository));
-        scheduler.setUrls(urls);
+        scheduler = spy(new Scheduler(restService, repository, properties));
+        when(properties.getUrls()).thenReturn(urls);
     }
 
     @Test
@@ -88,11 +92,6 @@ public class SchedulerTest {
         GithubMetricFakeCollector metric = spy(new GithubMetricFakeCollector(restService, metrics));
         doThrow(HttpClientErrorException.class).when(metric).collect();
         scheduler.executeCollection(metric, metrics);
-    }
-
-    @Test
-    public void getterMethodForUrlsExist() {
-        List<String> urls = scheduler.getUrls();
     }
 
     @SuppressWarnings("unchecked")

@@ -41,6 +41,7 @@ public class OpenIssuesTest {
     public void collectTest() {
         openIssues.setProjectRepository(mockedRepository);
         openIssues.collect();
-        assertThat(metrics.getOpenIssues()).isEqualTo(4);
+        assertThat(metrics.getMetrics().size()).isEqualTo(1);
+        assertThat(metrics.getMetrics().entrySet().iterator().next().getValue()).isEqualTo(4);
     }
 }

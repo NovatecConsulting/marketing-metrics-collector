@@ -19,6 +19,6 @@ public class Commits extends GithubBasicMetricCollector implements GithubMetricC
     public void collect() {
         String url = getBaseRequestUrl() + "/commits";
         JsonArray commits = createJsonArray(restService.sendRequest(url).getBody());
-        metrics.setCommits(commits.size());
+        metrics.addMetric("commits", commits.size());
     }
 }

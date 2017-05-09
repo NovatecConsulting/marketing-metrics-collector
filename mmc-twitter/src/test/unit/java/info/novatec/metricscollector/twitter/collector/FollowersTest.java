@@ -39,7 +39,8 @@ public class FollowersTest {
         when(twitter.getFollowersIDs(-1)).thenReturn(ids);
         when(ids.getIDs()).thenReturn(listOfIds);
         new Followers(twitter, metrics).collect();
-        assertThat(metrics.getFollowers()).isEqualTo(100);
+        assertThat(metrics.getMetrics().size()).isEqualTo(1);
+        assertThat(metrics.getMetrics().entrySet().iterator().next().getValue()).isEqualTo(100);
     }
 
     @Test(expected = TwitterRuntimeException.class)

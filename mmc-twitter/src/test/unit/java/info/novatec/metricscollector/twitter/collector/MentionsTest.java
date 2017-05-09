@@ -49,7 +49,8 @@ public class MentionsTest {
         QueryResult result = data.mockQueryResult(tweets);
         when(twitter.search(query)).thenReturn(result);
         new Mentions(twitter, metrics).collect();
-        assertThat(metrics.getMentions()).isEqualTo(200);
+        assertThat(metrics.getMetrics().size()).isEqualTo(1);
+        assertThat(metrics.getMetrics().entrySet().iterator().next().getValue()).isEqualTo(200);
     }
 
     @Test(expected = TwitterRuntimeException.class)
