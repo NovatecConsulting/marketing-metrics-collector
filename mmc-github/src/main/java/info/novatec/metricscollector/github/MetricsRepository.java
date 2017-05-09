@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.influxdb.dto.Point;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import info.novatec.metricscollector.commons.InfluxService;
@@ -15,18 +15,12 @@ import info.novatec.metricscollector.commons.MetricsValidator;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class MetricsRepository {
 
-    private InfluxService influx;
+    private final InfluxService influx;
 
-    private MetricsValidator metricsValidator;
-
-    @Autowired
-    MetricsRepository(InfluxService influx, MetricsValidator metricsValidator) {
-
-        this.influx = influx;
-        this.metricsValidator = metricsValidator;
-    }
+    private final MetricsValidator metricsValidator;
 
     void saveMetrics(Metrics metrics) {
         influx.savePoint(createPoints(metrics));
@@ -34,44 +28,34 @@ public class MetricsRepository {
     }
 
     List<Point> createPoints(Metrics metrics) {
-        log.info("Start creating points for repository '" + metrics.getRepositoryName() + "'.");
+        log.info("Start creating points for repository '{}'.", metrics.getRepositoryName());
         List<Point> points = new ArrayList<>();
 
         if(metricsValidator.hasNullValues(metrics)){
-            log.error("Since there are null values in metrics, creating points for repository '"
-                + metrics.getRepositoryName() + "' isn't possible!\n" + metrics.toString());
+            log.error("Since there are null values in metrics, creating points for repository '{}' isn't possible!"
+                + "collected metrics:\n{}" , metrics.getRepositoryName(), metrics.toString());
             return points;
         }
 
-        Point.Builder point = Point.measurement(metrics.getRepositoryName())
-                .addField("contributors", metrics.getContributors())
-                .addField("stars", metrics.getStars())
-                .addField("forks", metrics.getForks())
-                .addField("watchers", metrics.getWatchers())
-                .addField("openIssues", metrics.getOpenIssues())
-                .addField("closedIssues", metrics.getClosedIssues())
-                .addField("commits", metrics.getCommits())
-                .addField("yesterdaysTotalVisits", metrics.getYesterdaysPageViews().getTotalVisits())
-                .addField("yesterdaysUniqueVisits", metrics.getYesterdaysPageViews().getUniqueVisits());
+        Point.Builder point = Point.measurement(metrics.getRepositoryName());
+        metrics.getMetrics().forEach((key, value)-> {
+            point.addField(key, value);
+        });
         metrics.getReleaseDownloads().entrySet().forEach(
             download -> point.addField(download.getKey(), download.getValue())
         );
-
+        points.add(point.build());
 
         metrics.getReferringSitesLast14Days().entrySet().forEach( referrer -> {
             Point pointReferrer = Point
                 .measurement(metrics.getRepositoryName()+"_Referrer")
                 .tag("referringSite", referrer.getKey())
-                .addField("clicksLast14Days", referrer.getValue().getTotalVisits())
-                .addField("uniqueClicksLast14Days", referrer.getValue().getUniqueVisits())
+                .addField("totalVisitsLast14Days", referrer.getValue().getTotalVisits())
+                .addField("uniqueVisitsLast14Days", referrer.getValue().getUniqueVisits())
                 .build();
             points.add(pointReferrer);
         });
-
-        points.add(point.build());
-
-        log.info("Created "+points.size()+" points for repository '" + metrics.getRepositoryName() + "'.");
-
+        log.info("Created {} points for repository '{}'.", points.size(), metrics.getRepositoryName());
         return points;
     }
 

@@ -20,7 +20,7 @@ public class Tweets extends TwitterBasicMetricCollector implements TwitterMetric
         try {
             UserTimeLineFilter filter = tweet -> !tweet.isRetweeted();
             int tweets = getUserTimeLine(metrics.getAtUserName(), filter).size();
-            metrics.setTweets(tweets);
+            metrics.addMetric("tweets", tweets);
         }catch(TwitterException e){
             throw new TwitterRuntimeException(e);
         }

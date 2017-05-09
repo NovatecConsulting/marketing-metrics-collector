@@ -44,7 +44,8 @@ public class TweetsTest {
     public void collectNumberOfTweetsTest() throws TwitterException {
         when(twitter.getUserTimeline(data.AT_USERNAME, data.getPaging(1))).thenReturn(data.createTweets(10));
         new Tweets(twitter, metrics).collect();
-        assertThat(metrics.getTweets()).isEqualTo(10);
+        assertThat(metrics.getMetrics().size()).isEqualTo(1);
+        assertThat(metrics.getMetrics().entrySet().iterator().next().getValue()).isEqualTo(10);
     }
 
     @Test
@@ -54,7 +55,8 @@ public class TweetsTest {
         tweets = data.setAsRetweeted(data.createTweets(0), 25);
         when(twitter.getUserTimeline(data.AT_USERNAME, data.getPaging(2))).thenReturn(tweets);
         new Tweets(twitter, metrics).collect();
-        assertThat(metrics.getTweets()).isEqualTo(150);
+        assertThat(metrics.getMetrics().size()).isEqualTo(1);
+        assertThat(metrics.getMetrics().entrySet().iterator().next().getValue()).isEqualTo(150);
     }
 
     @Test(expected = TwitterRuntimeException.class)

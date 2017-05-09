@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import lombok.Setter;
 
-import info.novatec.metricscollector.commons.PageViews;
 import info.novatec.metricscollector.github.Metrics;
 import info.novatec.metricscollector.github.RestService;
 
@@ -35,10 +34,10 @@ public class YesterdaysPageViews extends GithubBasicMetricCollector implements G
         String url = getBaseRequestUrl() + "/traffic/views";
         JsonObject visitors = createJsonObject(restService.sendRequest(url).getBody());
         JsonObject visits = getYesterdaysVisits(visitors.getJsonArray("views"));
-        String timestamp = visits.getString("timestamp");
         int totalVisits = visits.getInt("count");
         int uniqueVisits = visits.getInt("uniques");
-        metrics.setYesterdaysPageViews(new PageViews(timestamp, totalVisits, uniqueVisits));
+        metrics.addMetric("yesterdaysTotalVisits", totalVisits);
+        metrics.addMetric("yesterdaysUniqueVisits", uniqueVisits);
     }
 
     /**

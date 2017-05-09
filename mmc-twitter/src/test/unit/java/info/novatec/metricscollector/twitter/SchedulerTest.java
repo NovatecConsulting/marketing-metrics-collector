@@ -8,6 +8,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +37,9 @@ import info.novatec.metricscollector.twitter.util.DataProvider;
 public class SchedulerTest {
 
     @MockBean
+    private TwitterProperties properties;
+
+    @MockBean
     private Twitter twitter;
 
     @MockBean
@@ -48,8 +52,8 @@ public class SchedulerTest {
         Map<String, String> users = new HashMap<>();
         users.put(DataProvider.AT_USERNAME + "1", DataProvider.USERNAME + "1");
         users.put(DataProvider.AT_USERNAME + "2", DataProvider.USERNAME + "2");
-        scheduler = spy(new Scheduler(twitter, repository));
-        scheduler.setUsers(users);
+        scheduler = spy(new Scheduler(properties, twitter, repository));
+        when(properties.getUsers()).thenReturn(users);
     }
 
     @Test

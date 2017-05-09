@@ -19,7 +19,7 @@ public class Contributors extends GithubBasicMetricCollector implements GithubMe
     public void collect() {
         String url = getBaseRequestUrl() + "/contributors";
         JsonArray contributors = createJsonArray(restService.sendRequest(url).getBody());
-        metrics.setContributors(contributors.size());
+        metrics.addMetric("contributors", contributors.size());
     }
 
 }

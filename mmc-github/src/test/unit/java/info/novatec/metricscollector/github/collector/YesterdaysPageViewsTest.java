@@ -41,32 +41,24 @@ public class YesterdaysPageViewsTest {
     }
 
     @Test
-    public void timestampTest() {
-
-        String responseBody = DataProvider.createResponseBodyWithYesterdaysData();
-        collectYesterdaysPageViews(responseBody);
-        assertThat(metrics.getYesterdaysPageViews().getTimestamp()).isEqualTo(DataProvider.TIMESTAMP_YESTERDAY);
-    }
-
-    @Test
     public void totalVisitsTest() {
         String responseBody = DataProvider.createResponseBodyWithYesterdaysData();
         collectYesterdaysPageViews(responseBody);
-        assertThat(metrics.getYesterdaysPageViews().getTotalVisits()).isEqualTo(27);
+        assertThat(metrics.getMetrics().get("yesterdaysTotalVisits")).isEqualTo(27);
     }
 
     @Test
     public void uniqueVisitsTest() {
         String responseBody = DataProvider.createResponseBodyWithYesterdaysData();
         collectYesterdaysPageViews(responseBody);
-        assertThat(metrics.getYesterdaysPageViews().getUniqueVisits()).isEqualTo(5);
+        assertThat(metrics.getMetrics().get("yesterdaysUniqueVisits")).isEqualTo(5);
     }
 
     @Test
     public void responseAlwaysYesterdaysData() throws Exception {
         String responseBody = DataProvider.createResponseBodyWithYesterdaysAndTodaysData();
         collectYesterdaysPageViews(responseBody);
-        assertThat(metrics.getYesterdaysPageViews().getTimestamp()).isEqualTo(DataProvider.TIMESTAMP_YESTERDAY);
+        assertThat(metrics.getMetrics().get("yesterdaysTotalVisits")).isEqualTo(27);
     }
 
     private void collectYesterdaysPageViews(String responseBody) {

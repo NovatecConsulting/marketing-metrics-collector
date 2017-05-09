@@ -44,6 +44,7 @@ public class WatchersTest {
         when(mockedRepository.getInt("subscribers_count")).thenReturn(4);
         watchers.setProjectRepository(mockedRepository);
         watchers.collect();
-        assertThat(metrics.getWatchers()).isEqualTo(4);
+        assertThat(metrics.getMetrics().size()).isEqualTo(1);
+        assertThat(metrics.getMetrics().entrySet().iterator().next().getValue()).isEqualTo(4);
     }
 }

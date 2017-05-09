@@ -46,4 +46,10 @@ public class MetricsTest {
     public void extractProjectNameWithNullUrlStringTest() throws Throwable {
         new Metrics(null);
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void extractProjectNameWithNoArgsConstructor() throws Throwable {
+        Metrics metrics = new Metrics();
+        metrics.extractProjectAndRepositoryNameFromGithubUrl();
+    }
 }

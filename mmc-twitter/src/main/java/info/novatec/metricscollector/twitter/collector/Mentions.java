@@ -27,7 +27,7 @@ public class Mentions extends TwitterBasicMetricCollector implements TwitterMetr
             List<Status> tweets = getAllTweets(new Query("@" + metrics.getAtUserName()));
             //filter out mentions from user itself
             long mentioned = tweets.stream().filter(tweet -> !tweet.getUser().getName().equals(metrics.getUserName())).count();
-            metrics.setMentions(Ints.checkedCast(mentioned));
+            metrics.addMetric("mentions", Ints.checkedCast(mentioned));
         }catch(TwitterException e){
             throw new TwitterRuntimeException(e);
         }

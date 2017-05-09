@@ -8,26 +8,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
-
+@Data
 @Slf4j
-@Setter
 @Component
 public class RestService {
 
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    @Getter
     private HttpHeaders httpHeaders;
-
     private String token;
 
     @Autowired
-    public RestService(RestTemplate restTemplate, String token){
-        this.token = token;
+    public RestService(RestTemplate restTemplate, GithubProperties properties){
+        token = properties.getToken();
         this.restTemplate = restTemplate;
         setDefaultHttpHeaders();
     }
@@ -39,7 +35,7 @@ public class RestService {
 
     public void setDefaultHttpHeaders() {
         if (token == null || token.equals("")) {
-            log.error("Token '" + token + "' is not a valid Token. Please specify in properties.");
+            log.error("Token '{}' is not a valid Token. Please specify in properties.", token);
             token = "";
         }
         HttpHeaders httpHeaders = new HttpHeaders();

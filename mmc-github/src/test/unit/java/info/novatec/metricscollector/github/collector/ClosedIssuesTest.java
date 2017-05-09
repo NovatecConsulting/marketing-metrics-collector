@@ -40,6 +40,7 @@ public class ClosedIssuesTest {
 
         ClosedIssues numberOfClosedIssues = new ClosedIssues(restService, metrics);
         numberOfClosedIssues.collect();
-        assertThat(metrics.getClosedIssues()).isEqualTo(3);
+        assertThat(metrics.getMetrics().size()).isEqualTo(1);
+        assertThat(metrics.getMetrics().entrySet().iterator().next().getValue()).isEqualTo(3);
     }
 }

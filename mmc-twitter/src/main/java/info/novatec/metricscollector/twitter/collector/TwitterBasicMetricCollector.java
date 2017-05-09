@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import lombok.Getter;
 import lombok.Setter;
 import twitter4j.Paging;
 import twitter4j.Query;
@@ -25,7 +24,6 @@ public abstract class TwitterBasicMetricCollector implements MetricCollector {
 
     Twitter twitter;
 
-    @Getter
     Metrics metrics;
 
     public abstract void collect();

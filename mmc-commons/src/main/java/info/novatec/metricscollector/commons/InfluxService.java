@@ -28,10 +28,6 @@ public class InfluxService {
 
     private String url;
 
-    public InfluxService() {
-        configure();
-    }
-
     public InfluxService(InfluxDB influxDb) {
         this.influxDB = influxDb;
         configure();

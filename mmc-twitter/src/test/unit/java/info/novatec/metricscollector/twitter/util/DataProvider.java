@@ -31,15 +31,15 @@ public class DataProvider {
     public static Metrics fillMetrics(Metrics metrics) {
         metrics.setUserName(USERNAME);
         metrics.setAtUserName(AT_USERNAME);
-        metrics.setTweets(1);
-        metrics.setReTweets(2);
-        metrics.setMentions(3);
-        metrics.setLikes(4);
+        metrics.addMetric("tweets", 1);
+        metrics.addMetric("retweets", 2);
+        metrics.addMetric("mentions", 3);
+        metrics.addMetric("likes", 4);
+        metrics.addMetric("followers", 5);
         SortedMap<String, Integer> likesOfMentions = new TreeMap<>();
-        likesOfMentions.put(LIKES_OF_MENTIONS_TIMESTAMP_2001_01_01, 5);
-        likesOfMentions.put(LIKES_OF_MENTIONS_TIMESTAMP_2002_02_02, 6);
+        likesOfMentions.put(LIKES_OF_MENTIONS_TIMESTAMP_2001_01_01, 6);
+        likesOfMentions.put(LIKES_OF_MENTIONS_TIMESTAMP_2002_02_02, 7);
         metrics.setLikesOfMentions(likesOfMentions);
-        metrics.setFollowers(7);
         return metrics;
     }
 

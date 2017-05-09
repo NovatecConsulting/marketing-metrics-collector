@@ -41,6 +41,7 @@ public class ForksTest {
     public void collectTest() {
         forks.setProjectRepository(mockedRepository);
         forks.collect();
-        assertThat(metrics.getForks()).isEqualTo(4);
+        assertThat(metrics.getMetrics().size()).isEqualTo(1);
+        assertThat(metrics.getMetrics().entrySet().iterator().next().getValue()).isEqualTo(4);
     }
 }

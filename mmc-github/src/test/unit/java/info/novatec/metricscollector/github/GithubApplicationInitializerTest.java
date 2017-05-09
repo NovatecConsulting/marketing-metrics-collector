@@ -2,10 +2,10 @@ package info.novatec.metricscollector.github;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import javax.annotation.PostConstruct;
-
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
@@ -13,20 +13,15 @@ import org.springframework.web.client.RestTemplate;
 @RunWith(SpringRunner.class)
 public class GithubApplicationInitializerTest {
 
-    private static final String TOKEN = "aToken";
+    @MockBean
+    private GithubProperties properties;
 
     GithubApplicationInitializer initializer;
 
-    @PostConstruct
+    @Before
     public void init(){
         initializer = new GithubApplicationInitializer();
-    }
-
-    @Test
-    public void createToken(){
-        initializer.setToken(TOKEN);
-        String token = initializer.token();
-        assertThat(token).isEqualTo(TOKEN);
+        initializer.setGithubProperties(properties);
     }
 
     @Test

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,17 +21,20 @@ import org.springframework.web.client.RestTemplate;
 public class RestServiceTest {
 
     private static final String DEFAULT_TOKEN = "aDefaultToken";
-
     private static final String REQUEST_URL = "theRequestUrl";
 
     @MockBean
     RestTemplate restTemplate;
 
+    @MockBean
+    GithubProperties properties;
+
     private RestService restService;
 
     @Before
     public void init(){
-        this.restService = new RestService(restTemplate, DEFAULT_TOKEN);
+        when(properties.getToken()).thenReturn(DEFAULT_TOKEN);
+        this.restService = new RestService(restTemplate, properties);
     }
 
     @Test
@@ -61,5 +65,10 @@ public class RestServiceTest {
         restService.setToken("");
         verify(restService, times(1)).setDefaultHttpHeaders();
         assertThat(restService.getHttpHeaders().get("Authorization")).doesNotContain("");
+    }
+
+    @Test
+    public void verifyThatTokenExistsTest(){
+        assertThat(restService.getToken()).isNotNull();
     }
 }
