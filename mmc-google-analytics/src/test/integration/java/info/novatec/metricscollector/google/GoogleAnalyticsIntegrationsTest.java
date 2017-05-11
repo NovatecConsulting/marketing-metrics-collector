@@ -10,7 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ApplicationInitializerGoogle.class)
-public class GoogleAnalyticsSystemTest {
+public class GoogleAnalyticsIntegrationsTest {
 
     @Autowired
     private Scheduler scheduler;

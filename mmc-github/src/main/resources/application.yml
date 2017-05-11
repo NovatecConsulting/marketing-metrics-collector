@@ -1,0 +1,9 @@
+influx:
+    url: http://localhost:8000
+    dbName: marketing_metrics
+    retention: default
+github:
+  token:
+  cron: 0 1 * * * *
+  urls:
+    - https://github.com/nt-ca-aqe/marketing-metrics-collector

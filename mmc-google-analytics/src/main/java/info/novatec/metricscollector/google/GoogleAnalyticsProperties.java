@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 @Component
-@ConfigurationProperties("google-analytics")
+@ConfigurationProperties("ga")
 public class GoogleAnalyticsProperties {
 
     public static final String GA_HOSTNAME = "ga:hostname";
@@ -20,7 +20,13 @@ public class GoogleAnalyticsProperties {
 
     private String applicationName;
     private String viewId;
-    private String keyFileLocation;
+
+    private String project_id;
+    private String private_key_id;
+    private String private_key;
+    private String client_email;
+    private String client_id;
+    private String client_x509_cert_url;
 
     @Data
     public static class AqeBlog {
