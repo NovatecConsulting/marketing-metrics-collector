@@ -1,6 +1,8 @@
 package info.novatec.metricscollector.google;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,9 +43,8 @@ public class ApplicationInitializerGoogle {
 
     @Bean
     public GoogleCredential googleCredential() throws IOException {
-        ClassLoader classLoader = getClass().getClassLoader();
         return GoogleCredential
-                .fromStream(classLoader.getResourceAsStream(properties.getKeyFileLocation()))
+                .fromStream(createCredentialInputStream())
                 .createScoped(AnalyticsReportingScopes.all());
     }
 
@@ -58,4 +59,21 @@ public class ApplicationInitializerGoogle {
     public List<Metrics> metricsList(){
         return new ArrayList<>();
     }
+
+    private InputStream createCredentialInputStream(){
+        String credentials = "{\n"
+            + "  \"type\": \"service_account\",\n"
+            + "  \"project_id\": \""+properties.getProject_id()+"\",\n"
+            + "  \"private_key_id\": \""+properties.getPrivate_key_id()+"\",\n"
+            + "  \"private_key\": \""+properties.getPrivate_key()+"\",\n"
+            + "  \"client_email\": \""+properties.getClient_email()+"\",\n"
+            + "  \"client_id\": \""+properties.getClient_id()+"\",\n"
+            + "  \"auth_uri\": \"https://accounts.google.com/o/oauth2/auth\",\n"
+            + "  \"token_uri\": \"https://accounts.google.com/o/oauth2/token\",\n"
+            + "  \"auth_provider_x509_cert_url\": \"https://www.googleapis.com/oauth2/v1/certs\",\n"
+            + "  \"client_x509_cert_url\": \""+properties.getClient_x509_cert_url()+"\"\n"
+            + "}\n";
+        return new ByteArrayInputStream(credentials.getBytes());
+    }
+
 }

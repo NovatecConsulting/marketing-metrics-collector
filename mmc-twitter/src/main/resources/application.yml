@@ -1,0 +1,12 @@
+influx:
+    url: http://localhost:8000
+    dbName: marketing_metrics
+    retention: default
+twitter:
+  cron: 0 * * * * *
+  consumerKey:
+  consumerSecret:
+  accessToken:
+  accessSecret:
+  users:
+    "@NT_AQE": Quality Engineering

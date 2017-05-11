@@ -3,5 +3,5 @@
 build/
 out/
 *.iml
-application.yml
-client_secrets.json
+secrets.bat
+secrets.sh

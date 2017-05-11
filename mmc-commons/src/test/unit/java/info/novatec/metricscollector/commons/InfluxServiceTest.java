@@ -5,6 +5,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,19 +23,21 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class InfluxServiceTest {
 
     private static final String DB_NAME = "aDbName";
-    private static final String DB_URL = "http://www.aDbUrl.com";
     private static final String RETENTION = "aRetention";
 
     @MockBean
     private InfluxDB influxDB;
 
+    @MockBean
+    private CommonsProperties properties;
+
     private InfluxService influxService;
 
     @Before
     public void init(){
-        InfluxService influxService = new InfluxService(influxDB);
-        influxService.setDbName(DB_NAME);
-        influxService.setRetention(RETENTION);
+        InfluxService influxService = new InfluxService(influxDB, properties);
+        when(properties.getDbName()).thenReturn(DB_NAME);
+        when(properties.getRetention()).thenReturn(RETENTION);
         this.influxService = influxService;
     }
 
