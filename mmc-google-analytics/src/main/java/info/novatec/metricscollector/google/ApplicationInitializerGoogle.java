@@ -12,6 +12,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
@@ -24,6 +25,7 @@ import com.google.api.services.analyticsreporting.v4.AnalyticsReportingScopes;
 import info.novatec.metricscollector.commons.CommonsApplicationInitializer;
 
 
+@EnableScheduling
 @SpringBootApplication
 @Import(CommonsApplicationInitializer.class)
 public class ApplicationInitializerGoogle {
@@ -73,6 +75,7 @@ public class ApplicationInitializerGoogle {
             + "  \"auth_provider_x509_cert_url\": \"https://www.googleapis.com/oauth2/v1/certs\",\n"
             + "  \"client_x509_cert_url\": \""+properties.getClient_x509_cert_url()+"\"\n"
             + "}\n";
+//        byte[] credentials = Base64.getDecoder().decode(properties.getClient_secrets_base64());
         return new ByteArrayInputStream(credentials.getBytes());
     }
 

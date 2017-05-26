@@ -33,7 +33,6 @@ public class MetricsRepository {
     }
 
     private List<Point> createPoints(Metrics metrics, String measurementName) {
-        log.info("Start creating points for page '{}'.", metrics.getPagePath());
         List<Point> points = new ArrayList<>();
 
         if(metricsValidator.hasNullValues(metrics)){

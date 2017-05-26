@@ -4,6 +4,6 @@ influx:
     retention: default
 github:
   token:
-  cron: 0 1 * * * *
+  cron: 0 * * * * *
   urls:
     - https://github.com/nt-ca-aqe/marketing-metrics-collector

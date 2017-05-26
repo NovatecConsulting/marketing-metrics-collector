@@ -28,6 +28,8 @@ public class GoogleAnalyticsProperties {
     private String client_id;
     private String client_x509_cert_url;
 
+    private String client_secrets_base64;
+
     @Data
     public static class AqeBlog {
         private String hostName;

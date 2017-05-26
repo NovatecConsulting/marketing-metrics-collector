@@ -1,4 +1,11 @@
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+
+plugins {
+    id 'org.springframework.boot' version '1.5.2.RELEASE'
+}
+
 description = 'Twitter Metrics Collector'
+
 dependencies {
     compile project(':mmc-commons')
     compile group: 'org.twitter4j', name: 'twitter4j-core', version: '4.0.6'
@@ -13,5 +20,11 @@ task(run, dependsOn: 'build', type: JavaExec) {
     }
     classpath = files(baseDir + fileNames)
     classpath = sourceSets.main.runtimeClasspath
-    main = 'info.novatec.metricscollector.twitter.ApplicationInitializerTwitter'
+    main = 'info.novatec.metricscollector.twitter.TwitterApplicationInitializer'
+}
+
+task buildImage(type: DockerBuildImage) {
+    dependsOn assemble
+    inputDir = project(":mmc-github").projectDir
+    tag = "mmc-github:${project.version}"
 }
