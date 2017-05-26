@@ -62,7 +62,7 @@ public class Scheduler implements ApplicationContextAware {
         try {
             metric.collect();
         }catch (HttpClientErrorException e) {
-            throw new UserDeniedException("No authorized user logged in! Please add a valid oauth token to the properties.");
+            throw new UserDeniedException("No authorized user logged in! Please add a valid github token!");
         }
     }
 }

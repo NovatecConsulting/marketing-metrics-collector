@@ -5,3 +5,4 @@ out/
 *.iml
 secrets.bat
 secrets.sh
+docker-compose.yml

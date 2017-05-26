@@ -20,17 +20,17 @@ public class ResponseParser {
         Report report = reportsResponse.getReports().get(0);
         List<String> dimensionsHeaders = report.getColumnHeader().getDimensions();
         List<MetricHeaderEntry> metricsHeaders = report.getColumnHeader().getMetricHeader().getMetricHeaderEntries();
-
+        final int[] numberOfMCollectedMetrics = { 0 };
         report.getData().getRows().forEach(row -> {
             Metrics metrics = new Metrics();
             List<String> dimensionsValues = row.getDimensions();
             List<String> metricsValues = row.getMetrics().get(0).getValues(); //parse only first daterange
             getDimensionsValues(dimensionsHeaders, dimensionsValues, metrics);
             getMetricsValues(metricsHeaders, metricsValues, metrics);
-            log.info("Collected {} metrics for pagePath '{}'.", metrics.getMetrics().size(), metrics.getPagePath());
+            numberOfMCollectedMetrics[0] += metrics.getMetrics().size();
             targetListOfMetrics.add(metrics);
         });
-        log.info("Collected metrics for {} pages.", targetListOfMetrics.size());
+        log.info("Collected {} metrics for {} pages.", numberOfMCollectedMetrics[0], targetListOfMetrics.size());
     }
 
     private void getDimensionsValues(List<String> dimensionsHeaders, List<String> dimensionsValues, Metrics metrics){

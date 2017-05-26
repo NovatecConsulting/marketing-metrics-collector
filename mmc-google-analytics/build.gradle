@@ -1,4 +1,11 @@
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+
+plugins {
+    id 'org.springframework.boot' version '1.5.2.RELEASE'
+}
+
 description = 'Metrics Collector for Google Analytics Projects'
+
 dependencies {
     compile project(':mmc-commons')
     compile group: 'com.google.apis', name: 'google-api-services-analytics', version: 'v3-rev139-1.22.0'
@@ -16,4 +23,10 @@ task(run, dependsOn: 'build', type: JavaExec) {
     classpath = files(baseDir + fileNames)
     classpath = sourceSets.main.runtimeClasspath
     main = 'info.novatec.metricscollector.google.ApplicationInitializerGoogle'
+}
+
+task buildImage(type: DockerBuildImage) {
+    dependsOn assemble
+    inputDir = project(":mmc-github").projectDir
+    tag = "mmc-github:${project.version}"
 }

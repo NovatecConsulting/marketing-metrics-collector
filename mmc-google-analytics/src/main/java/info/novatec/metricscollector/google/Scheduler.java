@@ -1,6 +1,5 @@
 package info.novatec.metricscollector.google;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -12,14 +11,13 @@ import info.novatec.metricscollector.google.collector.AqeBlog;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@ConfigurationProperties(prefix = "google-analytics")
 public class Scheduler {
 
     private final AqeBlog collectorAqeBlog;
 
     private final MetricsRepository metricsRepository;
 
-    @Scheduled(cron = "${google-analytics.cron}")
+    @Scheduled(cron = "${ga.cron}")
     void scheduleUpdateMetricsForAllWebpages() {
         collectorAqeBlog.collect();
         metricsRepository.saveMetrics(collectorAqeBlog.getMetrics(), "AqeBlog5");
