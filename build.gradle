@@ -20,6 +20,7 @@ allprojects {
 
     group = 'info.novatec'
     version = '1.0-SNAPSHOT'
+
 }
 
 subprojects {
@@ -76,21 +77,8 @@ subprojects {
             html.enabled false
         }
     }
-
     check.dependsOn jacocoTestReport
+
 }
 
-task buildAll(dependsOn: build){
-    println "config"
-
-    doFirst{
-        println "doFirst:"+project.name
-    }
-    doLast{
-        println "doLast:"+project.name
-    }
-}
-
-buildAll.mustRunAfter build
-composeUp.mustRunAfter buildAll
-composeUp.dependsOn buildAll
+composeUp.dependsOn subprojects.build
