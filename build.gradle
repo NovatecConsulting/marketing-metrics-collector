@@ -78,7 +78,17 @@ subprojects {
         }
     }
     check.dependsOn jacocoTestReport
+}
 
+task buildAll(dependsOn: build){
+    println "config"
+
+    doFirst{
+        println "doFirst:"+project.name
+    }
+    doLast{
+        println "doLast:"+project.name
+    }
 }
 
 composeUp.dependsOn subprojects.build
