@@ -20,6 +20,7 @@ allprojects {
 
     group = 'info.novatec'
     version = '1.0-SNAPSHOT'
+
 }
 
 subprojects {
@@ -76,7 +77,6 @@ subprojects {
             html.enabled false
         }
     }
-
     check.dependsOn jacocoTestReport
 }
 
@@ -91,6 +91,4 @@ task buildAll(dependsOn: build){
     }
 }
 
-buildAll.mustRunAfter build
-composeUp.mustRunAfter buildAll
-composeUp.dependsOn buildAll
+composeUp.dependsOn subprojects.build
