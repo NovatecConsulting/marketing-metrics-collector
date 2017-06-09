@@ -5,7 +5,6 @@ influx:
 ga:
   cron: 0 * * * * *
   applicationName: Google Analytics Metrics Collector
-  viewId:
   project_id:
   private_key_id:
   private_key:
@@ -13,6 +12,7 @@ ga:
   client_id:
   client_x509_cert_url:
   aqe-blog:
+    viewId:
     hostName: blog.novatec-gmbh.de
     metrics:
       - ga:pageviews
@@ -28,3 +28,6 @@ ga:
       - ga:pageTitle
     excluded-urls:
       - /
+  aqe-homepage:
+    viewId:
+    hostName: novatec-gmbh.de

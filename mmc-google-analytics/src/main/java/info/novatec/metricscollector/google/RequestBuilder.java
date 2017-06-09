@@ -2,6 +2,7 @@ package info.novatec.metricscollector.google;
 
 import static info.novatec.metricscollector.google.DimensionFilterOperators.EXACT;
 import static info.novatec.metricscollector.google.DimensionFilterOperators.NOT;
+import static info.novatec.metricscollector.google.GoogleAnalyticsProperties.*;
 import static java.time.format.DateTimeFormatter.ofPattern;
 
 import java.io.IOException;
@@ -40,21 +41,22 @@ public class RequestBuilder {
     private DateRange dateRange;
     private GetReportsRequest reportsRequest;
 
-    public RequestBuilder prepareRequest(String hostName){
+    //TODO Add Java Doc
+    public RequestBuilder prepareRequest() {
         metrics = new ArrayList<>();
         dimensions = new ArrayList<>();
         dimensionFilters = new ArrayList<>();
 
-        addDimensionFilters(GoogleAnalyticsProperties.GA_HOSTNAME, EXACT, Collections.singletonList(hostName));
-        LocalDate yesterdaysDate = LocalDate.now().minusDays(1);
-        addDateRange(yesterdaysDate, yesterdaysDate);
+        addDimensionFilters(GA_HOSTNAME, EXACT, Collections.singletonList(properties.getAqeBlog().getHostName()));
+        LocalDate currentDateMinusOne = LocalDate.now().minusDays(1);
+        addDateRange(currentDateMinusOne, currentDateMinusOne);
         return this;
     }
 
     /**
-     * Creates the Metric objects with its required values. Metric is a termin coming from Google Analytics Reporting API.
-     * Maximum number of metrics for a GA Request is 10
-     *
+     * @param metricNames a list of the Google Analytics Metric identifier
+     * Adds all required metrics into the Request Builder. Metric is a termin coming from Google Analytics Reporting API.
+     * Maximum number of metrics per single request is 10
      */
     public RequestBuilder addMetrics(List<String> metricNames) {
         metricNames.forEach(metricKey -> metrics.add(new Metric().setExpression(metricKey)));
@@ -62,29 +64,29 @@ public class RequestBuilder {
     }
 
     /**
-     * Creates the Dimension objects with its required values. Dimension is a termin coming from Google Analytics Reporting
-     * API.
-     * Maximum number of Dimensions for a GA request is 7.
-     *
+     * @param dimensionNames a list of the Google Analytics Dimension identifier
+     * Adds all required dimensions into the Request Builder. Dimension is a termin coming from Google Analytics Reporting API.
+     * Maximum number of Dimensions per single request is 7.
      */
     public RequestBuilder addDimensions(List<String> dimensionNames) {
         dimensionNames.forEach(dimension -> dimensions.add(new Dimension().setName(dimension)));
         return this;
     }
 
+    //TODO This method does more than one thing - creates and adds. Should be splitted.
     /**
      * DimensionFilters are used when additional filtering condition is required on a dimension.
-     * @param dimensionName the name of the dimension to be filtered on
-     * @param operator operator that can be used for filtering
+     * @param dimensionName    the name of the dimension to be filtered on
+     * @param operator         operator that can be used for filtering
      * @param comparisonValues value against which the dimension is compared
      */
-    public RequestBuilder addDimensionFilters(String dimensionName, DimensionFilterOperators operator, List<String> comparisonValues){
+    public RequestBuilder addDimensionFilters(String dimensionName, DimensionFilterOperators operator, List<String> comparisonValues) {
         DimensionFilter filter = new DimensionFilter()
-            .setDimensionName(dimensionName)
-            .setExpressions(comparisonValues);
-        if(operator.equals(NOT)){
+                .setDimensionName(dimensionName)
+                .setExpressions(comparisonValues);
+        if (operator.equals(NOT)) {
             filter.setOperator(EXACT.toString()).setNot(true);
-        }else{
+        } else {
             filter.setOperator(operator.toString());
         }
         dimensionFilters.add(filter);
@@ -92,12 +94,12 @@ public class RequestBuilder {
     }
 
     /**
-     * Defines the date range in which metrics should be collected. If this method wasn't invoked, the metrics for yesterday will be taken.<br>
-     *
+     * Defines the date range in which metrics should be collected.
+     * In case this method is not invoked, a default value for yesterday's data is used for collection.
      * @param startDate the begin of the period as String
-     * @param endDate the end of the period as String
+     * @param endDate   the end of the period as String
      */
-    public RequestBuilder addDateRange(LocalDate startDate, LocalDate endDate) {
+    private RequestBuilder addDateRange(LocalDate startDate, LocalDate endDate) {
         String pattern = "yyyy-MM-dd";
         dateRange = new DateRange();
         dateRange.setStartDate(startDate.format(ofPattern(pattern)));
@@ -105,19 +107,24 @@ public class RequestBuilder {
         return this;
     }
 
+    /**
+     * This method builds the body of the request to be sent
+     * @return
+     */
     public RequestBuilder buildRequest() {
         List<ReportRequest> reportRequests = new ArrayList<>();
 
         DimensionFilterClause dimensionFilterClause = createDimensionFilterClause(AND, dimensionFilters);
 
-        ReportRequest reportRequest = createReportRequest(properties.getViewId(), dateRange, dimensionFilterClause);
+        ReportRequest reportRequest = createReportRequest(properties.getAqeBlog().getViewId(), dateRange, dimensionFilterClause);
         reportRequests.add(reportRequest);
 
         reportsRequest = new GetReportsRequest().setReportRequests(reportRequests);
         return this;
     }
 
-    public GetReportsResponse sendRequest(){
+    //TODO Add Java Doc
+    public GetReportsResponse sendRequest() {
         try {
             return service.reports().batchGet(reportsRequest).execute();
         } catch (IOException e) {
@@ -128,7 +135,7 @@ public class RequestBuilder {
     /**
      * Creates DimensionFilterClause object. It serves as a unification of more than one dimension filters.
      *
-     * @param operator the operator for joining the dimension filters like AND, OR.
+     * @param operator         the operator for joining the dimension filters like AND, OR.
      * @param dimensionFilters list of DimensionFilter objects
      * @return the DimensionFilterClause object
      */
@@ -137,12 +144,12 @@ public class RequestBuilder {
     }
 
     private ReportRequest createReportRequest(String viewId, DateRange dateRange,
-        DimensionFilterClause dimensionFilterClause) {
+                                              DimensionFilterClause dimensionFilterClause) {
         return new ReportRequest().setViewId(viewId)
-            .setDateRanges(Collections.singletonList(dateRange))
-            .setMetrics(metrics)
-            .setDimensions(dimensions)
-            .setDimensionFilterClauses(Collections.singletonList(dimensionFilterClause));
+                .setDateRanges(Collections.singletonList(dateRange))
+                .setMetrics(metrics)
+                .setDimensions(dimensions)
+                .setDimensionFilterClauses(Collections.singletonList(dimensionFilterClause));
     }
 
 }

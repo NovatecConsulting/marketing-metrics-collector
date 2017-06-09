@@ -1,6 +1,7 @@
 package info.novatec.metricscollector.google.collector;
 
 import static info.novatec.metricscollector.google.DimensionFilterOperators.NOT;
+import static info.novatec.metricscollector.google.GoogleAnalyticsProperties.GA_PAGEPATH;
 
 import java.util.List;
 
@@ -39,10 +40,10 @@ public class AqeBlog implements MetricCollector {
 
     private GetReportsResponse requestMetrics(){
         return requestBuilder
-            .prepareRequest(properties.getAqeBlog().getHostName())
+            .prepareRequest()
             .addDimensions(properties.getAqeBlog().getDimensions())
             .addMetrics(properties.getAqeBlog().getMetrics())
-            .addDimensionFilters(properties.GA_PAGEPATH, NOT, properties.getAqeBlog().getExcludedUrls())
+            .addDimensionFilters(GA_PAGEPATH, NOT, properties.getAqeBlog().getExcludedUrls())
             .buildRequest()
             .sendRequest();
     }
