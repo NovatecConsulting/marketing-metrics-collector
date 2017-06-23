@@ -11,23 +11,31 @@ ga:
   client_email:
   client_id:
   client_x509_cert_url:
+  shared-metrics:
+    - ga:pageviews
+    - ga:uniquePageviews
+    - ga:sessions
+    - ga:bounces
+    - ga:bounceRate
+    - ga:avgSessionDuration
+    - ga:avgTimeOnPage
+  shared-dimensions:
+    - ga:hostname
+    - ga:pagePath
+    - ga:pageTitle
   aqe-blog:
-    viewId:
+    viewId: 0000
     hostName: blog.novatec-gmbh.de
-    metrics:
-      - ga:pageviews
-      - ga:uniquePageviews
-      - ga:sessions
-      - ga:bounces
-      - ga:bounceRate
-      - ga:avgSessionDuration
-      - ga:avgTimeOnPage
-    dimensions:
-      - ga:hostname
-      - ga:pagePath
-      - ga:pageTitle
+    unique-metrics:
+    #- ga:examplemetric
+    unique-dimensions:
+    #- ga:exampledimension
     excluded-urls:
       - /
   aqe-homepage:
-    viewId:
+    viewId: 0000
     hostName: novatec-gmbh.de
+    unique-metrics:
+    #- ga:examplemetric
+    unique-dimensions:
+    #- ga:exampledimension

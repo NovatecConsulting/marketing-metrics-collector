@@ -1,27 +1,20 @@
 package info.novatec.metricscollector.google.collector;
 
-import static info.novatec.metricscollector.google.DimensionFilterOperators.NOT;
-import static info.novatec.metricscollector.google.GoogleAnalyticsProperties.GA_PAGEPATH;
-
-import java.util.List;
-
-import org.springframework.stereotype.Component;
-
 import com.google.api.services.analyticsreporting.v4.model.GetReportsResponse;
-
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 import info.novatec.metricscollector.commons.MetricCollector;
 import info.novatec.metricscollector.google.GoogleAnalyticsProperties;
 import info.novatec.metricscollector.google.Metrics;
 import info.novatec.metricscollector.google.RequestBuilder;
 import info.novatec.metricscollector.google.ResponseParser;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class AqeBlog implements MetricCollector {
+public class AqeHomePage implements MetricCollector {
 
     private final GoogleAnalyticsProperties properties;
 
@@ -34,8 +27,8 @@ public class AqeBlog implements MetricCollector {
 
     @Override
     public void collect() {
-        GetReportsResponse response = requestMetrics();
-        responseParser.parse(response, metrics);
+        GetReportsResponse getReportsResponse = requestMetrics();
+        responseParser.parse(getReportsResponse, metrics);
     }
 
     private GetReportsResponse requestMetrics() {
@@ -46,16 +39,17 @@ public class AqeBlog implements MetricCollector {
                 .prepareRequest()
                 .addDimensions(properties.getSharedDimensions())
                 .addMetrics(properties.getSharedMetrics())
-                .addDimensionFilters(GA_PAGEPATH, NOT, properties.getAqeBlog().getExcludedUrls())
+                //.addDimensionFilters(GA_PAGEPATH, NOT, properties.AqeHomePage().getExcludedUrls())
                 .buildRequest()
                 .sendRequest();
     }
 
     public void mergeMetrics() {
-        properties.getSharedMetrics().addAll(properties.getAqeBlog().getUniqueMetrics());
+        properties.getSharedMetrics().addAll(properties.getAqeHomePage().getUniqueMetrics());
     }
 
     public void mergeDimensions() {
-        properties.getSharedDimensions().addAll(properties.getAqeBlog().getUniqueDimensions());
+        properties.getSharedDimensions().addAll(properties.getAqeHomePage().getUniqueDimensions());
     }
+
 }

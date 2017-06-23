@@ -30,17 +30,23 @@ public class GoogleAnalyticsProperties {
 
     private String client_secrets_base64;
 
+    private List<String> sharedMetrics;
+    private List<String> sharedDimensions;
+
     @Data
     public static class AqeBlog {
         private String viewId;
         private String hostName;
-        private List<String> metrics;
-        private List<String> dimensions;
+        private List<String> uniqueMetrics;
+        private List<String> uniqueDimensions;
         private List<String> excludedUrls;
     }
 
     @Data
     public static class AqeHomePage {
-
+        private String viewId;
+        private String hostName;
+        private List<String> uniqueMetrics;
+        private List<String> uniqueDimensions;
     }
 }
