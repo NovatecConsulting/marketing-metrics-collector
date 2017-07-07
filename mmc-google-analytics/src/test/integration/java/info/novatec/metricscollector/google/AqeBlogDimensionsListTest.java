@@ -36,12 +36,12 @@ public class AqeBlogDimensionsListTest {
 
     @Test
     public void getAqeBlogDimensionsListTest() {
-        Mockito.doReturn(Collections.singletonList(TEST_DIMENSION)).when(aqeBlogData).getUniqueDimensions();
+        Mockito.doReturn(Collections.singletonList(TEST_DIMENSION)).when(aqeBlogData).getSpecificDimensions();
         Mockito.doReturn(aqeBlogData).when(properties).getAqeBlog();
         Mockito.doReturn(inputDimensions).when(properties).getSharedDimensions();
 
         List<String> actualSharedDimensions = properties.getSharedDimensions();
-        List<String> actualUniqueDimensions = properties.getAqeBlog().getUniqueDimensions();
+        List<String> actualUniqueDimensions = properties.getAqeBlog().getSpecificDimensions();
 
         assertThat(actualSharedDimensions).hasSize(2);
         assertThat(actualUniqueDimensions).hasSize(1);
@@ -56,12 +56,12 @@ public class AqeBlogDimensionsListTest {
     public void getAqeBlogEmptyUniqueDimensionsListTest() {
         List<String> inputUniqueEmptyDimensions = new ArrayList<>();
 
-        Mockito.doReturn(inputUniqueEmptyDimensions).when(aqeBlogData).getUniqueDimensions();
+        Mockito.doReturn(inputUniqueEmptyDimensions).when(aqeBlogData).getSpecificDimensions();
         Mockito.doReturn(aqeBlogData).when(properties).getAqeBlog();
         Mockito.doReturn(inputDimensions).when(properties).getSharedDimensions();
 
         List<String> actualSharedDimesions = properties.getSharedDimensions();
-        List<String> actualUniqueDimensions = properties.getAqeBlog().getUniqueDimensions();
+        List<String> actualUniqueDimensions = properties.getAqeBlog().getSpecificDimensions();
 
         assertThat(actualSharedDimesions).hasSize(2);
         assertThat(actualUniqueDimensions).hasSize(0);

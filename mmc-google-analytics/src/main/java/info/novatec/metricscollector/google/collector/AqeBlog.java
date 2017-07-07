@@ -52,10 +52,10 @@ public class AqeBlog implements MetricCollector {
     }
 
     public void mergeMetrics() {
-        properties.getSharedMetrics().addAll(properties.getAqeBlog().getUniqueMetrics());
+        properties.getSharedMetrics().addAll(properties.getAqeBlog().getSpecificMetrics());
     }
 
     public void mergeDimensions() {
-        properties.getSharedDimensions().addAll(properties.getAqeBlog().getUniqueDimensions());
+        properties.getSharedDimensions().addAll(properties.getAqeBlog().getSpecificDimensions());
     }
 }

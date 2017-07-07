@@ -37,8 +37,8 @@ public class GoogleAnalyticsProperties {
     public static class AqeBlog {
         private String viewId;
         private String hostName;
-        private List<String> uniqueMetrics;
-        private List<String> uniqueDimensions;
+        private List<String> specificMetrics;
+        private List<String> specificDimensions;
         private List<String> excludedUrls;
     }
 
@@ -46,7 +46,7 @@ public class GoogleAnalyticsProperties {
     public static class AqeHomePage {
         private String viewId;
         private String hostName;
-        private List<String> uniqueMetrics;
-        private List<String> uniqueDimensions;
+        private List<String> specificMetrics;
+        private List<String> specificDimensions;
     }
 }

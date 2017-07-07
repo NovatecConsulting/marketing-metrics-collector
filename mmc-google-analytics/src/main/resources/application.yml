@@ -26,16 +26,16 @@ ga:
   aqe-blog:
     viewId: 0000
     hostName: blog.novatec-gmbh.de
-    unique-metrics:
+    specific-metrics:
     #- ga:examplemetric
-    unique-dimensions:
+    specific-dimensions:
     #- ga:exampledimension
     excluded-urls:
       - /
   aqe-homepage:
     viewId: 0000
     hostName: novatec-gmbh.de
-    unique-metrics:
+    specific-metrics:
     #- ga:examplemetric
-    unique-dimensions:
+    specific-dimensions:
     #- ga:exampledimension

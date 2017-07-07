@@ -45,11 +45,11 @@ public class AqeHomePage implements MetricCollector {
     }
 
     public void mergeMetrics() {
-        properties.getSharedMetrics().addAll(properties.getAqeHomePage().getUniqueMetrics());
+        properties.getSharedMetrics().addAll(properties.getAqeHomePage().getSpecificMetrics());
     }
 
     public void mergeDimensions() {
-        properties.getSharedDimensions().addAll(properties.getAqeHomePage().getUniqueDimensions());
+        properties.getSharedDimensions().addAll(properties.getAqeHomePage().getSpecificDimensions());
     }
 
 }
