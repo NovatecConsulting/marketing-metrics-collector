@@ -32,9 +32,6 @@ public class AqeHomePage implements MetricCollector {
     }
 
     private GetReportsResponse requestMetrics() {
-        mergeMetrics();
-        mergeDimensions();
-
         return requestBuilder
                 .prepareRequest()
                 .addDimensions(properties.getSharedDimensions())
@@ -43,13 +40,4 @@ public class AqeHomePage implements MetricCollector {
                 .buildRequest()
                 .sendRequest();
     }
-
-    public void mergeMetrics() {
-        properties.getSharedMetrics().addAll(properties.getAqeHomePage().getSpecificMetrics());
-    }
-
-    public void mergeDimensions() {
-        properties.getSharedDimensions().addAll(properties.getAqeHomePage().getSpecificDimensions());
-    }
-
 }

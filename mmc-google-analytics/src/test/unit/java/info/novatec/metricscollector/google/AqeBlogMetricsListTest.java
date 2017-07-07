@@ -3,12 +3,12 @@ package info.novatec.metricscollector.google;
 import static info.novatec.metricscollector.google.DataProvider.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import info.novatec.metricscollector.google.collector.AqeBlog;
+import com.google.api.services.analyticsreporting.v4.AnalyticsReporting;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -21,18 +21,26 @@ import java.util.List;
  * This test verifies if all of the required metrics for Aqe Blog are presented before sending a request to GA API
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ApplicationInitializerGoogle.class)
 public class AqeBlogMetricsListTest {
-    @Autowired
-    private AqeBlog aqeBlog;
+
+    private RequestBuilder requestBuilder;
 
     @SpyBean
     private GoogleAnalyticsProperties properties;
 
-    @SpyBean
+    @MockBean
     private GoogleAnalyticsProperties.AqeBlog aqeBlogData;
 
+    @MockBean
+    private AnalyticsReporting analyticsReporting;
+
     private List<String> inputMetrics = new ArrayList<>(Arrays.asList(AVG_SESSION_DURATION, BOUNCE_RATE, UNIQUE_PAGE_VIEWS));
+
+    @Before
+    public void init() {
+        requestBuilder = new RequestBuilder(properties, analyticsReporting);
+        requestBuilder.prepareRequest();
+    }
 
     @Test
     public void getAqeBlogMetricsListTest() {
@@ -41,14 +49,16 @@ public class AqeBlogMetricsListTest {
         Mockito.doReturn(inputMetrics).when(properties).getSharedMetrics();
 
         List<String> actualSharedMetrics = properties.getSharedMetrics();
-        List<String> actualUniqueMetrics = properties.getAqeBlog().getSpecificMetrics();
+        List<String> actualSpecificMetrics = properties.getAqeBlog().getSpecificMetrics();
 
         assertThat(actualSharedMetrics).hasSize(3);
-        assertThat(actualUniqueMetrics).hasSize(1);
+        assertThat(actualSpecificMetrics).hasSize(1);
 
-        aqeBlog.mergeMetrics();
+        requestBuilder.addMetrics(actualSharedMetrics);
+        requestBuilder.addMetrics(actualSpecificMetrics);
+        List<String> actualMetrics = getMetricsAsString(requestBuilder);
 
-        assertThat(actualSharedMetrics).hasSize(4)
+        assertThat(actualMetrics).hasSize(4)
                 .contains(AVG_SESSION_DURATION, BOUNCE_RATE, UNIQUE_PAGE_VIEWS, TEST_METRIC);
     }
 
@@ -61,15 +71,25 @@ public class AqeBlogMetricsListTest {
         Mockito.doReturn(inputMetrics).when(properties).getSharedMetrics();
 
         List<String> actualSharedMetrics = properties.getSharedMetrics();
-        List<String> actualUniqueMetrics = properties.getAqeBlog().getSpecificMetrics();
+        List<String> actualSpecificMetrics = properties.getAqeBlog().getSpecificMetrics();
 
         assertThat(actualSharedMetrics).hasSize(3);
-        assertThat(actualUniqueMetrics).hasSize(0);
+        assertThat(actualSpecificMetrics).hasSize(0);
 
-        aqeBlog.mergeMetrics();
+        requestBuilder.addMetrics(actualSharedMetrics);
+        requestBuilder.addMetrics(actualSpecificMetrics);
+        List<String> actualMetrics = getMetricsAsString(requestBuilder);
 
         assertThat(actualSharedMetrics).hasSize(3)
                 .contains(AVG_SESSION_DURATION, BOUNCE_RATE, UNIQUE_PAGE_VIEWS);
+    }
+    
+    private List<String> getMetricsAsString(RequestBuilder requestBuilder) {
+        List<String> metricsAsString = new ArrayList<>();
+        requestBuilder.getMetrics()
+                .forEach(metric ->
+                        metricsAsString.add(metric.getExpression()));
+        return metricsAsString;
     }
 
 }

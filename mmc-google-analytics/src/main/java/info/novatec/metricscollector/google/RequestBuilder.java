@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 import com.google.api.services.analyticsreporting.v4.AnalyticsReporting;
@@ -35,8 +36,12 @@ public class RequestBuilder {
 
     private final GoogleAnalyticsProperties properties;
     private final AnalyticsReporting service;
+
+    @Getter
     private List<Metric> metrics;
+    @Getter
     private List<Dimension> dimensions;
+
     private List<DimensionFilter> dimensionFilters;
     private DateRange dateRange;
     private GetReportsRequest reportsRequest;

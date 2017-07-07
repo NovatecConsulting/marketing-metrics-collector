@@ -38,24 +38,15 @@ public class AqeBlog implements MetricCollector {
         responseParser.parse(response, metrics);
     }
 
-    private GetReportsResponse requestMetrics() {
-        mergeMetrics();
-        mergeDimensions();
-
+    public GetReportsResponse requestMetrics() {
         return requestBuilder
                 .prepareRequest()
                 .addDimensions(properties.getSharedDimensions())
+                .addDimensions(properties.getAqeBlog().getSpecificDimensions())
                 .addMetrics(properties.getSharedMetrics())
+                .addMetrics(properties.getAqeBlog().getSpecificMetrics())
                 .addDimensionFilters(GA_PAGEPATH, NOT, properties.getAqeBlog().getExcludedUrls())
                 .buildRequest()
                 .sendRequest();
-    }
-
-    public void mergeMetrics() {
-        properties.getSharedMetrics().addAll(properties.getAqeBlog().getSpecificMetrics());
-    }
-
-    public void mergeDimensions() {
-        properties.getSharedDimensions().addAll(properties.getAqeBlog().getSpecificDimensions());
     }
 }

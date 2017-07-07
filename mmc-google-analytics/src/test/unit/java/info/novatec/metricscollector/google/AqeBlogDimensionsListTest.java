@@ -1,11 +1,11 @@
 package info.novatec.metricscollector.google;
 
-import info.novatec.metricscollector.google.collector.AqeBlog;
+import com.google.api.services.analyticsreporting.v4.AnalyticsReporting;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -21,18 +21,25 @@ import static org.assertj.core.api.Assertions.assertThat;
  * This test verifies if all of the required dimensions for Aqe Blog are presented before sending a request to GA API
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ApplicationInitializerGoogle.class)
 public class AqeBlogDimensionsListTest {
-    @Autowired
-    private AqeBlog aqeBlog;
+    private RequestBuilder requestBuilder;
 
     @SpyBean
     private GoogleAnalyticsProperties properties;
 
-    @SpyBean
+    @MockBean
     private GoogleAnalyticsProperties.AqeBlog aqeBlogData;
 
+    @MockBean
+    private AnalyticsReporting analyticsReporting;
+
     private List<String> inputDimensions = new ArrayList<>(Arrays.asList(HOST_NAME, PAGE_PATH));
+
+    @Before
+    public void init() {
+        requestBuilder = new RequestBuilder(properties, analyticsReporting);
+        requestBuilder.prepareRequest();
+    }
 
     @Test
     public void getAqeBlogDimensionsListTest() {
@@ -41,14 +48,16 @@ public class AqeBlogDimensionsListTest {
         Mockito.doReturn(inputDimensions).when(properties).getSharedDimensions();
 
         List<String> actualSharedDimensions = properties.getSharedDimensions();
-        List<String> actualUniqueDimensions = properties.getAqeBlog().getSpecificDimensions();
+        List<String> actualSpecificDimensions = properties.getAqeBlog().getSpecificDimensions();
 
         assertThat(actualSharedDimensions).hasSize(2);
-        assertThat(actualUniqueDimensions).hasSize(1);
+        assertThat(actualSpecificDimensions).hasSize(1);
 
-        aqeBlog.mergeDimensions();
+        requestBuilder.addDimensions(actualSharedDimensions);
+        requestBuilder.addDimensions(actualSpecificDimensions);
+        List<String> actualDimensions = getDimensionsAsString(requestBuilder);
 
-        assertThat(actualSharedDimensions).hasSize(3)
+        assertThat(actualDimensions).hasSize(3)
                 .contains(HOST_NAME, PAGE_PATH, TEST_DIMENSION);
     }
 
@@ -60,16 +69,26 @@ public class AqeBlogDimensionsListTest {
         Mockito.doReturn(aqeBlogData).when(properties).getAqeBlog();
         Mockito.doReturn(inputDimensions).when(properties).getSharedDimensions();
 
-        List<String> actualSharedDimesions = properties.getSharedDimensions();
-        List<String> actualUniqueDimensions = properties.getAqeBlog().getSpecificDimensions();
+        List<String> actualSharedDimensions = properties.getSharedDimensions();
+        List<String> actualSpecificDimensions = properties.getAqeBlog().getSpecificDimensions();
 
-        assertThat(actualSharedDimesions).hasSize(2);
-        assertThat(actualUniqueDimensions).hasSize(0);
+        assertThat(actualSharedDimensions).hasSize(2);
+        assertThat(actualSpecificDimensions).hasSize(0);
 
-        aqeBlog.mergeDimensions();
+        requestBuilder.addDimensions(actualSharedDimensions);
+        requestBuilder.addDimensions(actualSpecificDimensions);
+        List<String> actualDimensions = getDimensionsAsString(requestBuilder);
 
-        assertThat(actualSharedDimesions).hasSize(2)
+        assertThat(actualDimensions).hasSize(2)
                 .contains(HOST_NAME, PAGE_PATH);
+    }
+
+    private List<String> getDimensionsAsString(RequestBuilder requestBuilder) {
+        List<String> dimensionsAsString = new ArrayList<>();
+        requestBuilder.getDimensions()
+                .forEach(dimension ->
+                        dimensionsAsString.add(dimension.getName()));
+        return dimensionsAsString;
     }
 
 }
