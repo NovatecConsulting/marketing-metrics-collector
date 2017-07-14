@@ -1,16 +1,20 @@
 package info.novatec.metricscollector.google.collector;
 
 import com.google.api.services.analyticsreporting.v4.model.GetReportsResponse;
+
 import info.novatec.metricscollector.commons.MetricCollector;
 import info.novatec.metricscollector.google.GoogleAnalyticsProperties;
 import info.novatec.metricscollector.google.Metrics;
 import info.novatec.metricscollector.google.RequestBuilder;
 import info.novatec.metricscollector.google.ResponseParser;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+
 
 @Component
 @RequiredArgsConstructor
@@ -32,12 +36,11 @@ public class AqeHomePage implements MetricCollector {
     }
 
     private GetReportsResponse requestMetrics() {
-        return requestBuilder
-                .prepareRequest()
-                .addDimensions(properties.getSharedDimensions())
-                .addMetrics(properties.getSharedMetrics())
-                //.addDimensionFilters(GA_PAGEPATH, NOT, properties.AqeHomePage().getExcludedUrls())
-                .buildRequest()
-                .sendRequest();
+        return requestBuilder.prepareRequest()
+            .addDimensions(properties.getSharedDimensions())
+            .addMetrics(properties.getSharedMetrics())
+            //.addDimensionFilters(GA_PAGEPATH, NOT, properties.AqeHomePage().getExcludedUrls())
+            .buildRequest()
+            .sendRequest();
     }
 }

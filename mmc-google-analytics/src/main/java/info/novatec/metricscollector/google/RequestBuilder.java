@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 import lombok.Getter;
+
 import org.springframework.stereotype.Component;
 
 import com.google.api.services.analyticsreporting.v4.AnalyticsReporting;
@@ -27,6 +28,7 @@ import com.google.api.services.analyticsreporting.v4.model.ReportRequest;
 import lombok.RequiredArgsConstructor;
 
 import info.novatec.metricscollector.google.exception.IORuntimeException;
+
 
 @Component
 @RequiredArgsConstructor
@@ -70,7 +72,8 @@ public class RequestBuilder {
 
     /**
      * @param dimensionNames a list of the Google Analytics Dimension identifier
-     * Adds all required dimensions into the Request Builder. Dimension is a termin coming from Google Analytics Reporting API.
+     * Adds all required dimensions into the Request Builder. Dimension is a termin coming from Google Analytics Reporting
+     * API.
      * Maximum number of Dimensions per single request is 7.
      */
     public RequestBuilder addDimensions(List<String> dimensionNames) {
@@ -79,16 +82,17 @@ public class RequestBuilder {
     }
 
     //TODO This method does more than one thing - creates and adds. Should be splitted.
+
     /**
      * DimensionFilters are used when additional filtering condition is required on a dimension.
-     * @param dimensionName    the name of the dimension to be filtered on
-     * @param operator         operator that can be used for filtering
+     *
+     * @param dimensionName the name of the dimension to be filtered on
+     * @param operator operator that can be used for filtering
      * @param comparisonValues value against which the dimension is compared
      */
-    public RequestBuilder addDimensionFilters(String dimensionName, DimensionFilterOperators operator, List<String> comparisonValues) {
-        DimensionFilter filter = new DimensionFilter()
-                .setDimensionName(dimensionName)
-                .setExpressions(comparisonValues);
+    public RequestBuilder addDimensionFilters(String dimensionName, DimensionFilterOperators operator,
+        List<String> comparisonValues) {
+        DimensionFilter filter = new DimensionFilter().setDimensionName(dimensionName).setExpressions(comparisonValues);
         if (operator.equals(NOT)) {
             filter.setOperator(EXACT.toString()).setNot(true);
         } else {
@@ -101,8 +105,9 @@ public class RequestBuilder {
     /**
      * Defines the date range in which metrics should be collected.
      * In case this method is not invoked, a default value for yesterday's data is used for collection.
+     *
      * @param startDate the begin of the period as String
-     * @param endDate   the end of the period as String
+     * @param endDate the end of the period as String
      */
     private RequestBuilder addDateRange(LocalDate startDate, LocalDate endDate) {
         String pattern = "yyyy-MM-dd";
@@ -114,6 +119,7 @@ public class RequestBuilder {
 
     /**
      * This method builds the body of the request to be sent
+     *
      * @return
      */
     public RequestBuilder buildRequest() {
@@ -121,7 +127,8 @@ public class RequestBuilder {
 
         DimensionFilterClause dimensionFilterClause = createDimensionFilterClause(AND, dimensionFilters);
 
-        ReportRequest reportRequest = createReportRequest(properties.getAqeBlog().getViewId(), dateRange, dimensionFilterClause);
+        ReportRequest reportRequest =
+            createReportRequest(properties.getAqeBlog().getViewId(), dateRange, dimensionFilterClause);
         reportRequests.add(reportRequest);
 
         reportsRequest = new GetReportsRequest().setReportRequests(reportRequests);
@@ -140,7 +147,7 @@ public class RequestBuilder {
     /**
      * Creates DimensionFilterClause object. It serves as a unification of more than one dimension filters.
      *
-     * @param operator         the operator for joining the dimension filters like AND, OR.
+     * @param operator the operator for joining the dimension filters like AND, OR.
      * @param dimensionFilters list of DimensionFilter objects
      * @return the DimensionFilterClause object
      */
@@ -149,12 +156,12 @@ public class RequestBuilder {
     }
 
     private ReportRequest createReportRequest(String viewId, DateRange dateRange,
-                                              DimensionFilterClause dimensionFilterClause) {
+        DimensionFilterClause dimensionFilterClause) {
         return new ReportRequest().setViewId(viewId)
-                .setDateRanges(Collections.singletonList(dateRange))
-                .setMetrics(metrics)
-                .setDimensions(dimensions)
-                .setDimensionFilterClauses(Collections.singletonList(dimensionFilterClause));
+            .setDateRanges(Collections.singletonList(dateRange))
+            .setMetrics(metrics)
+            .setDimensions(dimensions)
+            .setDimensionFilterClauses(Collections.singletonList(dimensionFilterClause));
     }
 
 }

@@ -1,8 +1,8 @@
 package info.novatec.metricscollector.google.exception;
 
-public class IORuntimeException extends RuntimeException{
+public class IORuntimeException extends RuntimeException {
 
-    public IORuntimeException(String message){
+    public IORuntimeException(String message) {
         super(message);
     }
 }

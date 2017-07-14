@@ -1,6 +1,7 @@
 package info.novatec.metricscollector.google;
 
 import com.google.api.services.analyticsreporting.v4.AnalyticsReporting;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +18,7 @@ import java.util.List;
 import static info.novatec.metricscollector.google.DataProvider.*;
 import static info.novatec.metricscollector.google.DataProvider.UNIQUE_PAGE_VIEWS;
 import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * This test verifies if all of the required metrics for Aqe Homepage are presented before sending a request to GA API
@@ -58,8 +60,7 @@ public class AqeHomePageMetricsListTest {
         requestBuilder.addMetrics(actualSpecificMetrics);
         List<String> actualMetrics = getMetricsAsString(requestBuilder);
 
-        assertThat(actualMetrics).hasSize(4)
-                .contains(AVG_SESSION_DURATION, BOUNCE_RATE, UNIQUE_PAGE_VIEWS, TEST_METRIC);
+        assertThat(actualMetrics).hasSize(4).contains(AVG_SESSION_DURATION, BOUNCE_RATE, UNIQUE_PAGE_VIEWS, TEST_METRIC);
     }
 
     @Test
@@ -80,16 +81,13 @@ public class AqeHomePageMetricsListTest {
         requestBuilder.addMetrics(actualSpecificMetrics);
         List<String> actualMetrics = getMetricsAsString(requestBuilder);
 
-        assertThat(actualMetrics).hasSize(3)
-                .contains(AVG_SESSION_DURATION, BOUNCE_RATE, UNIQUE_PAGE_VIEWS);
+        assertThat(actualMetrics).hasSize(3).contains(AVG_SESSION_DURATION, BOUNCE_RATE, UNIQUE_PAGE_VIEWS);
     }
 
     //TODO remove duplicated method
     private List<String> getMetricsAsString(RequestBuilder requestBuilder) {
         List<String> metricsAsString = new ArrayList<>();
-        requestBuilder.getMetrics()
-                .forEach(metric ->
-                        metricsAsString.add(metric.getExpression()));
+        requestBuilder.getMetrics().forEach(metric -> metricsAsString.add(metric.getExpression()));
         return metricsAsString;
     }
 }

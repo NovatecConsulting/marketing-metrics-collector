@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import info.novatec.metricscollector.google.collector.AqeBlog;
 
+
 @Slf4j
 @Component
 @RequiredArgsConstructor

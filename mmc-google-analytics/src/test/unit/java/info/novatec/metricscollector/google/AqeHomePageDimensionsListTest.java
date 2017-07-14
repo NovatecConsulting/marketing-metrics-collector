@@ -1,6 +1,7 @@
 package info.novatec.metricscollector.google;
 
 import com.google.api.services.analyticsreporting.v4.AnalyticsReporting;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +19,7 @@ import static info.novatec.metricscollector.google.DataProvider.HOST_NAME;
 import static info.novatec.metricscollector.google.DataProvider.PAGE_PATH;
 import static info.novatec.metricscollector.google.DataProvider.TEST_DIMENSION;
 import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * This test verifies if all of the required dimensions for Aqe Homepage are presented before sending a request to GA API
@@ -59,8 +61,7 @@ public class AqeHomePageDimensionsListTest {
         requestBuilder.addDimensions(actualSpecificDimensions);
         List<String> actualDimensions = getDimensionsAsString(requestBuilder);
 
-        assertThat(actualDimensions).hasSize(3)
-                .contains(HOST_NAME, PAGE_PATH, TEST_DIMENSION);
+        assertThat(actualDimensions).hasSize(3).contains(HOST_NAME, PAGE_PATH, TEST_DIMENSION);
     }
 
     @Test
@@ -81,16 +82,13 @@ public class AqeHomePageDimensionsListTest {
         requestBuilder.addDimensions(actualSpecificDimensions);
 
         List<String> actualDimensions = getDimensionsAsString(requestBuilder);
-        assertThat(actualDimensions).hasSize(2)
-                .contains(HOST_NAME, PAGE_PATH);
+        assertThat(actualDimensions).hasSize(2).contains(HOST_NAME, PAGE_PATH);
     }
 
     //TODO remove duplicated method
     private List<String> getDimensionsAsString(RequestBuilder requestBuilder) {
         List<String> dimensionsAsString = new ArrayList<>();
-        requestBuilder.getDimensions()
-                .forEach(dimension ->
-                        dimensionsAsString.add(dimension.getName()));
+        requestBuilder.getDimensions().forEach(dimension -> dimensionsAsString.add(dimension.getName()));
         return dimensionsAsString;
     }
 }

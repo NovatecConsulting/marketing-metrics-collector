@@ -35,14 +35,14 @@ public class MetricsRepository {
     private List<Point> createPoints(Metrics metrics, String measurementName) {
         List<Point> points = new ArrayList<>();
 
-        if(metricsValidator.hasNullValues(metrics)){
-            log.error("Since there are null values in metrics, creating points for page '{}' isn't possible! Metrics content:\n{}",
+        if (metricsValidator.hasNullValues(metrics)) {
+            log.error(
+                "Since there are null values in metrics, creating points for page '{}' isn't possible! Metrics content:\n{}",
                 metrics.getPagePath(), metrics.toString());
             return points;
         }
 
-        Point.Builder point = Point.measurement(measurementName)
-            .tag("pagePath", metrics.getPagePath());
+        Point.Builder point = Point.measurement(measurementName).tag("pagePath", metrics.getPagePath());
         metrics.getMetrics().forEach((key, value) -> {
             key = key.startsWith(GA_PREFIX) ? key.substring(3) : key;
             point.addField(key, value);

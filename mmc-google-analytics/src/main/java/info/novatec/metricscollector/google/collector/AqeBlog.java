@@ -39,14 +39,13 @@ public class AqeBlog implements MetricCollector {
     }
 
     public GetReportsResponse requestMetrics() {
-        return requestBuilder
-                .prepareRequest()
-                .addDimensions(properties.getSharedDimensions())
-                .addDimensions(properties.getAqeBlog().getSpecificDimensions())
-                .addMetrics(properties.getSharedMetrics())
-                .addMetrics(properties.getAqeBlog().getSpecificMetrics())
-                .addDimensionFilters(GA_PAGEPATH, NOT, properties.getAqeBlog().getExcludedUrls())
-                .buildRequest()
-                .sendRequest();
+        return requestBuilder.prepareRequest()
+            .addDimensions(properties.getSharedDimensions())
+            .addDimensions(properties.getAqeBlog().getSpecificDimensions())
+            .addMetrics(properties.getSharedMetrics())
+            .addMetrics(properties.getAqeBlog().getSpecificMetrics())
+            .addDimensionFilters(GA_PAGEPATH, NOT, properties.getAqeBlog().getExcludedUrls())
+            .buildRequest()
+            .sendRequest();
     }
 }
