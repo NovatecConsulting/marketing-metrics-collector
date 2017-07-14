@@ -1,16 +1,6 @@
 package info.novatec.metricscollector.google.collector;
 
-import static info.novatec.metricscollector.google.DimensionFilterOperators.NOT;
-import static info.novatec.metricscollector.google.GoogleAnalyticsProperties.GA_PAGEPATH;
-
-import java.util.List;
-
-import org.springframework.stereotype.Component;
-
 import com.google.api.services.analyticsreporting.v4.model.GetReportsResponse;
-
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import info.novatec.metricscollector.commons.MetricCollector;
 import info.novatec.metricscollector.google.GoogleAnalyticsProperties;
@@ -18,10 +8,17 @@ import info.novatec.metricscollector.google.Metrics;
 import info.novatec.metricscollector.google.RequestBuilder;
 import info.novatec.metricscollector.google.ResponseParser;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
 
 @Component
 @RequiredArgsConstructor
-public class AqeBlog implements MetricCollector {
+public class AqeHomePage implements MetricCollector {
 
     private final GoogleAnalyticsProperties properties;
 
@@ -34,17 +31,15 @@ public class AqeBlog implements MetricCollector {
 
     @Override
     public void collect() {
-        GetReportsResponse response = requestMetrics();
-        responseParser.parse(response, metrics);
+        GetReportsResponse getReportsResponse = requestMetrics();
+        responseParser.parse(getReportsResponse, metrics);
     }
 
-    public GetReportsResponse requestMetrics() {
+    private GetReportsResponse requestMetrics() {
         return requestBuilder.prepareRequest()
             .addDimensions(properties.getSharedDimensions())
-            .addDimensions(properties.getAqeBlog().getSpecificDimensions())
             .addMetrics(properties.getSharedMetrics())
-            .addMetrics(properties.getAqeBlog().getSpecificMetrics())
-            .addDimensionFilters(GA_PAGEPATH, NOT, properties.getAqeBlog().getExcludedUrls())
+            //.addDimensionFilters(GA_PAGEPATH, NOT, properties.AqeHomePage().getExcludedUrls())
             .buildRequest()
             .sendRequest();
     }

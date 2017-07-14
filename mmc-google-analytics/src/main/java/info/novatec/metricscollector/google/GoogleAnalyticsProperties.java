@@ -17,9 +17,9 @@ public class GoogleAnalyticsProperties {
     public static final String GA_PAGEPATH = "ga:pagePath";
 
     private AqeBlog aqeBlog = new AqeBlog();
+    private AqeHomePage aqeHomePage = new AqeHomePage();
 
     private String applicationName;
-    private String viewId;
 
     private String project_id;
     private String private_key_id;
@@ -30,11 +30,23 @@ public class GoogleAnalyticsProperties {
 
     private String client_secrets_base64;
 
+    private List<String> sharedMetrics;
+    private List<String> sharedDimensions;
+
     @Data
     public static class AqeBlog {
+        private String viewId;
         private String hostName;
-        private List<String> metrics;
-        private List<String> dimensions;
+        private List<String> specificMetrics;
+        private List<String> specificDimensions;
         private List<String> excludedUrls;
+    }
+
+    @Data
+    public static class AqeHomePage {
+        private String viewId;
+        private String hostName;
+        private List<String> specificMetrics;
+        private List<String> specificDimensions;
     }
 }
