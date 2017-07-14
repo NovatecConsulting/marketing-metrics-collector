@@ -10,7 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import info.novatec.metricscollector.github.RestService;
+import info.novatec.metricscollector.commons.rest.RestService;
 import info.novatec.metricscollector.github.Metrics;
 import info.novatec.metricscollector.github.util.DataProvider;
 
@@ -25,7 +25,7 @@ public class ReferringSitesTest {
     private ResponseEntity<String> response;
 
     private Metrics metrics;
-  
+
     @Before
     public void init() {
         metrics = DataProvider.createEmptyMetrics();
@@ -55,7 +55,8 @@ public class ReferringSitesTest {
 
     private void collectReferringSites() {
         String mockedResponseBody = getMockedResponse();
-        when(restService.sendRequest(DataProvider.getRestURL(metrics.getRepositoryName()) + "/traffic/popular/referrers")).thenReturn(response);
+        when(restService.sendRequest(
+            DataProvider.getRestURL(metrics.getRepositoryName()) + "/traffic/popular/referrers")).thenReturn(response);
         when(response.getBody()).thenReturn(mockedResponseBody);
         ReferringSites referringSites = new ReferringSites(restService, metrics);
         referringSites.collect();

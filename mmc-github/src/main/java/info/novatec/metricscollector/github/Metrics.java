@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import info.novatec.metricscollector.commons.PageViews;
+import info.novatec.metricscollector.commons.model.PageViews;
 
 
 @Data
@@ -34,7 +34,7 @@ public class Metrics {
         metrics = new HashMap<>();
     }
 
-    public void addMetric(String metricName, Integer value){
+    public void addMetric(String metricName, Integer value) {
         metrics.put(metricName, value);
     }
 

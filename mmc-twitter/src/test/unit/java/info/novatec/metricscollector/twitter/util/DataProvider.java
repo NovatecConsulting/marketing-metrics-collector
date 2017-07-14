@@ -43,11 +43,11 @@ public class DataProvider {
         return metrics;
     }
 
-    public static Metrics createMetrics(){
+    public static Metrics createMetrics() {
         return fillMetrics(createEmptyMetrics());
     }
 
-    public static Metrics createEmptyMetrics(){
+    public static Metrics createEmptyMetrics() {
         return new Metrics();
     }
 
@@ -132,7 +132,7 @@ public class DataProvider {
 
     public void setCreatedAt(ResponseList<Status> tweets, int percent, Date date) {
         IntStream.range(0, tweets.size())
-            .filter(index -> (percent > 0) && index % (100 / percent) == 0 )
+            .filter(index -> (percent > 0) && index % (100 / percent) == 0)
             .mapToObj(tweets::get)
             .forEach(tweet -> when(tweet.getCreatedAt()).thenReturn(date));
     }

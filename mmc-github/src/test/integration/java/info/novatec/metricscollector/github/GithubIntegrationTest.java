@@ -15,7 +15,7 @@ public class GithubIntegrationTest {
     private Scheduler githubScheduler;
 
     @Test
-    public void updateAllGithubProjectsMetricsTest(){
+    public void updateAllGithubProjectsMetricsTest() {
         githubScheduler.scheduleUpdateAllGithubProjectsMetrics();
     }
 

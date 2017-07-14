@@ -15,8 +15,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import info.novatec.metricscollector.commons.rest.RestService;
 import info.novatec.metricscollector.github.Metrics;
-import info.novatec.metricscollector.github.RestService;
 import info.novatec.metricscollector.github.util.DataProvider;
 
 
@@ -31,7 +31,7 @@ public class GithubBasicMetricCollectorTest {
     GithubMetricFakeCollector collector;
 
     @Before
-    public void init(){
+    public void init() {
         metrics = new Metrics(DataProvider.VALID_GITHUB_URL);
         collector = spy(new GithubMetricFakeCollector(restService, metrics));
     }

@@ -1,4 +1,4 @@
-package info.novatec.metricscollector.commons;
+package info.novatec.metricscollector.commons.database;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -18,6 +18,8 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import info.novatec.metricscollector.commons.CommonsProperties;
+
 
 @RunWith(SpringRunner.class)
 public class InfluxServiceTest {
@@ -34,7 +36,7 @@ public class InfluxServiceTest {
     private InfluxService influxService;
 
     @Before
-    public void init(){
+    public void init() {
         InfluxService influxService = new InfluxService(influxDB, properties);
         when(properties.getDbName()).thenReturn(DB_NAME);
         when(properties.getRetention()).thenReturn(RETENTION);

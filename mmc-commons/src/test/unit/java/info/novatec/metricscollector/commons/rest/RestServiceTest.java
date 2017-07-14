@@ -1,10 +1,9 @@
-package info.novatec.metricscollector.github;
+package info.novatec.metricscollector.commons.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -26,26 +25,22 @@ public class RestServiceTest {
     @MockBean
     RestTemplate restTemplate;
 
-    @MockBean
-    GithubProperties properties;
-
     private RestService restService;
 
     @Before
-    public void init(){
-        when(properties.getToken()).thenReturn(DEFAULT_TOKEN);
-        this.restService = new RestService(restTemplate, properties);
+    public void init() {
+        this.restService = new RestService(restTemplate, DEFAULT_TOKEN);
     }
 
     @Test
-    public void verifyThatCustomHeaderIsUsed(){
+    public void verifyThatCustomHeaderIsUsed() {
         restService.setHttpHeaders(createHttpHeaders());
         restService.sendRequest(REQUEST_URL);
         HttpEntity entity = new HttpEntity(createHttpHeaders());
         verify(restTemplate, times(1)).exchange(REQUEST_URL, HttpMethod.GET, entity, String.class);
     }
 
-    private HttpHeaders createHttpHeaders(){
+    private HttpHeaders createHttpHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("headerKey", "headerValue");
         return httpHeaders;
@@ -56,7 +51,7 @@ public class RestServiceTest {
         restService = spy(restService);
         restService.setToken(DEFAULT_TOKEN);
         verify(restService, times(1)).setDefaultHttpHeaders();
-        assertThat(restService.getHttpHeaders().get("Authorization")).contains("token "+DEFAULT_TOKEN);
+        assertThat(restService.getHttpHeaders().get("Authorization")).contains("token " + DEFAULT_TOKEN);
     }
 
     @Test
@@ -68,7 +63,7 @@ public class RestServiceTest {
     }
 
     @Test
-    public void verifyThatTokenExistsTest(){
+    public void verifyThatTokenExistsTest() {
         assertThat(restService.getToken()).isNotNull();
     }
 }

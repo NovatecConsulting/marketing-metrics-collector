@@ -34,7 +34,7 @@ public class TweetsTest {
     DataProvider data;
 
     @Before
-    public void init(){
+    public void init() {
         metrics = new Metrics();
         metrics.setAtUserName(data.AT_USERNAME);
         data = new DataProvider();
@@ -60,7 +60,7 @@ public class TweetsTest {
     }
 
     @Test(expected = TwitterRuntimeException.class)
-    public void twitterRuntimeExceptionInsteadOfTwitterExceptionIsThrown() throws Exception{
+    public void twitterRuntimeExceptionInsteadOfTwitterExceptionIsThrown() throws Exception {
         doThrow(TwitterException.class).when(twitter).getUserTimeline(eq(metrics.getAtUserName()), any(Paging.class));
         new Tweets(twitter, metrics).collect();
     }

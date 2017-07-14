@@ -35,7 +35,7 @@ public class MentionsTest {
     DataProvider data;
 
     @Before
-    public void init(){
+    public void init() {
         metrics = new Metrics();
         metrics.setAtUserName(data.AT_USERNAME);
         data = new DataProvider();
@@ -54,7 +54,7 @@ public class MentionsTest {
     }
 
     @Test(expected = TwitterRuntimeException.class)
-    public void twitterRuntimeExceptionInsteadOfTwitterExceptionIsThrown() throws Exception{
+    public void twitterRuntimeExceptionInsteadOfTwitterExceptionIsThrown() throws Exception {
         Mentions thisMetric = spy(new Mentions(twitter, metrics));
         doThrow(TwitterException.class).when(thisMetric).getAllTweets(any(Query.class));
         thisMetric.collect();

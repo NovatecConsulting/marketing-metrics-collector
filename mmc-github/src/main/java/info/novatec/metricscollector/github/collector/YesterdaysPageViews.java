@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 
 import lombok.Setter;
 
+import info.novatec.metricscollector.commons.rest.RestService;
 import info.novatec.metricscollector.github.Metrics;
-import info.novatec.metricscollector.github.RestService;
 
 
 /**

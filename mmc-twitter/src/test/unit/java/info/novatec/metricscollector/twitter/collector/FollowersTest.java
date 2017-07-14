@@ -28,7 +28,7 @@ public class FollowersTest {
     private Metrics metrics;
 
     @Before
-    public void init(){
+    public void init() {
         metrics = new Metrics();
     }
 
@@ -44,7 +44,7 @@ public class FollowersTest {
     }
 
     @Test(expected = TwitterRuntimeException.class)
-    public void twitterRuntimeExceptionInsteadOfTwitterExceptionIsThrown() throws Exception{
+    public void twitterRuntimeExceptionInsteadOfTwitterExceptionIsThrown() throws Exception {
         doThrow(TwitterException.class).when(twitter).getFollowersIDs(-1);
         new Followers(twitter, metrics).collect();
     }

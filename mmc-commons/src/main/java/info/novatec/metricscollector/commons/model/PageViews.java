@@ -1,4 +1,4 @@
-package info.novatec.metricscollector.commons;
+package info.novatec.metricscollector.commons.model;
 
 import lombok.Getter;
 

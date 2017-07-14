@@ -11,13 +11,13 @@ public class MetricsValidator {
     public boolean hasNullValues(Object targetObject) {
         try {
             Field[] fields = targetObject.getClass().getDeclaredFields();
-            for (Field field : fields){
+            for (Field field : fields) {
                 field.setAccessible(true);
-                if(field.get(targetObject)==null){
+                if (field.get(targetObject) == null) {
                     return true;
                 }
             }
-        }catch(IllegalAccessException e){
+        } catch (IllegalAccessException e) {
             //do nothing. block is never accessed
         }
 

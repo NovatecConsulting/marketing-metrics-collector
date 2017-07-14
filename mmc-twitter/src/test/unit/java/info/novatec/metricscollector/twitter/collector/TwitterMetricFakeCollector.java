@@ -9,8 +9,8 @@ import info.novatec.metricscollector.twitter.util.DataProvider;
 
 
 @Component
-public class TwitterMetricFakeCollector extends TwitterBasicMetricCollector implements
-    TwitterMetricCollectorWithImplementations {
+public class TwitterMetricFakeCollector extends TwitterBasicMetricCollector
+    implements TwitterMetricCollectorWithImplementations {
 
     public TwitterMetricFakeCollector(Twitter twitter, Metrics metrics) {
         super(twitter, metrics);

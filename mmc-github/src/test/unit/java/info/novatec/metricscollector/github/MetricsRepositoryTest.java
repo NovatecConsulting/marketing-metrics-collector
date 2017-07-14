@@ -19,9 +19,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import info.novatec.metricscollector.commons.MetricsValidator;
+import info.novatec.metricscollector.commons.database.InfluxService;
 import info.novatec.metricscollector.github.util.DataProvider;
-
-import info.novatec.metricscollector.commons.InfluxService;
 
 
 @RunWith(SpringRunner.class)
@@ -38,7 +37,7 @@ public class MetricsRepositoryTest {
     private Metrics metrics;
 
     @Before
-    public void init(){
+    public void init() {
         metrics = DataProvider.createMetrics();
         githubRepository = new MetricsRepository(influxService, metricsResultCheck);
     }

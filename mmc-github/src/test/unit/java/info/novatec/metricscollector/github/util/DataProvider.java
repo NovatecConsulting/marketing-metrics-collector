@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import info.novatec.metricscollector.commons.PageViews;
+import info.novatec.metricscollector.commons.model.PageViews;
 import info.novatec.metricscollector.github.Metrics;
 import info.novatec.metricscollector.github.collector.GithubBasicMetricCollector;
 
@@ -63,26 +63,23 @@ public class DataProvider {
         return metrics;
     }
 
-    public static Metrics createMetrics(){
+    public static Metrics createMetrics() {
         return fillMetrics(createEmptyMetrics());
     }
 
-    public static Metrics createEmptyMetrics(){
+    public static Metrics createEmptyMetrics() {
         return new Metrics(VALID_GITHUB_URL);
     }
 
     public static String createResponseBodyWithYesterdaysData() {
-        return "{\"views\":["
-            + "{" + "\"timestamp\": \""+TIMESTAMP_DAY_BEFORE_YESTERDAY+"\"," + "\"count\": 26," + "\"uniques\": 4" + "},"
-            + "{" + "\"timestamp\": \""+TIMESTAMP_YESTERDAY+"\"," + "\"count\": 27," + "\"uniques\": 5" + "}]"
-            + "}";
+        return "{\"views\":[" + "{" + "\"timestamp\": \"" + TIMESTAMP_DAY_BEFORE_YESTERDAY + "\"," + "\"count\": 26,"
+            + "\"uniques\": 4" + "}," + "{" + "\"timestamp\": \"" + TIMESTAMP_YESTERDAY + "\"," + "\"count\": 27,"
+            + "\"uniques\": 5" + "}]" + "}";
     }
 
     public static String createResponseBodyWithYesterdaysAndTodaysData() {
-        return "{\"views\":["
-            + "{" + "\"timestamp\": \""+TIMESTAMP_YESTERDAY+"\"," + "\"count\": 27," + "\"uniques\": 5" + "},"
-            + "{" + "\"timestamp\": \""+TIMESTAMP_TODAY+"\"," + "\"count\": 28," + "\"uniques\": 6" + "}]"
-            + "}";
+        return "{\"views\":[" + "{" + "\"timestamp\": \"" + TIMESTAMP_YESTERDAY + "\"," + "\"count\": 27," + "\"uniques\": 5"
+            + "}," + "{" + "\"timestamp\": \"" + TIMESTAMP_TODAY + "\"," + "\"count\": 28," + "\"uniques\": 6" + "}]" + "}";
     }
 
 }

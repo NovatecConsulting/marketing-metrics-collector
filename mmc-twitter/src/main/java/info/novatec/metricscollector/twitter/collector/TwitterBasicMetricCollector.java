@@ -18,6 +18,7 @@ import twitter4j.TwitterException;
 import info.novatec.metricscollector.commons.MetricCollector;
 import info.novatec.metricscollector.twitter.Metrics;
 
+
 @Setter
 @Component
 public abstract class TwitterBasicMetricCollector implements MetricCollector {
@@ -46,7 +47,7 @@ public abstract class TwitterBasicMetricCollector implements MetricCollector {
         return allTweets;
     }
 
-    public List<Status> getUserTimeLine(String atUserName, UserTimeLineFilter filter) throws TwitterException{
+    public List<Status> getUserTimeLine(String atUserName, UserTimeLineFilter filter) throws TwitterException {
         List<Status> tweets = new ArrayList<>();
         Paging paging = new Paging(1, 200);
         int pageIndex = 1;
@@ -55,15 +56,15 @@ public abstract class TwitterBasicMetricCollector implements MetricCollector {
         do {
             pagedResult = twitter.getUserTimeline(atUserName, paging);
             pagedResult.stream()
-                .filter(tweet -> filter==null || filter.apply(tweet))
-                .collect(Collectors.toCollection( () -> tweets));
+                .filter(tweet -> filter == null || filter.apply(tweet))
+                .collect(Collectors.toCollection(() -> tweets));
             paging = new Paging(++pageIndex, 200);
-        }while(pagedResult.size()==200);
+        } while (pagedResult.size() == 200);
 
         return tweets;
     }
 
-    public List<Status> getUserTimeLine(String atUserName) throws TwitterException{
+    public List<Status> getUserTimeLine(String atUserName) throws TwitterException {
         return getUserTimeLine(atUserName, null);
     }
 

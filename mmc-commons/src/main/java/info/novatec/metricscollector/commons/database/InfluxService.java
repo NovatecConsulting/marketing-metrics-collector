@@ -1,4 +1,4 @@
-package info.novatec.metricscollector.commons;
+package info.novatec.metricscollector.commons.database;
 
 import java.util.List;
 
@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+
+import info.novatec.metricscollector.commons.CommonsProperties;
 
 
 @Slf4j
@@ -23,7 +25,8 @@ public class InfluxService {
 
     public void savePoint(List<Point> points) {
         points.forEach(point -> influxDB.write(properties.getDbName(), properties.getRetention(), point));
-        log.info("Saved " + points.size() + " points to database '"+properties.getDbName()+"' with retention '"+properties.getRetention()+"'.");
+        log.info("Saved " + points.size() + " points to database '" + properties.getDbName() + "' with retention '"
+            + properties.getRetention() + "'.");
     }
 
     public void close() {

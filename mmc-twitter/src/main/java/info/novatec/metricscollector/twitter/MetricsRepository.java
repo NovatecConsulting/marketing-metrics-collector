@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 
-import info.novatec.metricscollector.commons.InfluxService;
 import info.novatec.metricscollector.commons.MetricsValidator;
+import info.novatec.metricscollector.commons.database.InfluxService;
 
 
 @Slf4j
@@ -41,9 +41,9 @@ public class MetricsRepository {
     List<Point> createPoints(Metrics metrics) {
         log.info("Start creating points for user '" + metrics.getAtUserName() + "'.");
         List<Point> points = new ArrayList<>();
-        if(metricsResultCheck.hasNullValues(metrics)){
-            log.error("Since there are null values in metrics, creating points for user '"
-                + metrics.getAtUserName() + "' isn't possible!\n" + metrics.toString());
+        if (metricsResultCheck.hasNullValues(metrics)) {
+            log.error("Since there are null values in metrics, creating points for user '" + metrics.getAtUserName()
+                + "' isn't possible!\n" + metrics.toString());
             return points;
         }
 
@@ -59,7 +59,7 @@ public class MetricsRepository {
                 .addField("likesOfMentions", value);
             points.add(pointLikes.build());
         });
-        log.info("Created "+points.size()+" points for user '" + metrics.getAtUserName() + "'.");
+        log.info("Created " + points.size() + " points for user '" + metrics.getAtUserName() + "'.");
 
         return points;
     }
@@ -68,7 +68,7 @@ public class MetricsRepository {
      * Example input: Mon Mar 20 21:44:45 CET 2017
      * output: 2017-03-20T21:44:45
      */
-    long convertDateTime(String dateTime){
+    long convertDateTime(String dateTime) {
         Locale dateLocale = Locale.UK;
         DateTimeFormatter inFormatter = DateTimeFormatter.ofPattern("E MMM dd HH:mm:ss z yyyy", dateLocale);
         TemporalAccessor date = inFormatter.parse(dateTime);

@@ -26,9 +26,9 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
 import info.novatec.metricscollector.twitter.collector.TwitterMetricCollector;
-import info.novatec.metricscollector.twitter.collector.TwitterMetricFakeCollector;
 import info.novatec.metricscollector.twitter.collector.TwitterMetricCollectorWithImplementations;
 import info.novatec.metricscollector.twitter.collector.TwitterMetricCollectorWithoutImplementations;
+import info.novatec.metricscollector.twitter.collector.TwitterMetricFakeCollector;
 import info.novatec.metricscollector.twitter.exception.TwitterRuntimeException;
 import info.novatec.metricscollector.twitter.util.DataProvider;
 
@@ -64,7 +64,7 @@ public class SchedulerTest {
     }
 
     @Test
-    public void tryFindingCollectorsWithInterfaceThatHasNoImplementations(){
+    public void tryFindingCollectorsWithInterfaceThatHasNoImplementations() {
         mockApplicationContext(scheduler);
         scheduler.updateAllTwitterUsersMetrics(TwitterMetricCollectorWithoutImplementations.class);
         //since there is no collector implemented, execution is not invoked
