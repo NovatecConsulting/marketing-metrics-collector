@@ -1,27 +1,40 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.bmuschko:gradle-docker-plugin:3.0.6'
+        classpath 'com.avast.gradle:docker-compose-gradle-plugin:0.3.27'
+    }
+
+}
 description = 'Marketing Metrics Collector'
+
 allprojects {
     apply plugin: 'maven'
     apply plugin: 'jacoco'
+    apply plugin: 'docker-compose'
+    apply plugin: 'java'
+    apply plugin: 'com.bmuschko.docker-remote-api'
 
     group = 'info.novatec'
     version = '1.0-SNAPSHOT'
+
 }
 
 subprojects {
-    apply plugin: 'java'
+
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
     }
 
-
     repositories {
         mavenLocal()
-
         maven { url "http://repo.maven.apache.org/maven2" }
     }
-
 
     dependencies {
         compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '1.5.2.RELEASE'
@@ -64,7 +77,18 @@ subprojects {
             html.enabled false
         }
     }
-
     check.dependsOn jacocoTestReport
-
 }
+
+task buildAll(dependsOn: build){
+    println "config"
+
+    doFirst{
+        println "doFirst:"+project.name
+    }
+    doLast{
+        println "doLast:"+project.name
+    }
+}
+
+composeUp.dependsOn subprojects.build

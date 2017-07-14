@@ -5,26 +5,37 @@ influx:
 ga:
   cron: 0 * * * * *
   applicationName: Google Analytics Metrics Collector
-  viewId:
   project_id:
   private_key_id:
   private_key:
   client_email:
   client_id:
   client_x509_cert_url:
+  shared-metrics:
+    - ga:pageviews
+    - ga:uniquePageviews
+    - ga:sessions
+    - ga:bounces
+    - ga:bounceRate
+    - ga:avgSessionDuration
+    - ga:avgTimeOnPage
+  shared-dimensions:
+    - ga:hostname
+    - ga:pagePath
+    - ga:pageTitle
   aqe-blog:
+    viewId: 0000
     hostName: blog.novatec-gmbh.de
-    metrics:
-      - ga:pageviews
-      - ga:uniquePageviews
-      - ga:sessions
-      - ga:bounces
-      - ga:bounceRate
-      - ga:avgSessionDuration
-      - ga:avgTimeOnPage
-    dimensions:
-      - ga:hostname
-      - ga:pagePath
-      - ga:pageTitle
+    specific-metrics:
+    #- ga:examplemetric
+    specific-dimensions:
+    #- ga:exampledimension
     excluded-urls:
       - /
+  aqe-homepage:
+    viewId: 0000
+    hostName: novatec-gmbh.de
+    specific-metrics:
+    #- ga:examplemetric
+    specific-dimensions:
+    #- ga:exampledimension

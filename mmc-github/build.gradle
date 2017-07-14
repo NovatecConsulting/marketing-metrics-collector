@@ -1,4 +1,11 @@
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+
+plugins {
+    id 'org.springframework.boot' version '1.5.2.RELEASE'
+}
+
 description = 'GitHub Metrics Collector'
+
 dependencies {
   compile project(':mmc-commons')
 }
@@ -12,5 +19,11 @@ task run ( dependsOn: 'build', type: JavaExec) {
     }
     classpath = files(baseDir + fileNames)
     classpath = sourceSets.main.runtimeClasspath
-    main = 'info.novatec.metricscollector.github.ApplicationInitializerGithub'
+    main = 'info.novatec.metricscollector.github.GithubApplicationInitializer'
+}
+
+task buildImage(type: DockerBuildImage) {
+    dependsOn assemble
+    inputDir = project(":mmc-github").projectDir
+    tag = "mmc-github:${project.version}"
 }

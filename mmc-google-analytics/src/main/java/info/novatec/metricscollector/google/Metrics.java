@@ -17,11 +17,11 @@ public class Metrics {
         metrics = new HashMap<>();
     }
 
-    void addDimension(String name, String value){
+    void addDimension(String name, String value) {
         dimensions.put(name, value);
     }
 
-    void addMetric(String name, Double value){
+    void addMetric(String name, Double value) {
         metrics.put(name, value);
     }
 
