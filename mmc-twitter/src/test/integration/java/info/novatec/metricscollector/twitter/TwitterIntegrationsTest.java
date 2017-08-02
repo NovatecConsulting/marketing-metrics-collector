@@ -15,7 +15,7 @@ public class TwitterIntegrationsTest {
     private Scheduler twitterScheduler;
 
     @Test
-    public void updateAllGithubProjectsMetricsTest(){
+    public void updateAllGithubProjectsMetricsTest() {
         twitterScheduler.scheduleUpdateAllTwitterUsersMetrics();
     }
 }

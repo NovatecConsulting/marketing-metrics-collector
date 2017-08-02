@@ -32,7 +32,7 @@ public class TwitterApplicationInitializer {
     }
 
     @Bean
-    public Twitter twitter(){
+    public Twitter twitter() {
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
             .setOAuthConsumerKey(properties.getConsumerKey())
@@ -43,7 +43,7 @@ public class TwitterApplicationInitializer {
     }
 
     @Bean
-    public Map<String, String> users(){
+    public Map<String, String> users() {
         return properties.getUsers();
     }
 }

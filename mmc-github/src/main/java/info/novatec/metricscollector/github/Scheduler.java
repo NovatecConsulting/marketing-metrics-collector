@@ -26,8 +26,6 @@ import info.novatec.metricscollector.github.exception.UserDeniedException;
 @ConfigurationProperties(prefix = "github")
 public class Scheduler implements ApplicationContextAware {
 
-    private final RestService restService;
-
     private final MetricsRepository repository;
 
     private final GithubProperties properties;
@@ -58,11 +56,10 @@ public class Scheduler implements ApplicationContextAware {
 
     void executeCollection(GithubBasicMetricCollector metric, Metrics metrics) {
         metric.setMetrics(metrics);
-        metric.setRestService(restService);
         try {
             metric.collect();
-        }catch (HttpClientErrorException e) {
-            throw new UserDeniedException("No authorized user logged in! Please add a valid github token!");
+        } catch (HttpClientErrorException e) {
+            throw new UserDeniedException("No authorized user logged in! Please add a valid oauth token to the properties.");
         }
     }
 }

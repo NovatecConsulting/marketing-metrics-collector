@@ -1,6 +1,5 @@
 package info.novatec.metricscollector.github.exception;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
@@ -14,10 +13,10 @@ public class UserDeniedExceptionTest {
     private static final String EXCEPTION_MESSAGE = "exception message!";
 
     @Test
-    public void verifyExceptionMessage(){
+    public void verifyExceptionMessage() {
         try {
             throw new UserDeniedException(EXCEPTION_MESSAGE);
-        }catch(UserDeniedException e){
+        } catch (UserDeniedException e) {
             assertThat(e.getMessage()).isEqualTo(EXCEPTION_MESSAGE);
         }
     }

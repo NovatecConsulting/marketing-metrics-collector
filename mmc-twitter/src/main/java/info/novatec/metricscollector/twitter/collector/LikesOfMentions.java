@@ -29,7 +29,7 @@ public class LikesOfMentions extends TwitterBasicMetricCollector implements Twit
         List<Status> allTweets;
         try {
             allTweets = getAllTweets(query);
-        }catch(TwitterException e){
+        } catch (TwitterException e) {
             throw new TwitterRuntimeException(e);
         }
 
@@ -38,11 +38,8 @@ public class LikesOfMentions extends TwitterBasicMetricCollector implements Twit
             .filter(tweet -> !tweet.getUser().getName().equals(metrics.getUserName()))
             .filter(tweet -> tweet.getRetweetedStatus() != null)
             .filter(tweet -> tweet.getRetweetedStatus().getFavoriteCount() > 0)
-            .collect(Collectors.toMap(
-                tweet -> tweet.getCreatedAt().toString(),
-                tweet -> tweet.getRetweetedStatus().getFavoriteCount(),
-                (tweet1, tweet2) -> tweet1)
-            );
+            .collect(Collectors.toMap(tweet -> tweet.getCreatedAt().toString(),
+                tweet -> tweet.getRetweetedStatus().getFavoriteCount(), (tweet1, tweet2) -> tweet1));
 
         metrics.setLikesOfMentions(likesOfMentions);
     }

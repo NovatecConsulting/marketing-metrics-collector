@@ -1,8 +1,8 @@
 package info.novatec.metricscollector.github.exception;
 
-public class UserDeniedException extends RuntimeException{
+public class UserDeniedException extends RuntimeException {
 
-    public UserDeniedException(String message){
+    public UserDeniedException(String message) {
         super(message);
     }
 }

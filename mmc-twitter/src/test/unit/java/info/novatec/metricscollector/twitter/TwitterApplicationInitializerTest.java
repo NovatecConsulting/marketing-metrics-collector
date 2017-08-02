@@ -29,13 +29,13 @@ public class TwitterApplicationInitializerTest {
     TwitterApplicationInitializer initializer;
 
     @Before
-    public void init(){
+    public void init() {
         initializer = new TwitterApplicationInitializer();
         initializer.setProperties(properties);
     }
 
     @Test
-    public void checkIfAllAuthorizationAreInvokedTest(){
+    public void checkIfAllAuthorizationAreInvokedTest() {
         when(properties.getConsumerKey()).thenReturn(CONSUMER_KEY);
         when(properties.getConsumerSecret()).thenReturn(CONSUMER_SECRET);
         when(properties.getAccessToken()).thenReturn(ACCESS_TOKEN);
@@ -48,7 +48,7 @@ public class TwitterApplicationInitializerTest {
     }
 
     @Test
-    public void createUsers(){
+    public void createUsers() {
         Map<String, String> users = new HashMap<>();
         users.put("at_user1", "full username1");
         users.put("at_user2", "full username2");

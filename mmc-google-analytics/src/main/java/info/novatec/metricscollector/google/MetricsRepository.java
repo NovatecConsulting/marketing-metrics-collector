@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import info.novatec.metricscollector.commons.InfluxService;
+import info.novatec.metricscollector.commons.database.InfluxService;
 import info.novatec.metricscollector.commons.MetricsValidator;
 
 

@@ -20,7 +20,7 @@ public class Followers extends TwitterBasicMetricCollector implements TwitterMet
         try {
             int followers = twitter.getFollowersIDs(-1).getIDs().length;
             metrics.addMetric("followers", followers);
-        }catch(TwitterException e){
+        } catch (TwitterException e) {
             throw new TwitterRuntimeException(e);
         }
 

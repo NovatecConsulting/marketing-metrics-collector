@@ -11,7 +11,7 @@ public class MetricsValidatorTest {
     private MetricsValidator metricsResultCheck;
 
     @Before
-    public void init(){
+    public void init() {
         metricsResultCheck = new MetricsValidator();
     }
 
@@ -28,7 +28,7 @@ public class MetricsValidatorTest {
     }
 }
 
-class CustomMetrics{
+class CustomMetrics {
     private String aString;
     private int aInt;
 

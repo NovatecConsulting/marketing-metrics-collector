@@ -32,7 +32,7 @@ public class TweetsFromUserTimeLineTest {
     DataProvider data;
 
     @Before
-    public void init(){
+    public void init() {
         metrics = new Metrics();
         data = new DataProvider();
     }

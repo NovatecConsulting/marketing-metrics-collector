@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 import lombok.Setter;
 
 import info.novatec.metricscollector.commons.MetricCollector;
+import info.novatec.metricscollector.commons.rest.RestService;
 import info.novatec.metricscollector.github.Metrics;
-import info.novatec.metricscollector.github.RestService;
 
 
 @Setter
@@ -35,14 +35,14 @@ public abstract class GithubBasicMetricCollector implements MetricCollector {
     }
 
     JsonObject getProjectRepository() {
-        if(!projectRepositoryAlreadyRequested()){
+        if (!projectRepositoryAlreadyRequested()) {
             projectRepository = createJsonObject(restService.sendRequest(getBaseRequestUrl()).getBody());
         }
         return projectRepository;
     }
 
-    boolean projectRepositoryAlreadyRequested(){
-        return projectRepository==null ? false : true;
+    boolean projectRepositoryAlreadyRequested() {
+        return projectRepository == null ? false : true;
     }
 
     JsonArray createJsonArray(String serializedJsonObject) {

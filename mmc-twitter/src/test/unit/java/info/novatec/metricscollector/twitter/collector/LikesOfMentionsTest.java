@@ -86,7 +86,7 @@ public class LikesOfMentionsTest {
     }
 
     @Test(expected = TwitterRuntimeException.class)
-    public void twitterRuntimeExceptionInsteadOfTwitterExceptionIsThrown() throws Exception{
+    public void twitterRuntimeExceptionInsteadOfTwitterExceptionIsThrown() throws Exception {
         LikesOfMentions thisMetric = spy(new LikesOfMentions(twitter, metrics));
         doThrow(TwitterException.class).when(thisMetric).getAllTweets(any(Query.class));
         thisMetric.collect();

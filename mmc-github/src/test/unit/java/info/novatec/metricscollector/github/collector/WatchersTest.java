@@ -13,8 +13,8 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import info.novatec.metricscollector.commons.rest.RestService;
 import info.novatec.metricscollector.github.Metrics;
-import info.novatec.metricscollector.github.RestService;
 import info.novatec.metricscollector.github.util.DataProvider;
 
 
@@ -32,7 +32,7 @@ public class WatchersTest {
     JsonObject mockedRepository;
 
     @Before
-    public void init(){
+    public void init() {
         metrics = DataProvider.createEmptyMetrics();
         watchers = spy(new Watchers(restService, metrics));
         when(mockedRepository.getInt("subscribers_count")).thenReturn(4);
