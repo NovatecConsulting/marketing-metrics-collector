@@ -2,7 +2,6 @@ package info.novatec.metricscollector.google;
 
 import static info.novatec.metricscollector.google.DimensionFilterOperators.EXACT;
 import static info.novatec.metricscollector.google.DimensionFilterOperators.NOT;
-import static info.novatec.metricscollector.google.GoogleAnalyticsProperties.*;
 import static java.time.format.DateTimeFormatter.ofPattern;
 
 import java.io.IOException;
@@ -10,8 +9,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import lombok.Getter;
 
 import org.springframework.stereotype.Component;
 
@@ -25,11 +22,12 @@ import com.google.api.services.analyticsreporting.v4.model.GetReportsResponse;
 import com.google.api.services.analyticsreporting.v4.model.Metric;
 import com.google.api.services.analyticsreporting.v4.model.ReportRequest;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import info.novatec.metricscollector.google.exception.IORuntimeException;
 
-
+@Getter
 @Component
 @RequiredArgsConstructor
 public class RequestBuilder {
@@ -38,11 +36,8 @@ public class RequestBuilder {
 
     private final AnalyticsReporting service;
 
-    @Getter
     private List<Metric> metrics;
-    @Getter
     private List<Dimension> dimensions;
-
     private List<DimensionFilter> dimensionFilters;
     private DateRange dateRange;
     private GetReportsRequest reportsRequest;
@@ -52,7 +47,7 @@ public class RequestBuilder {
         dimensions = new ArrayList<>();
         dimensionFilters = new ArrayList<>();
         LocalDate currentDateMinusOne = LocalDate.now().minusDays(1);
-        addDateRange(currentDateMinusOne, currentDateMinusOne);
+        setDateRange(currentDateMinusOne, currentDateMinusOne);
         return this;
     }
 
@@ -84,10 +79,11 @@ public class RequestBuilder {
      * @param operator operator that can be used for filtering
      * @param comparisonValues value against which the dimension is compared
      */
-    public RequestBuilder addDimensionFilters(String dimensionName, DimensionFilterOperators operator,
+    public RequestBuilder addDimensionFilter(String dimensionName, DimensionFilterOperators operator,
         List<String> comparisonValues) {
         DimensionFilter filter = new DimensionFilter().setDimensionName(dimensionName).setExpressions(comparisonValues);
         if (operator.equals(NOT)) {
+            //There is no true operator "NOT". But "not EXACT" filters out all matches and acts as it is a "NOT"
             filter.setOperator(EXACT.toString()).setNot(true);
         } else {
             filter.setOperator(operator.toString());
@@ -97,7 +93,7 @@ public class RequestBuilder {
     }
 
     /**
-     * This method builds the body of the request to be sent.
+     * This method builds the body of the request to be sent
      *
      * @param viewId the viewId for the specific module (e.g. AgeBlog) that is being requested.
      */
@@ -106,7 +102,7 @@ public class RequestBuilder {
 
         DimensionFilterClause dimensionFilterClause = createDimensionFilterClause(AND, dimensionFilters);
 
-        ReportRequest reportRequest = createReportRequest(viewId, dateRange, dimensionFilterClause);
+        ReportRequest reportRequest = createReportRequest(viewId, dimensionFilterClause);
         reportRequests.add(reportRequest);
 
         reportsRequest = new GetReportsRequest().setReportRequests(reportRequests);
@@ -127,6 +123,21 @@ public class RequestBuilder {
     }
 
     /**
+     * Defines the date range in which metrics should be collected.
+     * In case this method is not invoked, a default value for yesterday's data is used for collection.
+     *
+     * @param startDate the begin of the period as String
+     * @param endDate the end of the period as String
+     */
+    RequestBuilder setDateRange(LocalDate startDate, LocalDate endDate) {
+        String pattern = "yyyy-MM-dd";
+        dateRange = new DateRange();
+        dateRange.setStartDate(startDate.format(ofPattern(pattern)));
+        dateRange.setEndDate(endDate.format(ofPattern(pattern)));
+        return this;
+    }
+
+    /**
      * Creates DimensionFilterClause object. It serves as a unification of more than one dimension filters.
      *
      * @param operator the operator for joining the dimension filters like AND, OR. OR is the default one, when no operator
@@ -134,32 +145,17 @@ public class RequestBuilder {
      * @param dimensionFilters list of DimensionFilter objects
      * @return the DimensionFilterClause object
      */
-    private DimensionFilterClause createDimensionFilterClause(String operator, List<DimensionFilter> dimensionFilters) {
+    DimensionFilterClause createDimensionFilterClause(String operator, List<DimensionFilter> dimensionFilters) {
         return new DimensionFilterClause().setOperator(operator).setFilters(dimensionFilters);
     }
 
-    private ReportRequest createReportRequest(String viewId, DateRange dateRange,
-        DimensionFilterClause dimensionFilterClause) {
-        return new ReportRequest().setViewId(viewId)
+    ReportRequest createReportRequest(String viewId, DimensionFilterClause dimensionFilterClause) {
+        return new ReportRequest()
+            .setViewId(viewId)
             .setDateRanges(Collections.singletonList(dateRange))
             .setMetrics(metrics)
             .setDimensions(dimensions)
             .setDimensionFilterClauses(Collections.singletonList(dimensionFilterClause));
-    }
-
-    /**
-     * Defines the date range in which metrics should be collected.
-     * In case this method is not invoked, a default value for yesterday's data is used for collection.
-     *
-     * @param startDate the begin of the period as String
-     * @param endDate the end of the period as String
-     */
-    private RequestBuilder addDateRange(LocalDate startDate, LocalDate endDate) {
-        String pattern = "yyyy-MM-dd";
-        dateRange = new DateRange();
-        dateRange.setStartDate(startDate.format(ofPattern(pattern)));
-        dateRange.setEndDate(endDate.format(ofPattern(pattern)));
-        return this;
     }
 
 }

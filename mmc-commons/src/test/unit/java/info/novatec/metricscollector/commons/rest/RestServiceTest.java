@@ -38,7 +38,7 @@ public class RestServiceTest {
         restService.setHttpHeaders(createHttpHeaders());
         restService.sendRequest(REQUEST_URL);
         HttpEntity entity = new HttpEntity(createHttpHeaders());
-        verify(restTemplate, times(1)).exchange(REQUEST_URL, HttpMethod.GET, entity, String.class);
+        verify(restTemplate, times(1)).exchange(REQUEST_URL + "?", HttpMethod.GET, entity, String.class);
     }
 
     private HttpHeaders createHttpHeaders() {
@@ -54,20 +54,20 @@ public class RestServiceTest {
     }
 
     @Test
-    public void useHttpMethodPostTest(){
+    public void useHttpMethodPostTest() {
         restService.setHttpMethod(HttpMethod.POST);
         restService.setHttpHeaders(createHttpHeaders());
         restService.sendRequest(REQUEST_URL);
         HttpEntity entity = new HttpEntity(createHttpHeaders());
-        verify(restTemplate, times(1)).exchange(REQUEST_URL, HttpMethod.POST, entity, String.class);
+        verify(restTemplate, times(1)).exchange(REQUEST_URL + "?", HttpMethod.POST, entity, String.class);
     }
 
     @Test
-    public void useBodyTest(){
+    public void useBodyTest() {
         restService.setHttpHeaders(createHttpHeaders());
         restService.setBody("a body");
         restService.sendRequest(REQUEST_URL);
         HttpEntity<String> entity = new HttpEntity<>("a body", createHttpHeaders());
-        verify(restTemplate, times(1)).exchange(REQUEST_URL, HttpMethod.GET, entity, String.class);
+        verify(restTemplate, times(1)).exchange(REQUEST_URL + "?", HttpMethod.GET, entity, String.class);
     }
 }

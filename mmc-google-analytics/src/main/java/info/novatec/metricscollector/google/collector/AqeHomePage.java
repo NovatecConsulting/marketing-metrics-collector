@@ -1,23 +1,23 @@
 package info.novatec.metricscollector.google.collector;
 
-import static info.novatec.metricscollector.google.DimensionFilterOperators.*;
+import static info.novatec.metricscollector.google.DimensionFilterOperators.EXACT;
 import static info.novatec.metricscollector.google.GoogleAnalyticsProperties.GA_PAGEPATH;
 
+import java.util.Collections;
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+
 import com.google.api.services.analyticsreporting.v4.model.GetReportsResponse;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import info.novatec.metricscollector.commons.MetricCollector;
 import info.novatec.metricscollector.google.GoogleAnalyticsProperties;
 import info.novatec.metricscollector.google.Metrics;
 import info.novatec.metricscollector.google.RequestBuilder;
 import info.novatec.metricscollector.google.ResponseParser;
-
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-import org.springframework.stereotype.Component;
-
-import java.util.Collections;
-import java.util.List;
 
 
 @Component
@@ -41,13 +41,13 @@ public class AqeHomePage implements MetricCollector {
         responseParser.parse(getReportsResponse, metrics);
     }
 
-    private GetReportsResponse requestMetrics() {
+    GetReportsResponse requestMetrics() {
         return requestBuilder.prepareRequest()
             .addDimensions(properties.getSharedDimensions())
             .addDimensions(properties.getAqeHomepage().getSpecificDimensions())
             .addMetrics(properties.getSharedMetrics())
             .addMetrics(properties.getAqeHomepage().getSpecificMetrics())
-            .addDimensionFilters(GA_PAGEPATH, EXACT, Collections.singletonList(AQE_HOME_PAGE_PATH))
+            .addDimensionFilter(GA_PAGEPATH, EXACT, Collections.singletonList(AQE_HOME_PAGE_PATH))
             .buildRequest(properties.getAqeHomepage().getViewId())
             .sendRequest();
     }

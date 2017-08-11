@@ -9,6 +9,7 @@ import javax.json.JsonObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -33,7 +34,7 @@ public class ForksTest {
     @Before
     public void init() {
         metrics = DataProvider.createEmptyMetrics();
-        forks = spy(new Forks(restService, metrics));
+        forks = Mockito.spy(new Forks(restService, metrics));
         when(mockedRepository.getInt("forks_count")).thenReturn(4);
     }
 

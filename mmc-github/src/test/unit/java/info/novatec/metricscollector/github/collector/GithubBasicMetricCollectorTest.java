@@ -11,6 +11,7 @@ import javax.json.JsonObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -33,7 +34,7 @@ public class GithubBasicMetricCollectorTest {
     @Before
     public void init() {
         metrics = new Metrics(DataProvider.VALID_GITHUB_URL);
-        collector = spy(new GithubMetricFakeCollector(restService, metrics));
+        collector = Mockito.spy(new GithubMetricFakeCollector(restService, metrics));
     }
 
     @Test

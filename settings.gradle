@@ -3,8 +3,10 @@ include ':mmc-commons'
 include ':mmc-twitter'
 include ':mmc-github'
 include ':mmc-google-analytics'
+include ':mmc-linkedin'
 
 project(':mmc-commons').projectDir = "$rootDir/mmc-commons" as File
 project(':mmc-twitter').projectDir = "$rootDir/mmc-twitter" as File
 project(':mmc-github').projectDir = "$rootDir/mmc-github" as File
 project(':mmc-google-analytics').projectDir = "$rootDir/mmc-google-analytics" as File
+project(':mmc-linkedin').projectDir = "$rootDir/mmc-linkedin" as File

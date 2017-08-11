@@ -27,7 +27,7 @@ import info.novatec.metricscollector.github.collector.GithubMetricCollector;
 import info.novatec.metricscollector.github.collector.GithubMetricCollectorWithImplementations;
 import info.novatec.metricscollector.github.collector.GithubMetricCollectorWithoutImplementations;
 import info.novatec.metricscollector.github.collector.GithubMetricFakeCollector;
-import info.novatec.metricscollector.github.exception.UserDeniedException;
+import info.novatec.metricscollector.commons.exceptions.UserDeniedException;
 import info.novatec.metricscollector.github.util.DataProvider;
 
 

@@ -1,4 +1,4 @@
-package info.novatec.metricscollector.github.exception;
+package info.novatec.metricscollector.commons.exceptions;
 
 public class UserDeniedException extends RuntimeException {
 
