@@ -1,0 +1,8 @@
+influx:
+    url: http://localhost:8000
+    dbName: marketing_metrics
+    retention: default
+linkedin:
+  client_id:
+  client_secret:
+  cron: 0 * * * * *

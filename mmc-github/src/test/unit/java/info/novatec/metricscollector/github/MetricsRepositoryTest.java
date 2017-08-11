@@ -30,37 +30,37 @@ public class MetricsRepositoryTest {
     private InfluxService influxService;
 
     @MockBean
-    private MetricsValidator metricsResultCheck;
+    private MetricsValidator metricsValidator;
 
-    private MetricsRepository githubRepository;
+    private MetricsRepository repository;
 
     private Metrics metrics;
 
     @Before
     public void init() {
         metrics = DataProvider.createMetrics();
-        githubRepository = new MetricsRepository(influxService, metricsResultCheck);
+        repository = new MetricsRepository(influxService, metricsValidator);
     }
 
     @Test
     public void createPointsWithValidMetricsTest() {
         metrics = spy(metrics);
-        doReturn(false).when(metricsResultCheck).hasNullValues(metrics);
-        List<Point> points = githubRepository.createPoints(metrics);
+        doReturn(false).when(metricsValidator).hasNullValues(metrics);
+        List<Point> points = repository.createPoints(metrics);
         assertThat(points.size()).isEqualTo(3);
     }
 
     @Test
     public void createPointsWithNullValueMetricsTest() {
         metrics = mock(Metrics.class);
-        when(metricsResultCheck.hasNullValues(metrics)).thenReturn(true);
-        List<Point> points = githubRepository.createPoints(metrics);
+        when(metricsValidator.hasNullValues(metrics)).thenReturn(true);
+        List<Point> points = repository.createPoints(metrics);
         assertThat(points.size()).isEqualTo(0);
     }
 
     @Test
     public void checkIfSaveMetricsMethodWasInvokedTest() {
-        githubRepository.saveMetrics(metrics);
+        repository.saveMetrics(metrics);
         verify(influxService, times(1)).savePoint(anyListOf(Point.class));
         verify(influxService, times(1)).close();
     }

@@ -9,6 +9,7 @@ import javax.json.JsonObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -33,7 +34,7 @@ public class OpenIssuesTest {
     @Before
     public void init() {
         metrics = DataProvider.createEmptyMetrics();
-        openIssues = spy(new OpenIssues(restService, metrics));
+        openIssues = Mockito.spy(new OpenIssues(restService, metrics));
         when(mockedRepository.getInt("open_issues_count")).thenReturn(4);
     }
 

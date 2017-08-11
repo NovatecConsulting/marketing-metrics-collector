@@ -41,14 +41,14 @@ public class AqeBlog implements MetricCollector {
         responseParser.parse(response, metrics);
     }
 
-    public GetReportsResponse requestMetrics() {
+    GetReportsResponse requestMetrics() {
         return requestBuilder.prepareRequest()
             .addDimensions(properties.getSharedDimensions())
             .addDimensions(properties.getAqeBlog().getSpecificDimensions())
             .addMetrics(properties.getSharedMetrics())
             .addMetrics(properties.getAqeBlog().getSpecificMetrics())
-            .addDimensionFilters(GA_PAGEPATH, NOT, properties.getAqeBlog().getExcludedUrls())
-            .addDimensionFilters(GA_HOSTNAME, EXACT, Collections.singletonList(properties.getAqeBlog().getHostName()))
+            .addDimensionFilter(GA_PAGEPATH, NOT, properties.getAqeBlog().getExcludedUrls())
+            .addDimensionFilter(GA_HOSTNAME, EXACT, Collections.singletonList(properties.getAqeBlog().getHostName()))
             .buildRequest(properties.getAqeBlog().getViewId())
             .sendRequest();
     }
