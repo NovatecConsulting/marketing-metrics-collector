@@ -47,11 +47,11 @@ public class AqeHomePageMetricsListTest {
     @Test
     public void getAqeHomepageMetricsListTest() {
         Mockito.doReturn(Collections.singletonList(TEST_METRIC)).when(aqeHomePageData).getSpecificMetrics();
-        Mockito.doReturn(aqeHomePageData).when(properties).getAqeHomePage();
+        Mockito.doReturn(aqeHomePageData).when(properties).getAqeHomepage();
         Mockito.doReturn(inputMetrics).when(properties).getSharedMetrics();
 
         List<String> actualSharedMetrics = properties.getSharedMetrics();
-        List<String> actualSpecificMetrics = properties.getAqeHomePage().getSpecificMetrics();
+        List<String> actualSpecificMetrics = properties.getAqeHomepage().getSpecificMetrics();
 
         assertThat(actualSharedMetrics).hasSize(3);
         assertThat(actualSpecificMetrics).hasSize(1);
@@ -68,11 +68,11 @@ public class AqeHomePageMetricsListTest {
         List<String> inputUniqueEmptyMetrics = new ArrayList<>();
 
         Mockito.doReturn(inputUniqueEmptyMetrics).when(aqeHomePageData).getSpecificMetrics();
-        Mockito.doReturn(aqeHomePageData).when(properties).getAqeHomePage();
+        Mockito.doReturn(aqeHomePageData).when(properties).getAqeHomepage();
         Mockito.doReturn(inputMetrics).when(properties).getSharedMetrics();
 
         List<String> actualSharedMetrics = properties.getSharedMetrics();
-        List<String> actualSpecificMetrics = properties.getAqeHomePage().getSpecificMetrics();
+        List<String> actualSpecificMetrics = properties.getAqeHomepage().getSpecificMetrics();
 
         assertThat(actualSharedMetrics).hasSize(3);
         assertThat(actualSpecificMetrics).hasSize(0);

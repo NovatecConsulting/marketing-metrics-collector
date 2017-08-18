@@ -17,7 +17,7 @@ public class GoogleAnalyticsProperties {
     public static final String GA_PAGEPATH = "ga:pagePath";
 
     private AqeBlog aqeBlog = new AqeBlog();
-    private AqeHomePage aqeHomePage = new AqeHomePage();
+    private AqeHomePage aqeHomepage = new AqeHomePage();
 
     private String applicationName;
 
