@@ -7,10 +7,10 @@ plugins {
 description = 'GitHub Metrics Collector'
 
 dependencies {
-  compile project(':mmc-commons')
+    compile project(':mmc-commons')
 }
 
-task run ( dependsOn: 'build', type: JavaExec) {
+task run(dependsOn: 'build', type: JavaExec) {
     description 'Runs Github Collector Application.'
     def baseDir = "/build/libs/"
     def fileNames = []

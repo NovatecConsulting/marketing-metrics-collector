@@ -23,13 +23,14 @@ public class RestServiceTest {
     private static final String REQUEST_URL = "theRequestUrl";
 
     @MockBean
-    RestTemplate restTemplate;
+    private RestTemplate restTemplate;
 
     private RestService restService;
 
     @Before
     public void init() {
-        this.restService = new RestService(restTemplate, DEFAULT_TOKEN);
+        this.restService = spy(new RestService(restTemplate));
+        restService.prepareRequest().addHttpHeader("Authorization", "token " + DEFAULT_TOKEN);
     }
 
     @Test
@@ -47,23 +48,26 @@ public class RestServiceTest {
     }
 
     @Test
-    public void setCorrectTokenTest() {
-        restService = spy(restService);
-        restService.setToken(DEFAULT_TOKEN);
-        verify(restService, times(1)).setDefaultHttpHeaders();
-        assertThat(restService.getHttpHeaders().get("Authorization")).contains("token " + DEFAULT_TOKEN);
+    public void addHeaderTest() {
+        restService.addHttpHeader("HeaderKey", "HeaderValue");
+        assertThat(restService.getHttpHeaders().get("HeaderKey")).contains("HeaderValue");
     }
 
     @Test
-    public void setEmptyTokenTest() {
-        restService = spy(restService);
-        restService.setToken("");
-        verify(restService, times(1)).setDefaultHttpHeaders();
-        assertThat(restService.getHttpHeaders().get("Authorization")).doesNotContain("");
+    public void useHttpMethodPostTest(){
+        restService.setHttpMethod(HttpMethod.POST);
+        restService.setHttpHeaders(createHttpHeaders());
+        restService.sendRequest(REQUEST_URL);
+        HttpEntity entity = new HttpEntity(createHttpHeaders());
+        verify(restTemplate, times(1)).exchange(REQUEST_URL, HttpMethod.POST, entity, String.class);
     }
 
     @Test
-    public void verifyThatTokenExistsTest() {
-        assertThat(restService.getToken()).isNotNull();
+    public void useBodyTest(){
+        restService.setHttpHeaders(createHttpHeaders());
+        restService.setBody("a body");
+        restService.sendRequest(REQUEST_URL);
+        HttpEntity<String> entity = new HttpEntity<>("a body", createHttpHeaders());
+        verify(restTemplate, times(1)).exchange(REQUEST_URL, HttpMethod.GET, entity, String.class);
     }
 }

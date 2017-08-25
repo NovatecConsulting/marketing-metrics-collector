@@ -1,7 +1,6 @@
 package info.novatec.metricscollector.commons.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -19,34 +18,39 @@ import lombok.extern.slf4j.Slf4j;
 public class RestService {
 
     private final RestTemplate restTemplate;
-
     private HttpHeaders httpHeaders;
-    private String token;
+    private HttpMethod httpMethod;
+    private Object body;
 
     @Autowired
-    public RestService(RestTemplate restTemplate, @Qualifier("token") String token) {
-        this.token = token;
+    public RestService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-        setDefaultHttpHeaders();
+    }
+
+    public RestService prepareRequest() {
+        httpMethod = HttpMethod.GET;
+        httpHeaders = new HttpHeaders();
+        return this;
+    }
+
+    public RestService setHttpMethod(HttpMethod httpMethod){
+        this.httpMethod = httpMethod;
+        return this;
+    }
+
+    public RestService addHttpHeader(String headerName, String headerValue) {
+        httpHeaders.add(headerName, headerValue);
+        return this;
+    }
+
+    public RestService setBody(Object body) {
+        this.body = body;
+        return this;
     }
 
     public ResponseEntity<String> sendRequest(String url) {
-        HttpEntity entity = new HttpEntity(httpHeaders);
-        return restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+        HttpEntity entity = body == null ? new HttpEntity<>(httpHeaders) : new HttpEntity<>(body, httpHeaders);
+        return restTemplate.exchange(url, httpMethod, entity, String.class);
     }
 
-    public void setDefaultHttpHeaders() {
-        if (token == null || token.equals("")) {
-            log.error("Token '{}' is not a valid Token. Please specify in properties.", token);
-            token = "";
-        }
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set("Authorization", "token " + token);
-        this.httpHeaders = httpHeaders;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-        setDefaultHttpHeaders();
-    }
 }
