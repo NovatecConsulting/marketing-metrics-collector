@@ -12,6 +12,7 @@ import info.novatec.metricscollector.github.collector.GithubBasicMetricCollector
 
 public class DataProvider {
 
+    public static final String DUMMY_TOKEN = "123";
     public static final String LOCALDATE_TODAY = "2017-01-01";
     public static final String LOCALDATE_YESTERDAY = "2016-12-31";
     public static final String TIMESTAMP_TODAY = "2017-01-01T00:00:00Z";
@@ -28,7 +29,7 @@ public class DataProvider {
     private static final String DAILY_VISITS_TIMESTAMP_2002_02_02 = "2002-02-02T00:00:00Z";
 
     public static String getRestURL(String repositoryName) {
-        return GithubBasicMetricCollector.GITHUB_URL + repositoryName;
+        return GithubBasicMetricCollector.GITHUB_API_URL + repositoryName;
     }
 
     public static Metrics fillMetrics(Metrics metrics) {

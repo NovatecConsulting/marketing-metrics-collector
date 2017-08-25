@@ -10,17 +10,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import info.novatec.metricscollector.commons.MetricCollector;
 import info.novatec.metricscollector.commons.rest.RestService;
 import info.novatec.metricscollector.github.Metrics;
 
-
+@Slf4j
 @Setter
 @Component
 public abstract class GithubBasicMetricCollector implements MetricCollector {
 
-    public static final String GITHUB_URL = "https://api.github.com/repos/";
+    public static final String GITHUB_API_URL = "https://api.github.com/repos/";
 
     private JsonObject projectRepository;
 
@@ -42,7 +43,7 @@ public abstract class GithubBasicMetricCollector implements MetricCollector {
     }
 
     boolean projectRepositoryAlreadyRequested() {
-        return projectRepository == null ? false : true;
+        return projectRepository != null;
     }
 
     JsonArray createJsonArray(String serializedJsonObject) {
@@ -55,7 +56,7 @@ public abstract class GithubBasicMetricCollector implements MetricCollector {
         return jsonReader.readObject();
     }
 
-    public String getBaseRequestUrl() {
-        return GITHUB_URL + metrics.getRepositoryName();
+    String getBaseRequestUrl() {
+        return GITHUB_API_URL + metrics.getRepositoryName();
     }
 }

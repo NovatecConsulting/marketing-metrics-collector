@@ -6,8 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.web.client.RestTemplate;
 
 import info.novatec.metricscollector.commons.CommonsApplicationInitializer;
+import info.novatec.metricscollector.commons.rest.RestService;
 
 
 @EnableScheduling
@@ -18,6 +20,9 @@ public class GithubApplicationInitializer {
     @Autowired
     private GithubProperties properties;
 
+    @Autowired
+    private RestTemplate restTemplate;
+
     public static void main(String[] args) {
         SpringApplication.run(GithubApplicationInitializer.class, args);
     }
@@ -25,5 +30,12 @@ public class GithubApplicationInitializer {
     @Bean
     public String token() {
         return properties.getToken();
+    }
+
+    @Bean
+    public RestService restService(){
+        return new RestService(restTemplate)
+            .prepareRequest()
+            .addHttpHeader("Authorization", "token " + token());
     }
 }

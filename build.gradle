@@ -66,7 +66,7 @@ subprojects {
         integrationRuntime.extendsFrom testRuntime
     }
 
-    task integration (type: Test, description: 'Runs the integration tests.', group: 'Verification') {
+    task integration(type: Test, description: 'Runs the integration tests.', group: 'Verification') {
         testClassesDir = sourceSets.integration.output.classesDir
         classpath = sourceSets.integration.runtimeClasspath
     }
@@ -80,14 +80,14 @@ subprojects {
     check.dependsOn jacocoTestReport
 }
 
-task buildAll(dependsOn: build){
+task buildAll(dependsOn: build) {
     println "config"
 
-    doFirst{
-        println "doFirst:"+project.name
+    doFirst {
+        println "doFirst:" + project.name
     }
-    doLast{
-        println "doLast:"+project.name
+    doLast {
+        println "doLast:" + project.name
     }
 }
 
