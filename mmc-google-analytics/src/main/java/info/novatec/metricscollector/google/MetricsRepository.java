@@ -24,7 +24,7 @@ public class MetricsRepository {
 
     private final MetricsValidator metricsValidator;
 
-    void saveMetrics(List<Metrics> metricsForAllPages, String measurementName) {
+    public void saveMetrics(List<Metrics> metricsForAllPages, String measurementName) {
         List<Point> points = new ArrayList<>();
         metricsForAllPages.forEach(metrics -> points.addAll(createPoints(metrics, measurementName)));
         log.info("Created {} points for measurement '{}'.", points.size(), measurementName);

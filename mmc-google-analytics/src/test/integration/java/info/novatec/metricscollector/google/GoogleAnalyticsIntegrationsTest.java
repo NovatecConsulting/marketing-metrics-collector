@@ -8,16 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import info.novatec.metricscollector.google.scheduler.AqeBlogScheduler;
+
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ApplicationInitializerGoogle.class)
 public class GoogleAnalyticsIntegrationsTest {
 
     @Autowired
-    private Scheduler scheduler;
+    private AqeBlogScheduler aqeBlogScheduler;
 
     @Test
     public void collectTest() throws IOException {
-        scheduler.scheduleUpdateMetricsForAllWebpages();
+        aqeBlogScheduler.updateMetrics();
     }
 }
