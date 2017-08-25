@@ -39,7 +39,7 @@ public class AqeBlogDimensionsListTest {
 
     @Before
     public void init() {
-        requestBuilder = new RequestBuilder(properties, analyticsReporting);
+        requestBuilder = new RequestBuilder(analyticsReporting);
         requestBuilder.prepareRequest();
     }
 
