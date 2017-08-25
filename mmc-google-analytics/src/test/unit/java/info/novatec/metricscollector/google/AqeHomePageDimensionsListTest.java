@@ -41,7 +41,7 @@ public class AqeHomePageDimensionsListTest {
 
     @Before
     public void init() {
-        requestBuilder = new RequestBuilder(properties, analyticsReporting);
+        requestBuilder = new RequestBuilder(analyticsReporting);
         requestBuilder.prepareRequest();
     }
 

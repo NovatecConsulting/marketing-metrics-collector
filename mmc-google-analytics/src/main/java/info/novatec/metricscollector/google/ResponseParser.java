@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import com.google.api.services.analyticsreporting.v4.model.GetReportsResponse;
 import com.google.api.services.analyticsreporting.v4.model.MetricHeaderEntry;
 import com.google.api.services.analyticsreporting.v4.model.Report;
+import com.google.api.services.analyticsreporting.v4.model.ReportRow;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,19 +20,24 @@ public class ResponseParser {
 
     public void parse(GetReportsResponse reportsResponse, List<Metrics> targetListOfMetrics) {
         Report report = reportsResponse.getReports().get(0);
+        List<ReportRow> rows = report.getData().getRows();
         List<String> dimensionsHeaders = report.getColumnHeader().getDimensions();
         List<MetricHeaderEntry> metricsHeaders = report.getColumnHeader().getMetricHeader().getMetricHeaderEntries();
-        final int[] numberOfMCollectedMetrics = { 0 };
-        report.getData().getRows().forEach(row -> {
-            Metrics metrics = new Metrics();
-            List<String> dimensionsValues = row.getDimensions();
-            List<String> metricsValues = row.getMetrics().get(0).getValues(); //parse only first daterange
-            getDimensionsValues(dimensionsHeaders, dimensionsValues, metrics);
-            getMetricsValues(metricsHeaders, metricsValues, metrics);
-            numberOfMCollectedMetrics[0] += metrics.getMetrics().size();
-            targetListOfMetrics.add(metrics);
-        });
-        log.info("Collected {} metrics for {} pages.", numberOfMCollectedMetrics[0], targetListOfMetrics.size());
+        final int[] numberOfCollectedMetrics = { 0 };
+        if (rows == null) {
+            log.info("No data has been found for the requested view and period.");
+        } else {
+            rows.forEach(row -> {
+                Metrics metrics = new Metrics();
+                List<String> dimensionsValues = row.getDimensions();
+                List<String> metricsValues = row.getMetrics().get(0).getValues(); //parse only first daterange
+                getDimensionsValues(dimensionsHeaders, dimensionsValues, metrics);
+                getMetricsValues(metricsHeaders, metricsValues, metrics);
+                numberOfCollectedMetrics[0] += metrics.getMetrics().size();
+                targetListOfMetrics.add(metrics);
+            });
+            log.info("Collected {} metrics for {} page(s).", numberOfCollectedMetrics[0], targetListOfMetrics.size());
+        }
     }
 
     private void getDimensionsValues(List<String> dimensionsHeaders, List<String> dimensionsValues, Metrics metrics) {

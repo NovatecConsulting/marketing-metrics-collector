@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import info.novatec.metricscollector.google.scheduler.AqeBlogScheduler;
+import info.novatec.metricscollector.google.scheduler.AqeHomePageScheduler;
 
 
 @RunWith(SpringRunner.class)
@@ -18,8 +19,16 @@ public class GoogleAnalyticsIntegrationsTest {
     @Autowired
     private AqeBlogScheduler aqeBlogScheduler;
 
+    @Autowired
+    private AqeHomePageScheduler aqeHomePageScheduler;
+
     @Test
-    public void collectTest() throws IOException {
+    public void collectAndSaveAqeBlogHomePageData() throws IOException {
         aqeBlogScheduler.updateMetrics();
+    }
+
+    @Test
+    public void collectAndSaveAqeHomePageData() throws IOException {
+        aqeHomePageScheduler.updateMetrics();
     }
 }

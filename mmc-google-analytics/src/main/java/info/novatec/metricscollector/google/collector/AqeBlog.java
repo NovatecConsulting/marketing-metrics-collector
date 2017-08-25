@@ -1,8 +1,11 @@
 package info.novatec.metricscollector.google.collector;
 
+import static info.novatec.metricscollector.google.DimensionFilterOperators.EXACT;
 import static info.novatec.metricscollector.google.DimensionFilterOperators.NOT;
+import static info.novatec.metricscollector.google.GoogleAnalyticsProperties.GA_HOSTNAME;
 import static info.novatec.metricscollector.google.GoogleAnalyticsProperties.GA_PAGEPATH;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -45,7 +48,8 @@ public class AqeBlog implements MetricCollector {
             .addMetrics(properties.getSharedMetrics())
             .addMetrics(properties.getAqeBlog().getSpecificMetrics())
             .addDimensionFilters(GA_PAGEPATH, NOT, properties.getAqeBlog().getExcludedUrls())
-            .buildRequest()
+            .addDimensionFilters(GA_HOSTNAME, EXACT, Collections.singletonList(properties.getAqeBlog().getHostName()))
+            .buildRequest(properties.getAqeBlog().getViewId())
             .sendRequest();
     }
 }

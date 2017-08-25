@@ -36,7 +36,6 @@ public class RequestBuilder {
 
     private static final String AND = "AND";
 
-    private final GoogleAnalyticsProperties properties;
     private final AnalyticsReporting service;
 
     @Getter
@@ -48,13 +47,10 @@ public class RequestBuilder {
     private DateRange dateRange;
     private GetReportsRequest reportsRequest;
 
-    //TODO Add Java Doc
     public RequestBuilder prepareRequest() {
         metrics = new ArrayList<>();
         dimensions = new ArrayList<>();
         dimensionFilters = new ArrayList<>();
-
-        addDimensionFilters(GA_HOSTNAME, EXACT, Collections.singletonList(properties.getAqeBlog().getHostName()));
         LocalDate currentDateMinusOne = LocalDate.now().minusDays(1);
         addDateRange(currentDateMinusOne, currentDateMinusOne);
         return this;
@@ -81,8 +77,6 @@ public class RequestBuilder {
         return this;
     }
 
-    //TODO This method does more than one thing - creates and adds. Should be splitted.
-
     /**
      * DimensionFilters are used when additional filtering condition is required on a dimension.
      *
@@ -103,39 +97,27 @@ public class RequestBuilder {
     }
 
     /**
-     * Defines the date range in which metrics should be collected.
-     * In case this method is not invoked, a default value for yesterday's data is used for collection.
+     * This method builds the body of the request to be sent.
      *
-     * @param startDate the begin of the period as String
-     * @param endDate the end of the period as String
+     * @param viewId the viewId for the specific module (e.g. AgeBlog) that is being requested.
      */
-    private RequestBuilder addDateRange(LocalDate startDate, LocalDate endDate) {
-        String pattern = "yyyy-MM-dd";
-        dateRange = new DateRange();
-        dateRange.setStartDate(startDate.format(ofPattern(pattern)));
-        dateRange.setEndDate(endDate.format(ofPattern(pattern)));
-        return this;
-    }
-
-    /**
-     * This method builds the body of the request to be sent
-     *
-     * @return
-     */
-    public RequestBuilder buildRequest() {
+    public RequestBuilder buildRequest(String viewId) {
         List<ReportRequest> reportRequests = new ArrayList<>();
 
         DimensionFilterClause dimensionFilterClause = createDimensionFilterClause(AND, dimensionFilters);
 
-        ReportRequest reportRequest =
-            createReportRequest(properties.getAqeBlog().getViewId(), dateRange, dimensionFilterClause);
+        ReportRequest reportRequest = createReportRequest(viewId, dateRange, dimensionFilterClause);
         reportRequests.add(reportRequest);
 
         reportsRequest = new GetReportsRequest().setReportRequests(reportRequests);
         return this;
     }
 
-    //TODO Add Java Doc
+    /**
+     * Send the request to Google Analytics API
+     *
+     * @return An object of GetReportsResponse that contains the retrieved raw data.
+     */
     public GetReportsResponse sendRequest() {
         try {
             return service.reports().batchGet(reportsRequest).execute();
@@ -147,7 +129,8 @@ public class RequestBuilder {
     /**
      * Creates DimensionFilterClause object. It serves as a unification of more than one dimension filters.
      *
-     * @param operator the operator for joining the dimension filters like AND, OR.
+     * @param operator the operator for joining the dimension filters like AND, OR. OR is the default one, when no operator
+     * is provided.
      * @param dimensionFilters list of DimensionFilter objects
      * @return the DimensionFilterClause object
      */
@@ -162,6 +145,21 @@ public class RequestBuilder {
             .setMetrics(metrics)
             .setDimensions(dimensions)
             .setDimensionFilterClauses(Collections.singletonList(dimensionFilterClause));
+    }
+
+    /**
+     * Defines the date range in which metrics should be collected.
+     * In case this method is not invoked, a default value for yesterday's data is used for collection.
+     *
+     * @param startDate the begin of the period as String
+     * @param endDate the end of the period as String
+     */
+    private RequestBuilder addDateRange(LocalDate startDate, LocalDate endDate) {
+        String pattern = "yyyy-MM-dd";
+        dateRange = new DateRange();
+        dateRange.setStartDate(startDate.format(ofPattern(pattern)));
+        dateRange.setEndDate(endDate.format(ofPattern(pattern)));
+        return this;
     }
 
 }
