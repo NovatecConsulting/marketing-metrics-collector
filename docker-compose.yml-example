@@ -1,0 +1,34 @@
+version: '3'
+services:
+  github:
+    build: ./mmc-github
+    environment:
+      - INFLUX_URL=http:/influx-example.de
+      - INFLUX_DBNAME=db_test
+      - INFLUX_RETENTION=weekly
+      - GITHUB_TOKEN=abc123def456
+      - GITHUB_URLS=,https://github.com/company1/project1,https://github.com/company1/project2,https://github.com/company2/project1
+  google-analytics:
+    build: ./mmc-google-analytics
+    environment:
+      - INFLUX_URL=http:/influx-example.de
+      - INFLUX_DBNAME=db_test
+      - INFLUX_RETENTION=weekly
+      - GA_CLIENT_SECRETS_BASE64=ab12CDEFG345HIJKL
+      - GA_CLIENT_EMAIL=user@company.com
+      - GA_CLIENT_ID=123456789
+      - GA_CLIENT_X509_CERT_URL=https://google/service/account/link
+      - GA_PRIVATE_KEY=-----BEGIN PRIVATE KEY-----\123abc\n456def\n-----END PRIVATE KEY-----\n
+      - GA_PRIVATE_KEY_ID=12345abcdef6789
+      - GA_PROJECT_ID=project-name
+      - GA_VIEWID=12345
+  twitter:
+    build: ./mmc-twitter
+    environment:
+      - INFLUX_URL=http:/influx-example.de
+      - INFLUX_DBNAME=db_test
+      - INFLUX_RETENTION=weekly
+      - TWITTER_CONSUMER_KEY=abc123def
+      - TWITTER_CONSUMER_SECRET=abcde12345fghi
+      - TWITTER_ACCESS_TOKEN=123456789abcdefghijkl
+      - TWITTER_ACCESS_SECRET=a1b2c3
