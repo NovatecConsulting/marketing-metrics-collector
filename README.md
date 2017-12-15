@@ -2,12 +2,12 @@
 [![Build Status](https://travis-ci.org/nt-ca-aqe/marketing-metrics-collector.svg?branch=master)](https://travis-ci.org/nt-ca-aqe/marketing-metrics-collector)
 [![codecov](https://codecov.io/gh/nt-ca-aqe/marketing-metrics-collector/branch/master/graph/badge.svg)](https://codecov.io/gh/nt-ca-aqe/marketing-metrics-collector)
 
-Marketing metrics collector is a tool to collect information on different kind of medias. It is mainly used for collecting 
-information for the IT company NovaTec Consulting GmbH.
+Marketing metrics collector is a tool to collect information on different kind of social media modules. It is mainly 
+used for collecting information for the IT company NovaTec Consulting GmbH.
 
 ### Features
 
-- Picking metrics from medias..
+- Collecting metrics from medias..
    - Github
    - Twitter
    - Google Analytics - NovaTec Homepage
@@ -16,32 +16,33 @@ information for the IT company NovaTec Consulting GmbH.
    - Xing (currently under development)
    - Facebook (planned)
    - Kununu (planned)
-- Saving data to influx database. Saved data can be picked up with tools like Grafana to get a more informative view over 
+- Saving data to influx database. Saved data can be visualized with tools like Grafana to get a more informative view over 
 collected data.
-- Custom configuration like scheduling collector, retention of influx data and collector specific configurations like authorization. 
+- Custom configuration like collector scheduling, retention of influx data and collector specific configurations like authorization. 
 - Every configuration data can be picked up from system variables. Sensitive data like passwords or token can be taken from 
-local system variable and passed to a docker image. The classic way of saving data to a property file is also possible.
-- Every media is a microservice delivered with docker
-- Docker compose can be started by a gradle task. Creating and starting docker images manually is all water under the bridge now. 
+local system variable and passed to a docker image. The classical way of saving data to a property file is also possible.
+- Every module represents a microservice that can be run in a docker container. 
+- Docker compose can be started by a gradle task. 
 
 
-### Collectors and medias
+### Provider and Consumer
 
-"media" means the provider of information like Github, Twitter or Google Analytics. The collector is the mechanism which 
-fetches information of one media. Mostly there is one collector for each metric. For instance the Tweets collector collects 
-the number of tweets of a user. Other Twitter metrics like number of retweets has their own collectors.
+The so called “Social media module”, like Github, Twitter or Google Analytics, is in the role of service Provider. The 
+Consumer is the module that fetches information from a media. It consists of collectors, where in most of the cases one 
+collector is responsible for one metric. For example, Tweets collector in Twitter Module, collects the number of tweets 
+of a user. 
 
-The following image describes what the twitter collector basically does:
+The figure below shows a brief architecture overview for an example module – Twitter in this case. 
 
 ![Twitter collector](src/main/resources/images/architecture.jpg)
 
 ### Configuration
-Probably you don't want to safe (and check-in) your security settings like tokens or private keys into the application.yml. 
-These settings can passed by as a system variable to any desired microservice. You can set system variables manually when 
-you like to start the collector locally. If you want to use docker, it is necessary to set desired parameters in the 
-docker-compose.yml. To avoid accidentally checked in private tokens, the docker-compose will be ignored by git. The metrics 
-collector provides a docker-compose.yml-example which contains examples for some properties. You can trim "-example" and use 
-your new docker-compose.yml as the basic configuration. Fill in all parameters you get from your provider (GitHub, 
+Probably you don't want to save (and check-in) your security settings like tokens or private keys into the application.yml. 
+These settings can be passed by as a system variable to any of the desired microservice. You can set system variables manually when 
+you would like to start the collector on your local environment. If you want to use Docker, it is necessary to set desired parameters in the 
+docker-compose.yml. To avoid accidentally checking in private tokens, the docker-compose will be ignored by git. The metrics 
+collector provides a [docker-compose.yml-example](docker-compose.yml-example) which contains examples for some properties. 
+You just need to replace the example file with docuker-compose.yml file. Fill in all parameters you get from your provider (GitHub, 
 Twitter, ..), add parameters or remove a service. The name of the system variable is equal to the name of the property in
 the application.yml.
 
@@ -55,7 +56,7 @@ docker-compose.yml:
 ```
 services:github:environment:GITHUB_CRON=0 * * * * *
 ```
-Note: The colon in a property-key is a underscore in docker-compose 
+Note: The colon in a property-key is an underscore in docker-compose 
 
 
 To configure the marketing metrics collector, the application.yml in every resources-folder has to be configured. When there
