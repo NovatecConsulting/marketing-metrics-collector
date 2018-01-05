@@ -34,7 +34,7 @@ of a user.
 
 The figure below shows a brief architecture overview for an example module – Twitter in this case. 
 
-![Twitter collector](src/main/resources/images/architecture.jpg)
+![Twitter collector](src/main/resources/images/architecture.png)
 
 ### Configuration
 Probably you don't want to save (and check-in) your security settings like tokens or private keys into the application.yml. 
